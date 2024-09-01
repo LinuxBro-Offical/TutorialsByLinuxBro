@@ -1,0 +1,196 @@
+{% extends 'home/index.html' %}
+{% load static %}
+{% block content %}
+<style>
+    .navbar-transparent {
+        background-color: #fb641b !important;
+    }
+
+    .contents {
+        min-height: 80vh;
+        padding: 4rem 0 2rem 0;
+        margin: 3rem auto;
+    }
+
+    .wrapper {
+        background-color: #fff !important;
+    }
+
+    .blog-container {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    /* Blog List Styles */
+    .blog-list {
+        flex: 0 0 66%;
+        padding-right: 20px;
+        overflow-y: auto;
+        height: 80vh;
+    }
+
+    .blog-item {
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #e0e0e0; /* Add bottom border to each blog item */
+    }
+
+    .blog-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    .blog-content {
+        font-size: 1rem;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+        color: #333;
+    }
+
+    .blog-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.9rem;
+        color: #777;
+    }
+
+    .meta-left {
+        display: flex;
+        align-items: center;
+    }
+
+    .meta-left .icon {
+        margin-right: 8px;
+    }
+
+    .meta-left .icon,
+    .meta-left .count {
+        display: inline-block;
+    }
+
+    .bookmark-icon {
+        cursor: pointer;
+        font-size: 1.2rem;
+    }
+
+    .suggestions {
+        flex: 0 0 30%;
+        height: 80vh;
+        padding: 20px;
+        border-radius: 10px;
+    }
+
+    .suggestion-item {
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+    }
+
+    .suggestion-item img {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 4px;
+        margin-right: 15px;
+    }
+
+    .suggestion-title {
+        font-size: 1rem;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .filter-container {
+        margin-bottom: 1rem;
+    }
+
+    .filter-container h3 {
+        font-size: 1.25rem;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    .filter-badge {
+        display: inline-block;
+        background-color: #fb641b;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        margin-right: 5px;
+        margin-bottom: 5px;
+    }
+
+    .filter-badge i {
+        margin-left: 5px;
+    }
+
+    .results-title {
+        font-size: 1.25rem;
+        font-weight: bold;
+        margin-bottom: 2rem;
+        font-family: 'Montserrat', sans-serif;
+    }
+</style>
+
+<div class="contents container">
+    <div class="blog-container">
+        <!-- Blog List -->
+        <div class="blog-list">
+            <div class="results-title">Showing results for "Python, Django"</div> <!-- Title for results -->
+
+            <div class="blog-item">
+                <h2 class="blog-title">How to Master Django: A Complete Guide</h2>
+                <p class="blog-content">Learn the ins and outs of Django, from models to views, templates to middleware...</p>
+                <div class="blog-meta">
+                    <div class="meta-left">
+                        <i class="icon mdi mdi-thumb-up-outline"></i> <span class="count">34</span>
+                        <i class="icon mdi mdi-comment-outline" style="margin-left: 15px;"></i> <span class="count">12</span>
+                    </div>
+                    <i class="bookmark-icon mdi mdi-bookmark-outline"></i>
+                </div>
+            </div>
+
+            <div class="blog-item">
+                <h2 class="blog-title">10 Best Practices for Python Developers</h2>
+                <p class="blog-content">Discover the top ten best practices for writing clean, efficient, and scalable Python code...</p>
+                <div class="blog-meta">
+                    <div class="meta-left">
+                        <i class="icon mdi mdi-thumb-up-outline"></i> <span class="count">58</span>
+                        <i class="icon mdi mdi-comment-outline" style="margin-left: 15px;"></i> <span class="count">20</span>
+                    </div>
+                    <i class="bookmark-icon mdi mdi-bookmark-outline"></i>
+                </div>
+            </div>
+
+            <!-- Add more blog items here -->
+        </div>
+
+        <!-- Suggestions and Filters -->
+        <div class="suggestions">
+            <div class="filter-container">
+                <h3>Applied Filters:</h3>
+                <span class="filter-badge">Python <i class="mdi mdi-close"></i></span>
+                <span class="filter-badge">Django <i class="mdi mdi-close"></i></span>
+                <!-- Add more filter badges as needed -->
+            </div>
+
+            <div class="suggestion-item">
+                <img src="{% static 'images/blog_image.jpg' %}" alt="Suggestion">
+                <div class="suggestion-title">Understanding RESTful APIs</div>
+            </div>
+
+            <div class="suggestion-item">
+                <img src="{% static 'images/blog_image.jpg' %}" alt="Suggestion">
+                <div class="suggestion-title">Deploying Django on AWS</div>
+            </div>
+
+            <!-- Add more suggestion items here -->
+        </div>
+    </div>
+</div>
+{% endblock %}

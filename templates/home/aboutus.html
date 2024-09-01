@@ -1,0 +1,447 @@
+{% extends 'home/index.html' %}
+{% load static %}
+{% block content %}
+<style>
+   .navbar-transparent {
+        background-color: #fb641b !important;
+    }
+    .wrapper{
+        background-color: #fff !important;
+    }
+    .contents{
+        margin-top: 2rem;
+        min-height: 80vh;
+        padding: 4rem 0 2rem 0;
+        max-width: 800px;
+        margin: 0 auto;
+        text-align: center;
+        background: #fff;
+        border-radius: 10px;
+        position: relative;
+        overflow: hidden;
+        transition: box-shadow 0.5s ease;
+    }
+   
+    .contents:hover::before {
+        opacity: 0;
+    }
+   
+    .profile {
+        margin-top: 2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 2rem;
+        position: relative;
+        z-index: 1;
+    }
+    .profile img {
+        zoom: 2;
+        border-radius: 50%;
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        border: 4px solid #fb641b;
+        transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+    .profile img:hover {
+        transform: scale(1.1);
+        box-shadow: 0 0 15px rgba(251, 100, 27, 0.6);
+    }
+    .profile h1 {
+        font-size: 2.5rem;
+        margin: 1rem 0;
+        color: #333;
+        animation: fadeIn 2s ease-out;
+    }
+    .profile p {
+        font-size: 1.2rem;
+        color: #555;
+        line-height: 1.6;
+        animation: fadeIn 2s ease-out 0.5s;
+    }
+    .resume-button {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        font-size: 1.1rem;
+        color: #fff;
+        background-color: #fb641b;
+        border-radius: 5px;
+        text-decoration: none;
+        margin-top: 1.5rem;
+        transition: background-color 0.4s ease, transform 0.4s ease;
+    }
+    .resume-button:hover {
+        background-color: #e55d1e;
+        color: black;
+        transform: scale(1.05);
+    }
+    .portfolio {
+        margin-top: 2rem;
+    }
+    .portfolio h2 {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        color: #fb641b;
+        border-bottom: 2px solid #fb641b;
+        padding-bottom: 0.5rem;
+        display: inline-block;
+        position: relative;
+        overflow: hidden;
+    }
+    .portfolio h2::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: rgba(251, 100, 27, 0.5);
+        transform: translateX(-100%);
+        transition: transform 0.5s ease;
+    }
+    .portfolio h2:hover::after {
+        transform: translateX(0);
+    }
+    .portfolio img {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+    .portfolio img:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    .social-media {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.social-media h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #fb641b;
+    border-bottom: 2px solid #fb641b;
+    padding-bottom: 0.5rem;
+    display: inline-block;
+}
+
+.social-link {
+    font-size: 2rem;
+    color: #333;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.social-link:hover {
+    color: #fb641b;
+    transform: scale(1.2);
+}
+.vision {
+    margin-top: 2rem;
+    text-align: left;
+    padding: 2rem;
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+}
+
+.vision h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #fb641b;
+    border-bottom: 2px solid #fb641b;
+    padding-bottom: 0.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.vision p {
+    font-size: 1.2rem;
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.vision-list {
+    margin-top: 1rem;
+    list-style-type: none;
+    padding-left: 0;
+}
+
+.vision-list li {
+    display: flex;
+    align-items: center;
+    font-size: 1.1rem;
+    color: #333;
+    margin-bottom: 0.8rem;
+    position: relative;
+    padding-left: 2.5rem;
+    list-style: none !important;
+}
+
+.vision-list li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    background-color: #fb641b;
+    border-radius: 50%;
+    transform: translateY(-50%);
+}
+
+.vision-icon {
+    color: #fb641b;
+    font-size: 1.5rem;
+    margin-right: 1rem;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.vision-list li:hover .vision-icon {
+    color: #e55d1e;
+    transform: scale(1.2);
+}
+.skills {
+    margin-top: 2rem;
+    text-align: left;
+}
+
+.skills h2 {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 1.5rem;
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.skills-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
+.skills-item {
+    display: flex;
+    align-items: center;
+    font-size: 1.1rem;
+    color: #555;
+    flex-basis: 30%;
+    box-sizing: border-box;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.skills-item i {
+    font-size: 1.6rem;
+    color: #fb641b;
+    margin-right: 1rem;
+}
+
+.skills-item span {
+    display: inline-block;
+    font-weight: 500;
+}
+
+.skills-item:hover {
+    background-color: #fb641b;
+    color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.skills-item:hover i{
+    color: white;
+}
+.linkedin-github {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.linkedin-github h2 {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 1.5rem;
+}
+
+.linkedin-github-items {
+    display: flex;
+    flex-direction: column;
+    justify-content: baseline;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.linkedin-github-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 1.1rem;
+    color: #555;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 1rem;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.linkedin-github-item a {
+    text-decoration: none;
+    color: #fb641b;
+    display: flex;
+    align-items: baseline;
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+    transition: color 0.3s ease;
+}
+
+.linkedin-github-item a:hover {
+    color: #f2f2f1;
+}
+
+.linkedin-github-item i {
+    font-size: 2rem;
+    margin-right: 0.5rem;
+}
+
+.linkedin-github-item p {
+    font-size: 1rem;
+    color: #777;
+    margin: 0;
+}
+
+.linkedin-github-item:hover {
+    background-color: #fb641b;
+    color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.linkedin-github-item:hover a{
+    color: white;
+}
+.linkedin-github-item:hover p{
+    color: white;
+}
+.icon {
+    width: 1em;
+    height: 1em;
+    vertical-align: -0.125em;
+    margin-right: 0.5rem;
+}
+
+
+</style>
+<div class="contents">
+    <div class="profile">
+        <img src="{% static 'images/Ananthu_S.png' %}" alt="Profile Picture">
+        <h1>Ananthu S Kumar</h1>
+        <p>Hi, I'm Ananthu S Kumar, a passionate software engineer with expertise in Django and web development. I love building dynamic, user-friendly applications and solving complex problems. Welcome to my portfolio!</p>
+        <a href="{% static 'images/Ananthu_Python_Developer.pdf' %}" class="resume-button" download>Download Resume</a>
+    </div>
+    <div class="vision mt-4">
+        <h2>My Vision</h2>
+        <p>Working at LinuxBro is like:</p>
+        <ul class="vision-list">
+            <li><i class="fas fa-calendar-alt vision-icon"></i> Employees work only 4 days per week.</li>
+            <li><i class="fas fa-handshake vision-icon"></i> No politics at work.</li>
+            <li><i class="fas fa-chart-line vision-icon"></i> Profit sharing is encouraged.</li>
+            <li><i class="fas fa-home vision-icon"></i> A home office budget is provided.</li>
+            <li><i class="fas fa-globe vision-icon"></i> Permanent remote work is available.</li>
+            <li><i class="fas fa-hourglass-half vision-icon"></i> 50 days notice period is standard.</li>
+            <li><i class="fas fa-users vision-icon"></i> We hire old (and young)</li>
+            <li><i class="fas fa-pen vision-icon"></i> No whiteboard interview</li>
+        </ul>
+    </div>
+    <div class="skills">
+        <h2>My Skills</h2>
+        <div class="skills-items">
+            <div class="skills-item">
+                <i class="mdi mdi-language-python"></i>
+                <span>Python & Django</span>
+            </div>
+            <div class="skills-item">
+                <i class="mdi mdi-server"></i>
+                <span>Django REST Framework</span>
+            </div>
+            <div class="skills-item">
+                <i class="mdi mdi-angular"></i>
+                <span>Angular</span>
+            </div>
+            <div class="skills-item">
+                <i class="mdi mdi-flask"></i>
+                <span>Flask</span>
+            </div>
+            <div class="skills-item">
+                <i class="mdi mdi-language-css3"></i>
+                <span>CSS</span>
+            </div>
+            <div class="skills-item">
+                <i class="mdi mdi-sass"></i>
+                <span>Sass</span>
+            </div>
+            <div class="skills-item">
+                <i class="mdi mdi-material-ui"></i>
+                <span>Angular Material</span>
+            </div>
+            <div class="skills-item">
+                <i class="mdi mdi-bootstrap"></i>
+                <span>Bootstrap</span>
+            </div>
+            <div class="skills-item">
+                <i class="mdi mdi-docker"></i>
+                <span>Docker & Docker Compose</span>
+            </div>
+            <div class="skills-item">
+                <i class="mdi mdi-database"></i>
+                <span>PostgreSQL & MySQL</span>
+            </div>
+            <div class="skills-item">
+                <i class="mdi mdi-amazon"></i>
+                <span>AWS Lambda, EC2, S3, RDS, DynamoDB</span>
+            </div>
+            <div class="skills-item">
+                <i class="mdi mdi-git"></i>
+                <span>Git</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="linkedin-github">
+        <h2>Connect with Me</h2>
+        <div class="linkedin-github-items">
+            <div class="linkedin-github-item">
+                <a href="https://www.linkedin.com/in/ananthu-s-kumar-216a12190" target="_blank">
+                    <i class="mdi mdi-linkedin"></i>
+                    <span>LinkedIn</span>
+                </a>
+                <p>Explore my professional background and network with me on LinkedIn.</p>
+            </div>
+            <div class="linkedin-github-item">
+                <a href="https://github.com/LinuxBro-Offical" target="_blank">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon"  viewBox="0 0 496 512">
+                        <!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+                        <path fill="currentColor" d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3 .3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5 .3-6.2 2.3zm44.2-1.7c-2.9 .7-4.9 2.6-4.6 4.9 .3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3 .7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3 .3 2.9 2.3 3.9 1.6 1 3.6 .7 4.3-.7 .7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3 .7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3 .7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/>
+                    </svg>
+                    <span class="mb-2">GitHub</span>
+                </a>
+                <p>Check out my projects and contributions on GitHub.</p>
+            </div>
+        </div>
+    </div>
+    
+       
+</div>
+{% endblock %}

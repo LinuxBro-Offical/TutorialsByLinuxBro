@@ -1,0 +1,195 @@
+{% extends 'home/index.html' %}
+{% load static %}
+{% block content %}
+<style>
+    .navbar-transparent{
+        background-color: #fb641b !important;
+    }
+    .contents{
+        min-height: 80vh;
+        padding: 4rem 0 2rem 0;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    .wrapper{
+        background-color: #fff !important;
+    }
+    .title {
+            font-family: 'Merriweather', serif;
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        .subtitle {
+            font-family: 'Merriweather', serif;
+            font-size: 1.5rem;
+            color: #7f8c8d;
+            margin-bottom: 40px;
+        }
+        .author-info {
+            display: flex;
+            align-items: center;
+            margin-top: 5px;
+            margin-bottom: 20px;
+        }
+        .author-info img {
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .author-info .name {
+            font-weight: 600;
+            font-size: 1rem;
+            color: #7f8c8d;
+        }
+        .author-info .date {
+            font-size: 0.9rem;
+            color: #95a5a6;
+            margin-left: 10px;
+        }
+        .cover-image {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            margin-bottom: 30px;
+        }
+        .content {
+            font-size: 1.125rem;
+            line-height: 1.8;
+            color: #2c3e50;
+        }
+        .content h2 {
+            margin-top: 40px;
+            margin-bottom: 20px;
+            font-family: 'Merriweather', serif;
+            font-size: 1.875rem;
+            color: #2c3e50;
+        }
+        .content p {
+            margin-bottom: 20px;
+        }
+        .content blockquote {
+            margin: 40px 0;
+            padding: 20px;
+            background-color: #ecf0f1;
+            border-left: 5px solid #3498db;
+            font-style: italic;
+        }
+        .content img {
+            max-width: 100%;
+            height: auto;
+            margin: 30px 0;
+        }
+        .tags {
+            margin-top: 40px;
+        }
+        .tags a {
+            display: inline-block;
+            background-color: #3498db;
+            color: #fff;
+            padding: 5px 10px;
+            margin-right: 10px;
+            text-decoration: none;
+            border-radius: 3px;
+            font-size: 0.875rem;
+        }
+        .tags a:hover {
+            background-color: #2980b9;
+        }
+
+        .blog-interaction {
+            border-color: #e0e0e0; /* Adjust the border color if needed */
+            padding: 0 1rem; /* Add padding to the container */
+        }
+        .saveandshare{
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+        .save-icon, .share i{
+            font-size: 1.2rem;
+            color: grey;
+            padding: 0 0.4rem;
+        }
+
+
+</style>
+<div class="contents">
+    <div class="container">
+        <h1 class="title">{{ story.title }}</h1>
+        <p class="subtitle">{{ story.subtitle }}</p>
+
+        <div class="author-info">
+            <img src="{% static 'images/profile.jpg' %}" alt="Author" width="50" height="50">
+            <a href="{% url 'author_profile' story.author.uuid %}"><span class="name">{{ story.author }}</span></a>
+            <span class="date">{{story.publication_date}}</span>
+        </div>
+
+        <img src="{{ story.cover_image.url }}" alt="Cover Image" class="cover-image">
+
+        <div class="content">
+            {% for block in content_blocks %}
+                {% if block.content_type == 'paragraph' %}
+                    <p>{{ block.text_content }}</p>
+                {% elif block.content_type == 'image' %}
+                    <img src="{{ block.image_content.url }}" alt="Content Image" class="content-image">
+                {% elif block.content_type == 'blockquote' %}
+                    <blockquote>{{ block.text_content }}</blockquote>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <div class="blog-interaction d-flex justify-content-between align-items-center py-3 border-bottom">
+            <div class="icons d-flex">
+                <span class="clap-icon me-3" title="Clap">
+                    <i class="mdi mdi-thumb-up-outline"></i>
+                    <span class="count">{{ like_count }}</span>
+                </span>
+                <span class="comment-icon me-3 ml-3" title="Comment">
+                    <i class="mdi mdi-comment-outline"></i>
+                    <span class="count">{{ comment_count }}</span>
+                </span>
+            </div>
+            <div class="saveandshare">
+                <span class="save-icon" title="Save">
+                    <i class="mdi mdi-bookmark-outline"></i>
+                </span>
+                <ul class="list-unstyled topnav-menu mb-0 share">
+                    <li class="dropdown notification-list">
+                      <a class="nav-link dropdown-toggle nav-user mr-0" data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
+                        <i class="mdi mdi-export-variant"></i>
+                      </a>
+                      <div class="dropdown-menu dropdown-menu-right profile-dropdown " style="width: fit-content;">
+                        <a href="javascript:void(0);" id="copy-link" class="dropdown-item notify-item">
+                          <i class="mdi mdi-content-copy"></i>
+                          <span>Copy Link</span>
+                        </a>
+                        <a href="javascript:void(0);" class="dropdown-item notify-item">
+                            <i class="mdi mdi-whatsapp"></i>
+                            <span>Share on WhatsApp</span>
+                          </a>
+                        {% if user.is_authenticated %}
+                        <a class="dropdown-item notify-item" rel="nofollow" data-method="delete" href="">
+                          <i class="fe-log-out"></i>
+                          <span>Logout</span>
+                        </a>
+                        {% endif %}
+                      </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        
+        
+
+        <div class="tags">
+            {% for tag in story.tags.all %}
+                <a href="#">#{{ tag.name }}</a>
+            {% endfor %}
+        </div>
+    </div>
+</div>  
+
+
+
+{% endblock %}

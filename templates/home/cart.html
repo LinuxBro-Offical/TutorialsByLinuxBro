@@ -1,0 +1,92 @@
+{% extends "home/index.html" %}
+{% load static %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-9 pt-7">
+            <div class="card border mb-3">
+                <div class="border-bottom p-2 flex-row justify-space-between">
+                    <h5>My Cart (1)</h5>
+                    <div class="flex-row align-center">
+                        <i class="ti-location-pin text-danger" style="z-index: 1;"></i>
+                        <span class="b-shadow"></span>
+                        <h6 class="text-secondary mr-1">Deliverto</h6>
+                        <select name="" id="" class="form-control">
+                            <option value="" selected><span class="font-weight-bold text-dark">Ananthu</span>,nandhanam</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex-row p-2 border-bottom">
+                    <div class="col-4 flex-col justify-content-center align-center">
+                        <img src="{%static 'images/phone.png'%}" class="mb-2" alt="" width="25%">
+                        <div class="flex-row align-center">
+                            <i class=" fas fa-minus-circle text-lg"></i>
+                            <input type="number" class="mr-2 ml-2" style="width:50px" value="2">
+                            <i class="fas fa-plus-circle text-lg"> </i>
+                        </div>
+                    </div>
+                    <div class="col-4 flex-col">
+                        <span class="text-dark text-lg">Redmi Note 8 Pro</span>
+                        <span class="text-secondary text-md">Deep Blue</span>
+                        <span class="text-secondary text-sm">Seller:Annus Hub</span>
+                        <div class="flex-row align-center">
+                            <h6 class="text-lg text-dark font-weight-bold mr-1">₹1200</h6>
+                            <h6 class="text-md text-secondary line mr-1">₹1700</h6>
+                            <h6 class="text-sm text-success font-weight-bold">7% Off. 4 offers applied <i class="fas fa-exclamation-circle"></i></h6>
+                        </div>
+                        <div class="flex-row mt-2 justify-space-between">
+                            <a href="" class="btn text-dark font-weight-bold pl-0">MOVE TO WISHLIST</a>
+                            <a href="" class="btn text-dark font-weight-bold">REMOVE</a>
+                        </div>
+                    </div>
+                    <div class="col-4 flex-col">
+                        <div class="flex-row align-center">
+                            <span  class="text-dark" style="display: inline;">Delivary by Wed Jun 16</span>
+                            <span class="text-dark text-lg ml-1 mr-1">|</span>
+                            <span class="text-success mr-1">Free</span>
+                            <span class="line">₹120</span>
+                        </div>
+                        <span class="text-secondary text-sm">7 Days Replacement Policy</span>
+                    </div>
+                </div>
+                <div class="flex-row p-2 justify-content-end">
+                    <a href="" class="btn btn-orange btn shadow width-lg">PLACE ORDER</a>
+                </div>
+            </div>
+        </div>
+    
+        <div class="col-3 pt-7">
+            <div class="border payment-box">
+                <div class="flex-row border-bottom p-1">
+                    <h5 class="text-md text-secondary">PRICE DETAILS</h5>
+                </div>
+                <div class="p-1">
+                    <div class="flex-row justify-space-between p-1">
+                        <span class="text-md text-dark">Price(1 item)</span>
+                        <span class="text-md text-dark">₹5300</span>
+                    </div>
+                    <div class="flex-row justify-space-between p-1">
+                        <span class="text-md text-dark">Discount</span>
+                        <span class="text-md text-success">-₹400</span>
+                    </div>
+                    <div class="flex-row justify-space-between p-1 border-bottom">
+                        <span class="text-md text-dark">Delivary</span>
+                        <span class="text-md text-success">Free</span>
+                    </div>
+                    <div class="flex-row justify-space-between p-1 border-bottom">
+                        <h5 class="text-md">Total Amount</h5>
+                        <h5 class="text-md">₹4900</h5>
+                    </div>
+                    <div class="flex-row  p-1 ">
+                        <h6 class="text-sm text-success">You will save ₹400 on this order</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="flex-row align-center mt-1">
+                <i class=" fas fa-clipboard-check text-secondary text-lg mr-2"></i>
+                <h6 class="text-sm text-secondary">Safe and Secure Payments.Easy returns.100% Authentic products.</h6>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

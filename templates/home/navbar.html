@@ -1,0 +1,80 @@
+{% load static %}
+<style>
+  #logo_link{
+    width: 6rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+  .search-form{
+    margin: 0 2rem !important;
+  }
+</style>
+<div class="navbar-transparent flex-row align-center">
+  <ul class="list-unstyled topnav-menu mb-0">
+    <li>
+      <div class="container">
+        <div class="navbar-top">
+          <!-- search  -->
+          <div class="flex-row align-center">
+            <a href="/" id="logo_link">
+              <img src="{% static 'images/logo_linux.png'%}" alt="logo" width="100%">
+            </a>
+            <form action="" class="flex-row search-form">
+              <input type="text" class="form-nav-input shadow" placeholder="">
+              <button title="Search" value="" type="submit" class="form-nav-button"><i class="fas fa-search"></i></button>
+            </form>
+          </div>
+          <div class="flex-row align-center">
+            {% if user.is_authenticated %}
+            <div class="d-flex flex-column mr-2">
+              <h6 class="text-white flex-row" style="font-size: .78rem;">Logged in as,</h6>
+              <span class="text-white font-weight-bold" style="font-size: .78rem;">{{ request.user }}</span>
+            </div>
+            {% else %}
+            <button type="button" class="btn btn-sm btn-light width-lg shadow mr-2" style="border-radius: 0;" id="login_btn" data-toggle="modal" data-target="#exampleModal">
+              Get started
+            </button>
+            {% endif %}
+            <!-- Notification Bell Icon -->
+            <div class="notification-bell mr-3">
+              <a href="#" class="text-white">
+                <i class="fas fa-bell" style="font-size: 20px;"></i>
+              </a>
+            </div>
+            <ul class="list-unstyled topnav-menu">
+              <li class="dropdown notification-list">
+                <a class="nav-link dropdown-toggle nav-user mr-0 text-white" data-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
+                  <i class="fas fa-user"></i><span class="text-white ml-1" style="font-size: 15px; font-weight: bold;">More</span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right profile-dropdown">
+                  <div class="dropdown-header noti-title">
+                    <h6 class="text-overflow m-0 text-dark">Welcome!</h6>
+                  </div>
+                  <a href="{% url 'my_profile' %}" class="dropdown-item notify-item">
+                    <i class="fe-user"></i>
+                    <span>My Account</span>
+                  </a>
+                  <a href="{% url 'wallet' %}" class="dropdown-item notify-item">
+                    <i class="fe-credit-card"></i>
+                    <span>Wallet</span>
+                  </a>
+                  <a href="{% url 'blog_list' %}" class="dropdown-item notify-item">
+                    <i class="fe-bookmark"></i>
+                    <span>Saved</span>
+                  </a>
+                  {% if user.is_authenticated %}
+                  <a class="dropdown-item notify-item" rel="nofollow" data-method="delete" href="">
+                    <i class="fe-log-out"></i>
+                    <span>Logout</span>
+                  </a>
+                  {% endif %}
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>

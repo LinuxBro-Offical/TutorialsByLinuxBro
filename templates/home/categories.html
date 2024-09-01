@@ -1,0 +1,66 @@
+<div id="categories" class="cm-e-menu border-bottom">
+            <ul>
+              {% for item in category %}
+              <li class="topmenu p-1">
+                <a class="h6 p-1 ml-1 bb text-secondary">{{item}}</a>
+                <ul class="submenu shadow border">
+                {% for sub in subcategory %}
+                    {% if item == sub.categories %}
+                        <li><a>{{sub}}</a></li>
+                    {% endif %}
+                {% endfor %}
+                </ul>
+              </li>
+              {% endfor %}
+              <!-- first  -->
+              <!-- <li class="topmenu p-1">
+                  <a class="h6 p-1 ml-1 bb text-secondary">File</a>
+                  <ul class="submenu shadow border">
+                      <li><a>browse</a></li>
+                      <li><a>new file</a></li>
+                      <li><a>new folder</a></li>
+
+                      <li><a>save</a></li>
+                      <li><a>save as</a></li>
+                      <li><a>save all</a></li>
+
+                      <li><a>rename</a></li>
+                      <li><a>delete</a></li>
+
+                      <li>
+                          <a>close</a>
+                          <ul class="submenu shadow border">
+                              <li><a>current file</a></li>
+                              <li><a>files to the right</a></li>
+                              <li><a>files to the left</a></li>
+                              <li>
+                                  <a>all open files</a>
+                                  <ul class="submenu shadow border">
+                                      <li><a>current file</a></li>
+                                      <li><a>files to the right</a></li>
+                                      <li><a>files to the left</a></li>
+                                      <li>
+                                          <a>all open files</a>
+                                          <ul class="submenu shadow border">
+                                              <li><a>current file</a></li>
+                                              <li><a>files to the right</a></li>
+                                              <li><a>files to the left</a></li>
+                                              <li><a>all open files</a></li>
+                                          </ul>
+                                      </li>
+                                  </ul>
+                              </li>
+                          </ul>
+                      </li>
+                      <li>
+                          <a>download</a>
+                          <ul class="submenu shadow border">
+                              <li><a>all files</a></li>
+                              <li><a>current file</a></li>
+                          </ul>
+                      </li>
+                  </ul>
+              </li> -->
+              <!-- second  -->
+            </ul>
+      </div>

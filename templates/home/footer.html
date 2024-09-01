@@ -1,0 +1,50 @@
+{% load static %}
+<footer>
+    <div class="flex-row justify-content-center bg-secondary">
+        <a href="#carouselExampleControls "><h6>Back to top</h6></a>
+    </div>
+    <div class="d-flex dlex-row p-2 justify-content-center">
+        <!-- 1st column  -->
+        <div class="flex-col p-5">
+            <h6 class="text-secondary">ABOUT</h6>
+            <a href="{% url 'our_story' %}">About Us</a>
+            <a href="">Contact Us</a>
+            <a href="">Careers</a>
+        </div>
+        <!-- 2nd column  -->
+        <div class="flex-col p-5">
+            <h6 class="text-secondary">HELP</h6>
+            <a href="">Payments</a>
+            <a href="">Shipment</a>
+            <a href="">FAQ</a>
+            <a href="">Cancellation & Returns</a>
+        </div>
+        <!-- 3rd column  -->
+        <div class="flex-col p-5">
+            <h6 class="text-secondary">POLICY</h6>
+            <a href="">Return Policy</a>
+            <a href="">Terms Of Use</a>
+            <a href="">Security</a>
+            <a href="">Privacy</a>
+        </div>
+        <!-- 4th column  -->
+        <div class="flex-col p-5">
+            <h6 class="text-secondary">SOCIAL</h6>
+            <a href="">Facebook</a>
+            <a href="">Twitter</a>
+            <a href="">Instagram</a>
+        </div>
+        <!-- 5th column  -->
+        <div class="flex-col p-5 border-left">
+            <h6 class="text-secondary">Mail Us</h6>
+            <a href="">LinuxBro Private Limited,</a>
+            <a href="">Nandhanam, Venmoney PO</a>
+            <a href="">Chengannur, PIN:689509</a>
+        </div>
+    </div>
+
+    <div class="border-top footer-logo">   
+        <img src="{% static 'images/linux_bro_white.png'%}" width="6%">
+        <h6 class="text-white">© 1996-2025, linuxbro.in, Inc. or its affiliates</h6>
+    </div>
+</footer>

@@ -1,0 +1,432 @@
+.navbar-top{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+.flex-row{
+    display: flex;
+    flex-direction: row;
+}
+.flex-col{
+    display: flex;
+    flex-direction: column;
+}
+.align-center{
+    align-items: center !important;
+}
+.justify-space-around{
+    justify-content: space-around;
+}
+.justify-space-between{
+    justify-content: space-between;
+}
+.form-nav-input{
+    border: 1px;
+    border-radius: 2px 0 0 2px;
+    height: 38px;
+    margin-right: -2px;
+    font: 334 13.3333px Arial;
+    padding: 1rem;
+    color: rgb(66, 65, 65);
+    min-width: 500px;
+}
+.form-nav-button{
+    border: 1px;
+    height: 38px;
+    border-radius: 0.1rem;
+    background: #fff;
+    color:  rgb(83 116 167);                                    
+    font-size: 15px;
+}
+.form-nav-button i {
+    margin-right: 10px;
+}
+:focus-visible{
+    outline-width: 0 !important;
+}
+
+h5,h3,h4{
+    font-family:'Roboto',sans-serif !important;
+}
+
+.relative-close{
+    position: relative;
+    left: 3.5rem;
+    font-size: 30px;
+    bottom: 28px;
+    color: #ffff;
+    opacity: 1;
+}
+
+@media (min-width: 992px){
+    .modal-lg, .modal-xl {
+        max-width: 700px !important;
+        min-width: 650px !important;
+    }
+}
+
+.courousel-btn {
+    font-size: 3rem;
+    color: #ffffff;
+    opacity: 1;
+}
+.dropdown-menu.show {
+    top: 150% !important;
+}
+.bb:hover{
+    border-bottom: 4px solid #2874f0;
+}
+#login h6, #signup h6 {
+    font-size: 14px;
+}
+.btn-otp{
+    color: #2874f0;
+    background-color: white;
+    font-weight: 500;
+}
+.product-cont-head{
+    border: 1px solid #dfdfdf;
+    padding: 10px 20px 10px 20px;
+    align-items: center;
+}
+.product-cont-body{
+    border: 1px solid #dfdfdf;
+    border-top: none;
+    padding: 10px 20px 10px 20px;
+    /* align-items: center; */
+}
+.btn-flipkart-blue{
+    border: 1px;
+    background-color: #2874f0;
+    color: white;
+    border-radius: 0.1rem;
+    font-weight: bold;
+    padding: 5px 20px;
+}
+.btn-flipkart-blue:hover{
+    background-color: #0650c7;
+}
+
+.prod-card{
+    width: 25%;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+.prod-card h5,p {
+    margin-bottom: 0 !important;
+}
+.bg-green{
+    border-radius: 0.2rem;
+    background-color: green;
+    padding: 2px 7px;
+}
+.text-green{
+    color: green;
+}
+.img-cont{
+    width: 80%;
+    height: 200px;
+    overflow: hidden;
+}
+.img-cont img{
+    max-width: 100%;
+    height: 90%;
+    display: block;
+}
+.img-cont img:hover{
+    max-width: 110%;
+    height: 100%;
+}
+footer{
+    background-color: #172337;
+    height: 400px;
+}
+footer a,h6{
+    color: white;
+    font-size: 10px;
+    margin-bottom: 3px;
+}
+.border-left{
+    border-left: 2px solid grey;
+}
+.border-top{
+    border-top: 1px solid grey;
+    align-items: center;
+}
+/* dropdown  */
+  .cm-e-menu {
+      background-color: rgb(255, 255, 255);
+      position: relative;
+      z-index: 1000;
+      font-weight: 200;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+    }
+  .cm-e-menu ul {
+      margin: 0; padding: 0;
+  }
+  .cm-e-menu li {
+      position: relative;
+      white-space: nowrap;
+      cursor: pointer;
+      text-transform: capitalize !important;
+      list-style: none;
+  
+      -webkit-transition: background-color ease-in 300ms;
+      -moz-transition: background-color ease-in 300ms;
+      -ms-transition: background-color ease-in 300ms;
+      -o-transition: background-color ease-in 300ms;
+      transition: background-color ease-in 300ms;
+  }
+  .topmenu li:hover {
+    background-color: rgb(236, 233, 233);
+  }
+  .cm-e-menu ul li.topmenu {
+      display: inline-table;
+      padding: .3em 1em;
+  }
+  .cm-e-menu .topmenu ul {
+      display:none;
+      position: absolute;
+      background-color: rgb(255, 255, 255);
+  }
+  .cm-e-menu li:hover > ul {
+      display: table;
+  }
+  .cm-e-menu ul.submenu {
+      top: 100%; left: 0;
+      padding-top: .5em;
+      padding-bottom: .5em;	
+  }
+  .cm-e-menu ul.submenu .submenu {
+      top: -.5em; left: 100%;
+      font-size: 1em
+  }
+  .cm-e-menu ul.submenu li {
+      padding: .2em 1.5em;
+      font-size: .9rem;
+  }
+  .cm-e-menu li.divider {
+      padding: 0;
+      border-top: 1px solid #343434;
+      margin: .5rem auto .3rem;
+      cursor: default;
+  }
+  .cm-e-menu li.divider:hover {
+      background-color: transparent;
+  }
+ 
+/* end  */
+.submenu li a{
+    font-size: 12px;
+    font-weight: 400;
+}
+.product-div{
+    padding: 1rem;
+    margin-top: 7rem;
+    margin-bottom: 2rem;
+}
+.product-div h6,h5{
+    color: #343434;
+    margin: 0.5rem;
+}
+.product-div-header a {
+    color: #2874f0;
+    font-size: 12px;
+    margin: 0.2rem;
+    font-weight: 500;
+}
+.product-div a:active{
+    border-bottom: 3px solid #2874f0;
+}
+.filter-div{
+    padding: 1rem;
+    margin-top: 7rem;
+    margin-bottom: 2rem; 
+}
+.pt-7{
+    padding-top: 7rem;
+}
+.wishlist-icon{
+    position: absolute;
+    width: 10%;
+    height: 8%;
+    font-size: 15px;
+    border-radius: 50%;
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    top: 15px;
+    background-color: #fff;
+}
+.btn-new{
+    padding: 11px 40px 10px 40px;
+    color: white;
+    width: 50%;
+}
+.btn-new:hover{
+    color: white;
+}
+.btn-yellow{
+    background-color: rgb(255 213 7);
+}
+.btn-yellow:hover{
+    background-color: rgb(211, 176, 19);
+}
+.perfect-center{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+.detail-img{
+    width: 100%;
+    height: auto;
+}
+.check-pin{
+    display: flex;
+    flex-direction: row;
+}
+.check-pin input{
+    border: 0;
+    border-bottom: 3px solid blue;
+}
+.check-pin i {
+    position: relative;
+    left:20px;
+}
+.check-pin h6 {
+    font-weight: 600;
+    font-size: 10px;
+    position: relative;
+    right: 45px;
+    margin-bottom: 5px;
+}
+
+/* review and ratings */
+.heading {
+    font-size: 25px;
+    margin-right: 25px;
+  }
+  
+  .fa {
+    font-size: 25px;
+  }
+  
+  .checked {
+    color: orange;
+  }
+  
+  /* Three column layout */
+  .side {
+    float: left;
+    width: 15%;
+    margin-top:10px;
+  }
+  
+  .middle {
+    margin-top:10px;
+    float: left;
+    width: 70%;
+  }
+  
+  /* Place text to the right */
+  .right {
+    text-align: right;
+  }
+  
+  /* Clear floats after the columns */
+  .row:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+  
+  /* The bar container */
+  .bar-container {
+    width: 100%;
+    background-color: #f1f1f1;
+    text-align: center;
+    color: white;
+  }
+  
+  /* Individual bars */
+  .bar-5 {width: 60%; height: 18px; background-color: #04AA6D;}
+  .bar-4 {width: 30%; height: 18px; background-color: #2196F3;}
+  .bar-3 {width: 10%; height: 18px; background-color: #00bcd4;}
+  .bar-2 {width: 4%; height: 18px; background-color: #ff9800;}
+  .bar-1 {width: 15%; height: 18px; background-color: #f44336;}
+  
+  /* Responsive layout - make the columns stack on top of each other instead of next to each other */
+  @media (max-width: 400px) {
+    .side, .middle {
+      width: 100%;
+    }
+    .right {
+      display: none;
+    }
+  }
+
+
+
+
+.text-sm{
+    font-size: 10px !important;
+}
+.text-md{
+    font-size: 15px !important;
+}
+
+.text-lg{
+    font-size: 20px !important;
+}
+.b-shadow{
+    background-color: #ffcc12;
+    height: 10px;
+    width: 30px;
+    border-radius: 93px;
+    position: relative;
+    right: 17px;
+    top: 6px;
+    box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+}
+.payment-box h5{
+    margin: 0;
+}
+.text-success{
+    color: #388e3c !important;
+}
+h6 , h5 {
+    font-family: 'Roboto', sans-serif;
+}
+.main{
+    min-height: 62vh;
+}
+.otp-div{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.otp-box{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+.otp-box input{
+    border: 0;
+    border-bottom: 1px solid rgb(206, 206, 206);
+    width: 20px;
+    margin: 1rem;
+}
+.otp-box input:hover{
+    border-bottom: 2px solid rgb(51, 63, 236);
+}
+
+.notification-bell{
+    margin-left: 0.5rem;
+}

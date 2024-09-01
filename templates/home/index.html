@@ -1,0 +1,591 @@
+{% load static %}
+<html lang="en">
+  <head>
+    <!-- Character Encoding -->
+    <meta charset="utf-8" />
+    
+    <!-- Compatibility Mode for IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    
+    <!-- Page Title -->
+    <title>
+      {% block title %} LinuxBro {% endblock %}
+    </title>
+    
+    <!-- Viewport Settings for Responsive Design -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no" />
+    
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="{% static 'images/logo_linux.png'%}">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+    
+    <!-- Toastr Notifications CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    
+    <!-- Application CSS -->
+    <link href="{% static 'css/bootstrap.min.css'%}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'css/icons.min.css'%}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'css/app.min.css'%}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'css/myStyle.css' %}" rel="stylesheet" type="text/css" />
+    <link href="{% static 'css/mainStyle.css' %}" rel="stylesheet" type="text/css" />
+    
+    <!-- Custom CSS -->
+    <style>
+      body{
+        padding-bottom: 0rem !important;
+
+      }
+
+      /* Global Font Settings */
+      body, span, div, h1, h2, h3, h4, h5 {
+        font-family: "Montserrat", sans-serif !important;
+      }
+
+     /* styles.css */
+      body, h1, h2, h3, h4, h5, h6, p, a, span, div, button, input, textarea, label {
+          font-family: 'Montserrat', sans-serif !important;
+      }
+
+
+  
+      /* Card Styling */
+      .col-12 .card {
+        margin: 1rem !important;
+        border: 1px solid rgb(226, 226, 226);
+      }
+  
+      /* Reset Row Margins */
+      .row {
+        margin-left: 0;
+        margin-right: 0;
+      }
+  
+      /* Column Padding Removal */
+      .col-md-8, .col-md-4 {
+        padding-left: 0;
+        padding-right: 0;
+      }
+  
+      /* Latest Section Styling */
+      .latest-section {
+        margin-bottom: 2rem;
+      }
+  
+      /* Blog Card Styling */
+      .blog-card {
+        overflow: hidden;
+        margin-bottom: 1.5rem;
+        background-color: #fff;
+        border-bottom: 1px solid #dee2e6 !important;
+      }
+  
+      /* Blog Card Image Styling */
+      .blog-card .blog-img {
+        width: 80%;
+        height: auto;
+        object-fit: cover;
+      }
+  
+      /* Blog Card Author Image Styling */
+      .blog-card .author-img {
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        object-fit: cover;
+        margin-right: 10px;
+      }
+  
+      /* Blog Card Body Styling */
+      .blog-card-body {
+        padding: 1rem;
+        padding-right: 1.2rem !important;
+        margin-top: 0.5rem;
+        margin-bottom: 0.5rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+  
+      /* Blog Card Title Styling */
+      .blog-card-title {
+        font-size: 1.8rem !important;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        letter-spacing: 0.02rem;
+      }
+  
+      /* Blog Card Subtitle Styling */
+      .blog-card-subtitle {
+        font-size: 1rem;
+        color: #6c757d;
+        margin-bottom: 0.5rem;
+        font-weight: normal;
+      }
+  
+      /* Blog Card Author Styling */
+      .blog-card-author {
+        font-size: 0.900rem;
+        color: black !important;
+        display: flex;
+        align-items: center;
+      }
+  
+      /* Trending Section Styling with Left Border */
+      .trending-section {
+        border-left: 1px solid #e1e4e8;
+        padding-left: 1rem;
+        margin-left: -1rem;
+      }
+  
+      /* Tech Logos Section */
+      .tech-logos-section {
+        background-color: #fb641b;
+        padding: 2rem 0;
+        text-align: center;
+      }
+  
+      /* Tech Logos Title */
+      .tech-logos-title {
+        font-size: 1.5rem;
+        color: #fff;
+        font-family: "Montserrat", sans-serif !important;
+        margin-bottom: 2.0rem;
+      }
+  
+      /* Tech Logos Container */
+      .tech-logos-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+  
+      /* Tech Logo Link */
+      .tech-logo-link {
+        margin: 0 2rem;
+      }
+  
+      /* Tech Logo */
+      .tech-logo {
+        width: 230px;
+        height: 150px;
+        transition: transform 0.3s;
+        background-color: #fff;
+        padding: 1rem;
+        border-radius: 0.5rem;
+      }
+  
+      /* Tech Logo Hover Effect */
+      .tech-logo-link:hover .tech-logo {
+        transform: scale(1.1);
+      }
+  
+      /* Tab Content */
+      .tab-content {
+        margin-right: 2rem;
+        padding: 0 !important;
+        border: none;
+      }
+  
+      /* Navigation Tabs */
+      .nav-tabs {
+        margin-right: 2rem;
+      }
+  
+      /* Active Nav Link */
+      .nav-link.active {
+        border-bottom: solid black !important;
+        border-style: solid;
+        border: 4px;
+        border-top: none;
+        border-left: none;
+        border-right: none;
+      }
+  
+      /* Latest Section Header */
+      .latest-section h2 {
+        margin: 1rem 0;
+      }
+  
+      /* Trending Section Header */
+      .trending-section h2 {
+        font-size: 1.5rem;
+      }
+  
+      /* Trending Link */
+      .trending-link {
+        text-decoration: none;
+      }
+  
+      /* Trending Link Title */
+      .trending-link .title {
+        font-weight: bold;
+        color: #343a40;
+        font-size: 1.1rem;
+      }
+  
+      /* Trending Link Author */
+      .trending-link .author {
+        color: #343a40;
+        font-size: 0.9rem;
+        margin-left: 5px;
+      }
+  
+      /* Author Image */
+      .author-img {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        vertical-align: middle;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+      {% include 'home/navbar.html' %}
+  
+      {% block content %}{% endblock %}
+      <!-- Footer -->
+      {% include 'home/footer.html' %}
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+          <div class="modal-content">
+              <!-- Login Content -->
+              <div class="row d-none" id="login_modal">
+                  <div class="col-md-4 bg-pink p-3">
+                      <h3 class="text-white mb-3">Login</h3>
+                      <h5 class="text-ash">Discover the best resources for <br> mastering new technologies and frameworks</h5>
+                      <div class="mt-2">
+                          <img src="{% static 'images/logo_linux.png' %}" alt="" width="100%">
+                      </div>
+                  </div>
+                  <div class="col-md-8 p-3">
+                      <div class="mb-3 mr-1">
+                          <button type="button" class="close btn relative-close" data-dismiss="modal" aria-label="Close">
+                              <i class="dripicons-cross"></i>
+                          </button>
+                      </div>
+
+                      <form action="" method="POST" enctype="multipart/form-data" id="loginform">
+                          {% csrf_token %}
+                          <h6 id="error_msg" class="text-danger float-right"></h6>
+                          <div class="pwd-div">
+                              <label for="email" class="text-blue">Enter Email / Mobile Number</label>
+                              <input type="text" class="form-control mb-2" name="mobile" id="user_number" placeholder="Mobile Number ..">
+                              <label for="email" class="text-blue">Enter Password</label>
+                              <input type="password" name="password" id="password" class="form-control mb-3" placeholder="Password">
+                              <button type="submit" class="btn btn-block bg-orange">Login</button>
+                          </div>
+                          <div id="signup-otp">
+                              <div class="text-center"><h6 class="text-secondary">OR</h6></div>
+                              <button type="button" class="btn btn-block btn-otp shadow" id="otp-btn">Request OTP</button>
+                              <div class="text-center mt-5">
+                                  <a href="javascript:void(0)" id="signup"><h6 class="text-darkblue btn-link font-weight-bold">New to LinuxBro? Create an account</h6></a>
+                              </div>
+                          </div>
+
+                          <div class="otp-div d-none">
+                              <h6 id="error_msg" class="text-danger float-right"></h6>
+                              <label for="email" class="text-blue">Enter Mobile Number</label>
+                              <input type="text" class="form-control mb-2" name="mobile" id="mobile_number" placeholder="Mobile Number ..">
+                              <label for="email" class="text-blue">Enter OTP</label>
+                              <input type="password" name="otp" id="otp" class="form-control mb-3" placeholder="OTP">
+                              <button type="submit" class="btn btn-block bg-orange">Submit</button>
+                              <div class="text-center mt-5">
+                                  <a href="javascript:void(0)" id="otp_login"><h6 class="text-darkblue btn-link font-weight-bold">Sign in with password</h6></a>
+                              </div>
+                          </div>
+                      </form>
+                  </div>
+              </div>
+
+              <!-- Signup Content -->
+              <div class="row" id="signup_modal">
+                  <div class="col-md-4 bg-pink p-3">
+                      <h3 class="text-white mb-3">Signup</h3>
+                      <h5 class="text-ash">We are committed to safeguarding your personal information at all times</h5>
+                      <div class="mt-2">
+                          <img src="{% static 'images/logo_linux.png' %}" alt="" width="100%">
+                      </div>
+                  </div>
+                  <div class="col-md-8 p-3">
+                      <div class="mb-3 mr-1">
+                          <button type="button" class="close btn relative-close" data-dismiss="modal" aria-label="Close">
+                              <i class="dripicons-cross"></i>
+                          </button>
+                      </div>
+
+                      <form action="" method="POST" enctype="multipart/form-data" id="signupform">
+                          {% csrf_token %}
+                          <h6 id="error_msg" class="text-danger float-right"></h6>
+                          <div class="pwd-div">
+                              <label for="name" class="text-blue">Name</label>
+                              <input type="text" class="form-control mb-2" name="name" id="name" placeholder="Name">
+                              <label for="email" class="text-blue">Enter Email / Mobile Number</label>
+                              <input type="text" class="form-control mb-2" name="mobile" id="user_number" placeholder="Mobile Number ..">
+                              <label for="password" class="text-blue">Enter Password</label>
+                              <input type="password" name="password" id="password" class="form-control mb-3" placeholder="Password">
+                              <label for="password" class="text-blue">Confirm Password</label>
+                              <input type="password" name="cpassword" id="cpassword" class="form-control mb-3" placeholder="Confirm Password">
+                              <button type="submit" class="btn btn-block bg-orange">Signup</button>
+                          </div>
+                          <div id="signup-otp">
+                              <div class="text-center mt-4">
+                                  <a href="javascript:void(0)" id="login"><h6 class="text-darkblue btn-link font-weight-bold">Already have an account? Login</h6></a>
+                              </div>
+                          </div>
+
+                          <div class="otp-div d-none">
+                              <h6 id="error_msg" class="text-danger float-right"></h6>
+                              <label for="email" class="text-blue">Enter Mobile Number</label>
+                              <input type="text" class="form-control mb-2" name="mobile" id="mobile_number" placeholder="Mobile Number ..">
+                              <label for="email" class="text-blue">Enter OTP</label>
+                              <input type="password" name="otp" id="otp" class="form-control mb-3" placeholder="OTP">
+                              <button type="submit" class="btn btn-block bg-orange">Submit</button>
+                              <div class="text-center mt-5">
+                                  <a href="javascript:void(0)" id="otp_signup"><h6 class="text-darkblue btn-link font-weight-bold">Sign in with password</h6></a>
+                              </div>
+                          </div>
+                      </form>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+  
+    
+  <!-- Vendor js -->
+  <script src="{% static 'js/vendor.min.js'%}"></script>
+  <!-- App js -->
+  <script src="{% static 'js/app.min.js'%}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+  <script> 
+    // SIGN UP FUNCTION 
+    $('#submit').on('submit',(event)=>{
+        console.log("data kitty")
+        let action = ""
+        let token = "{{csrf_token}}"
+        let data = $('#submit').serialize()
+        event.preventDefault();
+        $.ajax({
+            type: "POST",
+            url: action ,
+            data:data,
+            headers: { "X-CSRFToken": token },
+            success: (data)=>{
+                console.log(data["status"])
+                console.log(data["message"])
+                if (data["status"] == 200){
+                  $('form .d-none').removeClass('d-none')
+                  $('.otp-div').addClass('d-none');
+                  $('#error_msg_signup').addClass('text-success')
+                  $('#error_msg_signup').html(`<i class=" mdi mdi-bell"></i>   ${data["message"]}`);
+                  setTimeout(function(){document.getElementById("error_msg_signup").innerHTML="";}, 2000)
+                }
+                else if(data["status"] == 400 || data["status"] == 403){
+                  $('#error_msg_signup').html(`<span class="text-danger"><i class=" mdi mdi-bell"></i>${data["message"]}</span>`);
+                  setTimeout(function(){document.getElementById("error_msg_signup").innerHTML="";}, 2000)
+                }
+                else{
+                  $('#error_msg_signup').addClass('text-success')
+                  $('#error_msg_signup').html(`<i class=" mdi mdi-bell"></i>   ${data["message"]}`);
+                  setTimeout(function(){$('#signup_modal').addClass('d-none');$('#login_modal').removeClass('d-none');document.getElementById("error_msg").innerHTML="";}, 2000)
+                }
+            },
+        });
+    })
+    // GETTING OTP ON PHONE
+    $('#otp-btn').on('click', ()=>{
+      console.log("work aye")
+      document.getElementById('password').value = ""
+      let action = ""
+      let token = "{{csrf_token}}"
+      let data = $('#loginform').serialize()
+      event.preventDefault();
+      $.ajax({
+            type: "POST",
+            url: action ,
+            data:data,
+            headers: { "X-CSRFToken": token },
+            success: (data)=>{
+              console.log(data["status"])
+              console.log(data["message"])
+              if (data["status"]==200){
+                console.log("AAYGGGGGGGGGGGGGGGGGGGGGGG")
+                $('.otp-div').removeClass('d-none');
+                $('.pwd-div').addClass('d-none');
+                $('#signup-otp').addClass('d-none');
+                document.getElementById('number').innerHTML = document.getElementById('user_number').value
+              }
+              else{
+                $('#error_msg').html(`<i class=" mdi mdi-bell"></i> ${data["message"]}`);
+                setTimeout(function(){document.getElementById("error_msg").innerHTML="";}, 2000)
+              }
+            }
+    })
+  });
+</script>
+<!-- LOGIN AJAX  -->
+<script>
+   $('#loginform').on('submit',(event)=>{
+        console.log("data vannu")
+        let action = ""
+        let token = "{{csrf_token}}"
+        let data = $('#loginform').serialize()
+        console.log("DATA:",data)
+        event.preventDefault();
+        $.ajax({
+            type: "POST",
+            url: action ,
+            data:data,
+            headers: { "X-CSRFToken": token },
+            success: (data)=>{
+                console.log(data["status"])
+                console.log(data["message"])
+                if (data["status"] == 200){
+                  console.log("MYIREEEE")
+                  $('#error_msg').addClass('text-success')
+                  $('#error_msg').html(`<i class=" mdi mdi-bell"></i>   ${data["message"]}`);
+                  $('#error').html(`<i class=" mdi mdi-bell"></i>   ${data["message"]}`);
+                  setTimeout(function(){document.getElementById("error_msg").innerHTML="";location.reload();}, 1000)
+                }
+                else if(data["status"] == 404){
+                  $('#error_msg').html(`<span class="text-danger"><i class=" mdi mdi-bell"></i>${data["message"]}</span>`); 
+                }
+                else{
+                  $('#error').html(`<span class="text-danger"><i class=" mdi mdi-bell"></i>   ${data["message"]}</span>`);
+                  setTimeout(function(){$('#signup_modal').addClass('d-none');$('#login_modal').removeClass('d-none');document.getElementById("error_msg").innerHTML="";}, 2000)
+                }
+            },
+        });
+    })
+</script>
+<!-- OTP VERIFICATION  -->
+<script>
+  $('#otp-verify').on('click', ()=>{
+    let action = ""
+    let token = "{{csrf_token}}"
+    let data = $('#loginform').serialize()
+    event.preventDefault();
+    $.ajax({
+            type: "POST",
+            url: action ,
+            data:data,
+            headers: { "X-CSRFToken": token },
+            success:(data)=>{
+              console.log(data["status"])
+              console.log(data["message"])
+              if (data["status"] == 200){
+                $('#error').addClass('text-success')
+                $('#error').html(`<i class=" mdi mdi-bell"></i> ${data["message"]}`);
+                setTimeout(function(){document.getElementById("error").innerHTML="";location.reload();}, 2000)
+              }
+              else{
+                $('#error').addClass('text-danger')
+                $('#error').html(`<i class=" mdi mdi-bell"></i> ${data["message"]}`);
+                setTimeout(function(){document.getElementById("error").innerHTML="";}, 2000)
+              }
+            }
+  });
+});
+</script>
+<!-- OTP add and number change  -->
+<script>
+$(document).ready(()=>{
+  $('#change').on('click', ()=>{
+    $('.otp-div').addClass('d-none');
+    $('.pwd-div').removeClass('d-none');
+    $('#signup-otp').removeClass('d-none');
+  })
+  // otp box next auto open
+  $('.otp-box input').on('keyup', function() {
+    if ($(this).val()) {
+        $(this).next().focus();
+    }
+  });
+})
+  function myFunction(obj){
+      console.log("func work cheyyunnu")
+      document.getElementById('otp').value += obj.value
+  }
+</script>
+
+<script>
+    searchVisible = 0;
+    transparent = true;
+    // login and signup
+    $(document).ready(function(){
+      $('#login').on('click',()=>{
+        $('#login_modal').removeClass('d-none');
+        $('#signup_modal').addClass('d-none');
+        $('form .otp-inp').addClass('d-none')
+      })
+      $('#signup').on('click',()=>{
+        $('#login_modal').addClass('d-none');
+        $('#signup_modal').removeClass('d-none');
+      })
+      $('#login_btn').on('click',()=>{
+        $('#login_modal').removeClass('d-none');
+        $('#signup_modal').addClass('d-none');
+      })
+    });
+    // scroll
+    $(document).scroll(function() {
+      if( $(this).scrollTop() > 100 ) {
+        if(transparent) {
+          transparent = false;
+          $('.navbar-transparent').addClass('bg-blue shadow');
+        }
+      } else {
+        if( !transparent ) {
+          transparent = true;
+          $('.navbar-transparent').removeClass('bg-blue shadow');
+        }
+      }
+      if( $(this).scrollTop() > 480 ){
+        $('#categories').attr('style','position: fixed;top: 62px;width: 100%;z-index: 99;')
+        $('.navbar-transparent').removeClass('shadow');
+        $('#categories').addClass('shadow')
+        // $('#nav_cate').removeClass('d-none')
+      }
+      else{
+        // $('#nav_cate').addClass('d-none')
+        $('#categories').attr('style','')
+        $('#categories').removeClass('shadow')
+      }
+    });
+  </script>
+  {% block script %}
+  {% endblock %}
+
+
+  {% if messages %}
+    <script>
+        console.log("ananthu")
+        document.addEventListener("DOMContentLoaded", function(event) {
+        toastr.options = { "closeButton": true, "debug": false, "newestOnTop": true,
+            "progressBar": false, "positionClass": "toast-top-right", "preventDuplicates": true,
+            "onclick": null, "showDuration": "300", "hideDuration": "1000", "timeOut": "5000",
+            "extendedTimeOut": "1000", "showEasing": "swing", "hideEasing": "linear",
+            "showMethod": "fadeIn", "hideMethod": "fadeOut" };
+        {% autoescape off %}
+            {% for msg in messages %}
+                toastr.{{ msg.level_tag }}("{{ msg }}");
+            {% endfor %}
+        {% endautoescape %}
+    });
+    </script>
+  {% endif %}
+
+</body>
+
+</html>
