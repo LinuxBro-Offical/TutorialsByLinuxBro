@@ -56,6 +56,9 @@
         font-size: 0.9rem;
         color: #777;
     }
+    .blog-meta .save-icon{
+        font-size: 1.2rem;
+    }
 
     .meta-left {
         display: flex;
@@ -130,56 +133,93 @@
     }
 
     .results-title {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
         font-size: 1.25rem;
         font-weight: bold;
         margin-bottom: 2rem;
         font-family: 'Montserrat', sans-serif;
+    }
+
+    .results-title i{
+        margin-left: 0.5rem;
+    }
+    .select2-container--default .select2-selection--multiple .select2-selection__choice{
+        background-color: #fb641b;
+        border-color: white;
+        border-radius: 20px;
+    }
+    .select2-selection__choice__remove span{
+        color: white;
+        border-right-color: white;
+    }
+    .select2-container--default .select2-selection--multiple .select2-selection__choice__remove{
+        border-right: 1px solid #fb641b !important;
     }
 </style>
 
 <div class="contents container">
     <div class="blog-container">
         <!-- Blog List -->
-        <div class="blog-list">
-            <div class="results-title">Showing results for "Python, Django"</div> <!-- Title for results -->
-
+        <div class="blog-list" id="bloglist">
+            {% if slug == 'saved' %}
+            <div class="results-title">{{title}} <i class="mdi mdi-bookmark"></i></div> <!-- Title for results -->
+            {% else %}
+            <div class="results-title">Showing results for "{{title | title }}"</div>
+            {% endif %}
+            {% if not stories %}
+                <p>No results found</p>
+            {% endif %}
+            {% for story in stories %}
             <div class="blog-item">
-                <h2 class="blog-title">How to Master Django: A Complete Guide</h2>
-                <p class="blog-content">Learn the ins and outs of Django, from models to views, templates to middleware...</p>
-                <div class="blog-meta">
-                    <div class="meta-left">
-                        <i class="icon mdi mdi-thumb-up-outline"></i> <span class="count">34</span>
-                        <i class="icon mdi mdi-comment-outline" style="margin-left: 15px;"></i> <span class="count">12</span>
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h2 class="blog-title">
+                            <a href="{% url 'blog' story.uuid %}" class="blog-link text-dark">
+                                {{ story.title }}
+                            </a>
+                        </h2>
+                        <p class="blog-content">{{ story.subtitle }}</p>
                     </div>
-                    <i class="bookmark-icon mdi mdi-bookmark-outline"></i>
+                    <div class="" style="width: 30%;">
+                        <a href="{% url 'blog' story.uuid %}">
+                            <img src="{{ story.cover_image.url }}" alt="Blog Image" class="blog-img" width="80%">
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="blog-meta mt-2">
+                    <div class="meta-left">
+                        <i class="icon mdi mdi-thumb-up-outline"></i> <span class="count">{{story.get_like_count}}</span>
+                        <i class="icon mdi mdi-comment-outline" style="margin-left: 15px;"></i> <span class="count">{{story.get_comment_count}}</span>
+                    </div>
+                    {% if story.id in saved_story_ids %}
+                    <i class="mdi mdi-bookmark save-icon" data-story-id="{{ story.id }}"></i> 
+                    {% else %}
+                    <i class="mdi mdi-bookmark-outline save-icon" data-story-id="{{ story.id }}"></i>
+                    {% endif %}
                 </div>
             </div>
-
-            <div class="blog-item">
-                <h2 class="blog-title">10 Best Practices for Python Developers</h2>
-                <p class="blog-content">Discover the top ten best practices for writing clean, efficient, and scalable Python code...</p>
-                <div class="blog-meta">
-                    <div class="meta-left">
-                        <i class="icon mdi mdi-thumb-up-outline"></i> <span class="count">58</span>
-                        <i class="icon mdi mdi-comment-outline" style="margin-left: 15px;"></i> <span class="count">20</span>
-                    </div>
-                    <i class="bookmark-icon mdi mdi-bookmark-outline"></i>
-                </div>
-            </div>
-
-            <!-- Add more blog items here -->
+            {% endfor %}
         </div>
 
         <!-- Suggestions and Filters -->
         <div class="suggestions">
             <div class="filter-container">
                 <h3>Applied Filters:</h3>
-                <span class="filter-badge">Python <i class="mdi mdi-close"></i></span>
-                <span class="filter-badge">Django <i class="mdi mdi-close"></i></span>
                 <!-- Add more filter badges as needed -->
+                <select class="js-example-basic-multiple mt-2" name="states[]" multiple="multiple">
+                    {% for tag in tags %}
+                        <option value="{{ tag.name }}" 
+                                {% if tag.name == title %}selected hidden{% endif %}>
+                                {{ tag.name }}
+                        </option>
+                    {% endfor %}
+                </select>
             </div>
 
-            <div class="suggestion-item">
+            <div class="suggestion-item mt-4">
                 <img src="{% static 'images/blog_image.jpg' %}" alt="Suggestion">
                 <div class="suggestion-title">Understanding RESTful APIs</div>
             </div>
@@ -193,4 +233,59 @@
         </div>
     </div>
 </div>
+{% endblock %}
+{% block script %}
+<script>
+    $(document).ready(function() {
+    // In your Javascript (external .js resource or <script> tag)
+    
+    $('.js-example-basic-multiple').select2();
+
+    $('.save-icon').click(function() {
+            var icon = $(this);
+            var storyId = icon.data('story-id');
+
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'save-story' %}",  // Replace with your URL name for SaveStoryView
+                data: {
+                    'story_id': storyId,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    if (response.status === 'saved') {
+                        icon.removeClass('mdi-bookmark-outline').addClass('mdi-bookmark');
+                    } else if (response.status === 'unsaved') {
+                        icon.removeClass('mdi-bookmark').addClass('mdi-bookmark-outline');
+                    }
+                },
+                error: function(response) {
+                    alert('An error occurred. Please try again.');
+                }
+            });
+    });
+    // Handle tag selection change
+    $('.js-example-basic-multiple').on('change', function() {
+        let selectedTags = $(this).val();  // Get selected tags
+            
+        // Send AJAX request when tags are changed
+        $.ajax({
+            url: "{% url 'filter_stories_by_tag' %}",  // Replace with your URL
+            method: "GET",
+            data: {
+                'tags': selectedTags,  // Send the selected tags to the backend
+            },
+            success: function(response) {
+                // Replace the blog-list with the updated stories
+                $('#bloglist').html()
+                $('#bloglist').html(response.blog_html);
+            },
+            error: function(xhr, status, error) {
+                console.log(error);  // Handle any errors
+            }
+        });
+    });
+});
+
+</script>
 {% endblock %}

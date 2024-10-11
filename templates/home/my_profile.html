@@ -163,8 +163,8 @@
     <div class="author-header">
         <img src="{% static 'images/profile.jpg' %}" alt="Author Image">
         <div>
-            <h1>Ananthu S Kumar</h1>
-            <p>Passionate software engineer with expertise in Django and web development. Building dynamic, user-friendly applications.</p>
+            <h1>{{author.full_name | title}}</h1>
+            <p>{{author.bio}}</p>
         </div>
     </div>
 

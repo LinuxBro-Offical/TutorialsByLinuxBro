@@ -1,0 +1,161 @@
+{% load static %}
+<style>
+    .comments-list {
+        height: 400px;
+        overflow-y: scroll;
+    }
+    .reply {
+        margin-left: 10px;
+        margin-top: 20px;
+    }
+    .btn-delete, .btn-reply{
+        font-size: 12px !important;
+        font-weight: 500;
+        padding: 0 0.3rem !important;
+    }
+    .btn-delete:hover,.btn-delete:active{
+        color: rgb(165, 0, 0) !important;
+        font-weight: 600;
+    }
+    .btn-reply:hover, .btn-reply:active{
+        color: black;
+        font-weight: 500;
+    }
+    .reply-header{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+</style>
+
+<!-- Comments List -->
+<div class="comments-list p-2">
+    {% for comment in comments %}
+        <!-- Check if the comment is not a reply (i.e., has no parent) -->
+        {% if comment.parent is None %}
+        <!-- Main Comment -->
+        <div class="comment">
+            <div class="comment-header">
+                <div>
+                    <img src="{% static 'images/profile.jpg' %}" alt="Author Image" class="author-img">
+                    <span class="comment-author ml-1 font-weight-bold">{{ comment.author | title }}</span>
+                </div>
+                <div class="d-flex flex-row align-items-end">
+                    {% if comment.author == user %}
+                    <span class="btn-delete btn-delete-comment" data-comment-id="{{ comment.id }}">Delete</span>
+                    <span>.</span>
+                    {% endif %}
+                    <button class="btn-reply" data-comment-id="{{ comment.id }}" data-author="{{ comment.author }}">Reply</button>
+                </div>
+                <!-- If the current user is the author, show delete button -->
+            </div>
+            <div class="comment-body mt-2">
+                <p>{{ comment.comment }}</p>
+            </div>
+
+            <!-- Replies Section -->
+            <div class="replies">
+                {% for reply in comment.replies.all %}
+                    <!-- Ensure that the reply belongs to this comment -->
+                    {% if reply.parent == comment %}
+                    <div class="reply">
+                        <div class="reply-header">
+                            <div>
+                                <img src="{% static 'images/profile.jpg' %}" alt="Author Image" class="author-img">
+                                <span class="reply-author">{{ reply.author.user.username }}</span>
+                            </div>
+                            {% if comment.author == user %}
+                            <span class="btn-delete btn-delete-comment" data-comment-id="{{ comment.id }}">Delete</span>
+                            {% endif %}
+                        </div>
+                        <div class="d-flex flex-row align-items-end">
+                            
+                            <!-- <button class="btn-reply" data-comment-id="{{ comment.id }}" data-author="{{ comment.author }}">Reply</button> -->
+                        </div>
+                        <div class="reply-body">
+                            <p><span class="text-info">@{{ comment.author.user.username }}</span> {{ reply.comment }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    {% endfor %}
+</div>
+
+<!-- Reply Box (hidden initially) -->
+<div class="reply-box" style="display: none;">
+    <textarea placeholder="Write a reply..."></textarea>
+    <div class="comment-box-header">
+        <button class="btn-format" data-format="bold"><strong>B</strong></button>
+        <button class="btn-format" data-format="italic"><em>I</em></button>
+        <button class="btn-cancel">Cancel</button>
+        <button class="btn-submit" data-parent-id="">Submit</button>
+    </div>
+</div>
+<script>
+    $(document).ready(function() {
+        // Show the reply box when clicking on a reply button
+        $('.btn-reply').on('click', function() {
+            let commentId = $(this).data('comment-id');
+            let author = $(this).data('author');
+            let replyBox = $('#comment-text');  // Target reply box
+            let word = "@"+author+" "
+            replyBox.val(word)
+            
+            // Attach parent comment ID to the submit button
+            $('#parent_id').val(commentId);  // Correct jQuery selector for the input field
+            console.log($('#parent_id').val());  
+        });
+
+        // Handle the delete button click
+        // Handle the delete button click
+        $('.btn-delete-comment').on('click', function() {
+            let commentId = $(this).data('comment-id');  // Get comment ID from button
+            
+            // // Confirm deletion
+            // if (confirm('Are you sure you want to delete this comment?')) {
+            //     $.ajax({
+            //         url: "{% url 'delete_comment' %}",  // URL for the delete comment view
+            //         type: 'POST',
+            //         data: {
+            //             comment_id: commentId,  // Send the comment ID in the data payload
+            //             csrfmiddlewaretoken: '{{ csrf_token }}'  // Pass CSRF token in the request
+            //         },
+            //         success: function(response) {
+            //             if (response.status === 'success') {
+            //                 // Remove the comment from the DOM
+            //                 $('button[data-comment-id="' + commentId + '"]').closest('.comment').remove();
+            //             } else {
+            //                 alert(response.message);
+            //             }
+            //         },
+            //         error: function(error) {
+            //             console.error('Error deleting comment:', error);
+            //         }
+            //     });
+            // }
+            $.ajax({
+                url: "{% url 'delete_comment' %}",  // URL for CommentAjaxView (POST)
+                type: "POST",
+                data: {
+                    comment_id: commentId,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'  // Include CSRF token for security
+                },
+                success: function(response) {
+                    // Append the updated comments (HTML) to the #comments container
+                    $('#comments').html(response.comments_html);
+                    // Clear the comment input after successful submission
+                    $('#comment-text').val('');
+                    $('#parent_id').val('');
+                    let currentCount = parseInt($('#comment-count').text()); 
+                    $('#comment-count').text(currentCount - 1); 
+                },
+                error: function(error) {
+                    console.error("Error submitting comment:", error);
+                }
+            });
+        });
+    })
+</script>

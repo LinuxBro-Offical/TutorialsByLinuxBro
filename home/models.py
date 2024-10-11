@@ -79,6 +79,15 @@ class Author(models.Model):
             int: The number of authors being followed.
         """
         return self.following.count()
+    
+    def following_list(self):
+        """
+        Returns the number of authors the current author is following.
+
+        Returns:
+            int: The number of authors being followed.
+        """
+        return self.following.all()
 
 
 class Category(models.Model):
@@ -121,11 +130,15 @@ class Tag(models.Model):
     """
     Model representing a tag that can be associated with a blog post.
     """
-
     name = models.CharField(max_length=50, unique=True)
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        # Convert the name to lowercase before saving
+        self.name = self.name.lower()
+        super().save(*args, **kwargs)
 
 
 class Story(models.Model):
@@ -153,10 +166,64 @@ class Story(models.Model):
     approval_status = models.CharField(max_length=10,
                                        choices=APPROVAL_STATUS_CHOICES,
                                        default='pending')
-    views = models.IntegerField(default=0)
 
     def __str__(self):
         return self.title
+    
+    def is_saved_by_user(self, user):
+        """
+        Check if the given user has saved this story.
+
+        Args:
+            user (User): The user to check.
+
+        Returns:
+            bool: True if the story is saved by the user, otherwise False.
+        """
+        if not user.is_authenticated:
+            return False
+        return Saved.objects.filter(user=user.author, story=self).exists()
+
+    def get_like_count(self):
+        """
+        Get the number of likes for this story.
+        """
+        return self.interactions.filter(liked=True).count()
+
+    def get_comment_count(self):
+        """
+        Get the number of comments for this story.
+        """
+        return self.interactions.exclude(comment='').count()
+    
+    def is_liked_by_user(self, user):
+        response = Response.objects.filter(author=user,
+                                           story=self,
+                                           liked=True)
+        return True if len(response) == 1 else False
+
+class StoryView(models.Model):
+    """
+    Model representing a user's view of a story.
+    """
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='story_views')
+    story = models.ForeignKey(Story, on_delete=models.CASCADE, related_name='story_views')  # Updated related_name
+    viewed_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} viewed {self.story.title}"
+
+    def total_views(self, story):
+        """
+        Returns the total number of views for a given story.
+
+        Args:
+            story (Story): The story for which to count views.
+
+        Returns:
+            int: The total number of views for the story.
+        """
+        return self.objects.filter(story=story).count()
 
 
 class ContentBlock(models.Model):
@@ -193,12 +260,14 @@ class Response(models.Model):
     """
 
     story = models.ForeignKey(Story,
-                            on_delete=models.CASCADE,
-                            related_name='interactions')
+                              on_delete=models.CASCADE,
+                              related_name='interactions')
     author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name='interactions')
     liked = models.BooleanField(default=False)
     comment = models.TextField(null=True, blank=True)
     date = models.DateTimeField(auto_now_add=True)
+    parent = models.ForeignKey('self', null=True, blank=True, related_name='replies',
+                               on_delete=models.CASCADE)
 
     def __str__(self):
         return f"Interaction by {self.author.user.username} on {self.story.title}"
@@ -220,3 +289,21 @@ class Saved(models.Model):
 
     def __str__(self):
         return f"{self.user.username} saved {self.story.title}"
+
+    @classmethod
+    def get_saved_stories_by_user(self, user):
+        """
+        Retrieve all stories saved by the given user.
+
+        Args:
+            user (Author): The author for whom to retrieve saved stories.
+
+        Returns:
+            QuerySet: A queryset of Story objects saved by the user.
+        """
+        return self.objects.filter(user=user).select_related('story').order_by('-saved_at')
+
+
+    def save_story(self, story, user):
+        saved_instance, created = Saved.objects.get_or_create(story=story, user=user)
+        return saved_instance, created
