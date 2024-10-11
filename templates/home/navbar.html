@@ -51,15 +51,17 @@
                   <div class="dropdown-header noti-title">
                     <h6 class="text-overflow m-0 text-dark">Welcome!</h6>
                   </div>
+                  {% if user.is_authenticated %}
                   <a href="{% url 'my_profile' %}" class="dropdown-item notify-item">
                     <i class="fe-user"></i>
                     <span>My Account</span>
                   </a>
+                  {% endif %}
                   <a href="{% url 'wallet' %}" class="dropdown-item notify-item">
                     <i class="fe-credit-card"></i>
                     <span>Wallet</span>
                   </a>
-                  <a href="{% url 'blog_list' %}" class="dropdown-item notify-item">
+                  <a href="{% url 'blog-list-slug' 'saved' %}" class="dropdown-item notify-item">
                     <i class="fe-bookmark"></i>
                     <span>Saved</span>
                   </a>

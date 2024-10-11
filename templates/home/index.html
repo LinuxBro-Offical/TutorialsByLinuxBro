@@ -36,7 +36,8 @@
     <link href="{% static 'css/app.min.css'%}" rel="stylesheet" type="text/css" />
     <link href="{% static 'css/myStyle.css' %}" rel="stylesheet" type="text/css" />
     <link href="{% static 'css/mainStyle.css' %}" rel="stylesheet" type="text/css" />
-    
+
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />    
     <!-- Custom CSS -->
     <style>
       body{
@@ -229,6 +230,18 @@
         font-weight: bold;
         color: #343a40;
         font-size: 1.1rem;
+        white-space: nowrap;       
+        overflow: hidden;          
+        text-overflow: ellipsis;
+        width: 100%;
+        display: block;  
+      }
+      .recent_view h5, .recent_view p{
+        white-space: nowrap;       
+        overflow: hidden;          
+        text-overflow: ellipsis;
+        width: 100%;
+        display: block;  
       }
   
       /* Trending Link Author */
@@ -245,6 +258,216 @@
         border-radius: 50%;
         vertical-align: middle;
       }
+      .card-img-top{
+        height: 150px;
+      }
+      .right-bar{
+        width: 360px !important;
+        right: -360px;
+      }
+      .rightbar-title{
+        background-color: #ffffff !important;
+      }
+      .rightbar-title h4{
+        color: black !important;
+      }
+      .right-bar .right-bar-toggle{
+        background-color: transparent !important;
+      }
+      /* General Styles */
+      .comment-box, .reply-box {
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          padding: 10px;
+          background-color: #fff;
+          margin-bottom: 15px;
+          box-shadow: rgba(0, 0, 0, 0.12) 0px 2px 8px;
+      }
+
+      textarea {
+          width: 100%;
+          height: 100px;
+          border: none;
+          resize: none;
+          padding: 10px;
+          font-size: 14px;
+      }
+
+      .comment-box-header, .reply-box .comment-box-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 10px;
+      }
+
+      .btn-format {
+          background: none;
+          border: none;
+          cursor: pointer;
+          font-size: 14px;
+          color: #999;
+      }
+
+      .btn-format:hover {
+          color: #333;
+      }
+
+      .btn-cancel, .btn-submit {
+          background-color: #007bff;
+          color: white;
+          border: none;
+          border-radius: 4px;
+          padding: 5px 10px;
+          cursor: pointer;
+          font-size: 14px;
+      }
+
+      .btn-cancel {
+          background-color: transparent !important;
+          color: #333 !important;
+      }
+
+      .btn-submit {
+          background-color: #fb641b;
+      }
+
+      .btn-reply {
+          background: none;
+          border: none;
+          color: #007bff;
+          cursor: pointer;
+          font-size: 14px;
+      }
+
+      .comment {
+          border-bottom: 1px solid #ddd;
+          padding: 10px 0;
+      }
+
+      .comment-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 5px;
+      }
+
+      .comment-body {
+          margin-bottom: 10px;
+      }
+
+      .replies {
+          margin-left: 20px;
+      }
+
+      .reply {
+          border-top: 1px solid #ddd;
+          padding-top: 10px;
+      }
+      /* General Styles */
+      .comment-box, .reply-box {
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          padding: 10px;
+          background-color: #fff;
+          margin-bottom: 15px;
+      }
+
+      textarea {
+          width: 100%;
+          height: 100px;
+          border: none;
+          resize: none;
+          padding: 10px;
+          font-size: 14px;
+      }
+
+      .comment-box-header, .reply-box .comment-box-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 10px;
+      }
+
+      .btn-format {
+          background: none;
+          border: none;
+          cursor: pointer;
+          font-size: 14px;
+          color: #999;
+      }
+
+      .btn-format:hover {
+          color: #333;
+      }
+
+      .btn-cancel, .btn-submit {
+          background-color: #007bff;
+          color: white;
+          border: none;
+          border-radius: 4px;
+          padding: 5px 10px;
+          cursor: pointer;
+          font-size: 14px;
+      }
+
+      .btn-cancel {
+          background-color: #6c757d;
+      }
+
+      .btn-submit {
+          background-color: #fb641b;
+      }
+
+      .btn-reply {
+          background: none;
+          border: none;
+          color: #6a6a6a;
+          cursor: pointer;
+          font-size: 14px;
+          border-radius: 1rem;
+      }
+
+      .comment {
+          border-bottom: 1px solid #ddd;
+          padding: 10px 0;
+      }
+
+      .comment-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 5px;
+      }
+
+      .comment-body {
+          margin-bottom: 10px;
+      }
+
+      .replies {
+          margin-left: 20px;
+      }
+
+      .reply {
+          border-top: 1px solid #ddd;
+          padding-top: 10px;
+      }
+      .editable-div {
+          width: 100%;
+          min-height: 100px;
+          padding: 10px;
+          font-size: 16px;
+          color: black; /* Default text color */
+          white-space: pre-wrap;
+          word-wrap: break-word;
+      }
+      .blue {
+          color: blue;
+      }
+      .card-title{
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
     </style>
   </head>
   <body>
@@ -255,6 +478,32 @@
       <!-- Footer -->
       {% include 'home/footer.html' %}
     </div>
+    <!-- Right Sidebar -->
+    <div class="right-bar">
+      <div class="rightbar-title">
+          <a href="javascript:void(0);" class="right-bar-toggle float-right mt-1">
+              <i class="dripicons-cross noti-icon text-dark" style="font-size: 18px;"></i>
+          </a>
+          <h4 class="m-0 text-white">Responses</h4>
+      </div>
+      <div class="comment-box m-2">
+        <div class="comment-box-header">
+            <div>
+              <!-- <button class="btn-format" data-format="bold"><strong>B</strong></button>
+              <button class="btn-format" data-format="italic"><em>I</em></button> -->
+            </div>
+            <div>
+              <button class="btn-cancel">Clear</button>
+              <button class="btn-submit" id="submit-comment" type="submit">Submit</button>  
+            </div>
+        </div>
+        <input type="hidden" value="" id="parent_id">
+        <textarea placeholder="Add a comment..." id="comment-text" contenteditable="true" class="editable-div"></textarea>
+      </div>
+      <div class="p-2" id="comments">
+      </div> 
+  </div>
+  <!-- /Right-bar -->
     <!-- Modal -->
     <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -564,6 +813,7 @@ $(document).ready(()=>{
       }
     });
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
   {% block script %}
   {% endblock %}
 

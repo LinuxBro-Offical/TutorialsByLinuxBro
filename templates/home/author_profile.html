@@ -161,7 +161,6 @@
         <div class="col-8">
             <div class="tabs">
                 <a href="#" data-target="#home" class="tab-link active">Home</a>
-                <a href="#" data-target="#list" class="tab-link">List</a>
                 <a href="#" data-target="#about" class="tab-link">About</a>
             </div>
             <div class="tab-content">
@@ -169,20 +168,25 @@
                 <div id="home" class="tab-pane active">
                     {% for story in stories %}
                     <div class="blog-item">
-                        <h3>{{story.title}}</h3>
+                        <a href="{% url 'blog' story.uuid %}"><h3>{{story.title}}</h3></a>
                         <p>{{story.subtitle}}</p>
                         <div class="blog-meta">
                             <div class="meta-left">
                                 <div class="like-count">
                                     <i class="mdi mdi-thumb-up-outline"></i>
-                                    <span>{{ like_count }}</span>
+                                    <span>{{story.get_like_count}}</span>
                                 </div>
                                 <div class="comment-count">
                                     <i class="mdi mdi-comment-outline"></i>
-                                    <span>{{ comment_count }}</span>
+                                    <span>{{story.get_comment_count}}</span>
                                 </div>
                             </div>
-                            <i class="save-icon mdi mdi-bookmark-outline"></i>
+    
+                            {% if story.id in saved_story_ids %}
+                                <i class="save-icon mdi mdi-bookmark" data-story-id="{{ story.id }}"></i> 
+                            {% else %}
+                                <i class="save-icon mdi mdi-bookmark-outline" data-story-id="{{ story.id }}"></i>
+                            {% endif %}
                         </div>
                     </div>
                     {% endfor %}
@@ -190,47 +194,12 @@
                     <!-- Add more blog items as needed -->
                 </div>
 
-                <!-- List Tab Content -->
-                <div id="list" class="tab-pane">
-                    <div class="blog-item">
-                        <h3>Published Blog Title 2</h3>
-                        <p>Another blog content goes here...</p>
-                        <div class="blog-meta">
-                            <div class="meta-left">
-                                <div class="like-count">
-                                    <i class="mdi mdi-thumb-up-outline"></i>
-                                    <span>15</span>
-                                </div>
-                                <div class="comment-count">
-                                    <i class="mdi mdi-comment-outline"></i>
-                                    <span>5 </span>
-                                </div>
-                            </div>
-                            <i class="save-icon mdi mdi-bookmark-outline"></i>
-                        </div>
-                    </div>
-                    <div class="blog-item">
-                        <h3>Published Blog Title 2</h3>
-                        <p>Another blog content goes here...</p>
-                        <div class="blog-meta">
-                            <div class="meta-left">
-                                <div class="like-count">
-                                    <i class="mdi mdi-thumb-up-outline"></i>
-                                    <span>15</span>
-                                </div>
-                                <div class="comment-count">
-                                    <i class="mdi mdi-comment-outline"></i>
-                                    <span>5 </span>
-                                </div>
-                            </div>
-                            <i class="save-icon mdi mdi-bookmark-outline"></i>
-                        </div>
-                    </div>
-                </div>
                 <!-- About Tab Content -->
                 <div id="about" class="tab-pane">
-                    <h3>About Content Title</h3>
-                    <p>About content goes here...</p>
+                    <p>{{author.bio}}</p>
+                    <p>{{author.website}}</p>
+                    <hr>
+                    <p>LinuxBro member since {{author.created_date | date }}·</p>
                 </div>
             </div>
         </div>
@@ -240,14 +209,21 @@
             <div class="author-details">
                 <img src="{% static 'images/profile.jpg' %}" alt="Author Profile Picture">
                 <h3>{{author | title}}</h3>
+                {%if author.sex == "M"%}
                 <p>he/him</p>
+                {% else %}
+                <p>she/her</p>
+                {% endif %}
                 <p>{{author.follower_count}} Followers</p>
                 <span>
                     <p>{{author.bio}}</p>
-                    <a href="https://joinwrittenbyai.com" target="_blank">{{author.website}}</a>
+                    <a href="{{author.website}}" target="_blank">{{author.website}}</a>
                 </span>
-                
-                <a href="#" class="follow-btn">Follow</a>
+                {% if is_following %}
+                <a href="#" class="follow-btn" data-author-id="{{ author.id }}">Following</a>
+                {% else %}
+                <a href="#" class="follow-btn" data-author-id="{{ author.id }}">Follow</a>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -273,5 +249,61 @@
             });
         });
     });
+</script>
+{% endblock %}
+{% block script %}
+<script>
+    $(document).ready(function() {
+    $('.follow-btn').on('click', function(event) {
+        event.preventDefault();
+        const authorId = $(this).data('author-id');
+        const csrfToken = $('input[name="csrfmiddlewaretoken"]').val();
+        const $this = $(this);
+
+        $.ajax({
+            url: "{% url 'follow-author' %}",
+            type: "POST",
+            data: {
+                author_id: authorId,
+                csrfmiddlewaretoken: csrfToken
+            },
+            success: function(response) {
+                if (response.status === 'followed') {
+                    $this.text('Following');
+                } else if (response.status === 'unfollowed') {
+                    $this.text('Follow');
+                }
+                $this.closest('.author-details').find('p:nth-child(4)').text(response.followers_count + ' Followers');
+            },
+            error: function(xhr, errmsg, err) {
+                console.log('Error: ' + errmsg);
+            }
+        });
+    });
+    $('.save-icon').click(function() {
+            var icon = $(this);
+            var storyId = icon.data('story-id');
+
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'save-story' %}",  // Replace with your URL name for SaveStoryView
+                data: {
+                    'story_id': storyId,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    if (response.status === 'saved') {
+                        icon.removeClass('mdi-bookmark-outline').addClass('mdi-bookmark');
+                    } else if (response.status === 'unsaved') {
+                        icon.removeClass('mdi-bookmark').addClass('mdi-bookmark-outline');
+                    }
+                },
+                error: function(response) {
+                    alert('An error occurred. Please try again.');
+                }
+            });
+        });
+});
+
 </script>
 {% endblock %}

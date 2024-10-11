@@ -1,0 +1,37 @@
+<!-- Blog List -->
+<div class="blog-list" id="bloglist">
+    {% if not stories %}
+        <p>No results found</p>
+    {% endif %}
+    {% for story in stories %}
+    <div class="blog-item">
+        <div class="d-flex justify-content-between">
+            <div>
+                <h2 class="blog-title">
+                    <a href="{% url 'blog' story.uuid %}" class="blog-link text-dark">
+                        {{ story.title }}
+                    </a>
+                </h2>
+                <p class="blog-content">{{ story.subtitle }}</p>
+            </div>
+            <div class="" style="width: 30%;">
+                <a href="{% url 'blog' story.uuid %}">
+                    <img src="{{ story.cover_image.url }}" alt="Blog Image" class="blog-img" width="80%">
+                </a>
+            </div>
+        </div>
+        
+        <div class="blog-meta mt-2">
+            <div class="meta-left">
+                <i class="icon mdi mdi-thumb-up-outline"></i> <span class="count">{{story.get_like_count}}</span>
+                <i class="icon mdi mdi-comment-outline" style="margin-left: 15px;"></i> <span class="count">{{story.get_comment_count}}</span>
+            </div>
+            {% if story.id in saved_story_ids %}
+            <i class="mdi mdi-bookmark save-icon" data-story-id="{{ story.id }}"></i> 
+            {% else %}
+            <i class="mdi mdi-bookmark-outline save-icon" data-story-id="{{ story.id }}"></i>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
