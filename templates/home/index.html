@@ -481,25 +481,32 @@
     <!-- Right Sidebar -->
     <div class="right-bar">
       <div class="rightbar-title">
-          <a href="javascript:void(0);" class="right-bar-toggle float-right mt-1">
-              <i class="dripicons-cross noti-icon text-dark" style="font-size: 18px;"></i>
+          <a href="javascript:void(0);" class="right-bar-toggle float-right">
+            <i class="dripicons-cross noti-icon text-dark" style="font-size:20px;"></i>
           </a>
           <h4 class="m-0 text-white">Responses</h4>
       </div>
+      {% if user.is_authenticated %}
       <div class="comment-box m-2">
         <div class="comment-box-header">
             <div>
-              <!-- <button class="btn-format" data-format="bold"><strong>B</strong></button>
-              <button class="btn-format" data-format="italic"><em>I</em></button> -->
+                <!-- Optionally, you can enable formatting buttons here -->
             </div>
             <div>
-              <button class="btn-cancel">Clear</button>
-              <button class="btn-submit" id="submit-comment" type="submit">Submit</button>  
+                {% if user.is_authenticated %}
+                <button class="btn-cancel" {% if not user.is_authenticated %}disabled{% endif %}>Clear</button>
+                <button class="btn-submit" id="submit-comment" type="submit">Submit</button>
+                {% endif %}
             </div>
         </div>
         <input type="hidden" value="" id="parent_id">
-        <textarea placeholder="Add a comment..." id="comment-text" contenteditable="true" class="editable-div"></textarea>
-      </div>
+        
+        <!-- Disable the textarea if the user is not authenticated -->
+        <textarea placeholder="You need to log in to add a comment" id="comment-text" 
+                  class="editable-div" {% if not user.is_authenticated %}{% endif %}>
+        </textarea>
+    </div>
+    {% endif %}  
       <div class="p-2" id="comments">
       </div> 
   </div>
@@ -526,18 +533,26 @@
 
                       <form action="" method="POST" enctype="multipart/form-data" id="loginform">
                           {% csrf_token %}
-                          <h6 id="error_msg" class="text-danger float-right"></h6>
+                          <h6 id="error_msg" class="text-danger float-right mb-2"></h6>
                           <div class="pwd-div">
                               <label for="email" class="text-blue">Enter Email / Mobile Number</label>
-                              <input type="text" class="form-control mb-2" name="mobile" id="user_number" placeholder="Mobile Number ..">
+                              <input type="text" class="form-control mb-2" name="mobile" id="user_number" autocomplete="off" placeholder="Mobile Number ..">
                               <label for="email" class="text-blue">Enter Password</label>
-                              <input type="password" name="password" id="password" class="form-control mb-3" placeholder="Password">
-                              <button type="submit" class="btn btn-block bg-orange">Login</button>
+                              <input type="password" name="password" id="password" autocomplete="new-password" class="form-control mb-3" placeholder="Password">
+                              <button type="submit" id="passwordlogin" class="btn btn-block bg-orange">Login</button>
                           </div>
                           <div id="signup-otp">
-                              <div class="text-center"><h6 class="text-secondary">OR</h6></div>
-                              <button type="button" class="btn btn-block btn-otp shadow" id="otp-btn">Request OTP</button>
-                              <div class="text-center mt-5">
+                            <!-- <div class="d-flex justify-content-center mt-3">
+                              <a href="javascript:void(0)" class="btn btn-outline-primary" id="google-auth">
+                                <img src="path/to/google-icon.png" alt="Google Icon" style="width: 20px; height: 20px;" />
+                                Sign in with Google
+                              </a>
+                              <a href="javascript:void(0)" class="btn btn-outline-primary" id="facebook-auth">
+                                  <img src="path/to/facebook-icon.png" alt="Facebook Icon" style="width: 20px; height: 20px;" />
+                                  Sign in with Facebook
+                              </a>
+                            </div> -->
+                              <div class="text-center mt-4">
                                   <a href="javascript:void(0)" id="signup"><h6 class="text-darkblue btn-link font-weight-bold">New to LinuxBro? Create an account</h6></a>
                               </div>
                           </div>
@@ -575,17 +590,17 @@
 
                       <form action="" method="POST" enctype="multipart/form-data" id="signupform">
                           {% csrf_token %}
-                          <h6 id="error_msg" class="text-danger float-right"></h6>
+                          <h6 id="error_msg_signup" class="text-danger float-right mb-2"></h6>
                           <div class="pwd-div">
-                              <label for="name" class="text-blue">Name</label>
+                              <label for="name" class="text-blue">Enter Full Name</label>
                               <input type="text" class="form-control mb-2" name="name" id="name" placeholder="Name">
                               <label for="email" class="text-blue">Enter Email / Mobile Number</label>
                               <input type="text" class="form-control mb-2" name="mobile" id="user_number" placeholder="Mobile Number ..">
                               <label for="password" class="text-blue">Enter Password</label>
-                              <input type="password" name="password" id="password" class="form-control mb-3" placeholder="Password">
+                              <input type="password" name="password" id="signup_password" class="form-control mb-3" placeholder="Password">
                               <label for="password" class="text-blue">Confirm Password</label>
                               <input type="password" name="cpassword" id="cpassword" class="form-control mb-3" placeholder="Confirm Password">
-                              <button type="submit" class="btn btn-block bg-orange">Signup</button>
+                              <button type="submit" class="btn btn-block bg-orange" id="passwordsignup">Signup</button>
                           </div>
                           <div id="signup-otp">
                               <div class="text-center mt-4">
@@ -685,38 +700,73 @@
 </script>
 <!-- LOGIN AJAX  -->
 <script>
-   $('#loginform').on('submit',(event)=>{
-        console.log("data vannu")
-        let action = ""
-        let token = "{{csrf_token}}"
-        let data = $('#loginform').serialize()
-        console.log("DATA:",data)
-        event.preventDefault();
-        $.ajax({
-            type: "POST",
-            url: action ,
-            data:data,
-            headers: { "X-CSRFToken": token },
-            success: (data)=>{
-                console.log(data["status"])
-                console.log(data["message"])
-                if (data["status"] == 200){
-                  console.log("MYIREEEE")
-                  $('#error_msg').addClass('text-success')
-                  $('#error_msg').html(`<i class=" mdi mdi-bell"></i>   ${data["message"]}`);
-                  $('#error').html(`<i class=" mdi mdi-bell"></i>   ${data["message"]}`);
-                  setTimeout(function(){document.getElementById("error_msg").innerHTML="";location.reload();}, 1000)
-                }
-                else if(data["status"] == 404){
-                  $('#error_msg').html(`<span class="text-danger"><i class=" mdi mdi-bell"></i>${data["message"]}</span>`); 
-                }
-                else{
-                  $('#error').html(`<span class="text-danger"><i class=" mdi mdi-bell"></i>   ${data["message"]}</span>`);
-                  setTimeout(function(){$('#signup_modal').addClass('d-none');$('#login_modal').removeClass('d-none');document.getElementById("error_msg").innerHTML="";}, 2000)
-                }
-            },
-        });
-    })
+   $(document).ready(function() {
+    $('#passwordlogin').click(function(e) {
+      e.preventDefault();  // Prevent default form submission
+      var mobile = $('#user_number').val();
+      var password = $('#password').val();
+
+      $.ajax({
+        url: '{% url "login" %}',  // Django URL name for login
+        type: 'POST',
+        data: {
+          'mobile': mobile,
+          'password': password,
+          'csrfmiddlewaretoken': '{{ csrf_token }}'  // CSRF token for POST request
+        },
+        success: function(response) {
+          if (response.success) {
+            location.reload();  // Reload the page if login successful
+          } else {
+            $('#error_msg').show()
+            $('#error_msg').html('<i class="fas fa-bell"></i>  ' + response.error);
+            setTimeout(function(){$('#error_msg').hide()}, 2000)
+          }
+        },
+        error: function(xhr) {
+          $('#error_msg').text('An error occurred. Please try again.');
+        }
+      });
+    });
+  });
+  $('#passwordsignup').on('click', function(e) {
+    e.preventDefault();
+
+    let name = $('#name').val();
+    let mobile = $('#user_number').val();
+    let password = $('#signup_password').val();
+    let cpassword = $('#cpassword').val();
+    
+    $.ajax({
+        url: "{% url 'ajax_signup' %}",  // Django URL for the signup view
+        type: "POST",
+        data: {
+            'name': name,
+            'mobile': mobile,
+            'password': password,
+            'cpassword': cpassword,
+            'csrfmiddlewaretoken': '{{ csrf_token }}'  // Ensure CSRF token is included
+        },
+        success: function(response) {
+            if (response.success) {
+                location.reload();  // Reload the page or redirect to the homepage
+            } else {
+                $('#error_msg_signup').show();
+                $('#error_msg_signup').html('<i class="fas fa-exclamation-triangle"></i> ' + response.error);
+                setTimeout(function() {
+                    $('#error_msg_signup').hide();
+                }, 3000);
+            }
+        },
+        error: function(xhr, errmsg, err) {
+            $('#error_msg_signup').show();
+            $('#error_msg_signup').html('<i class="fas fa-exclamation-triangle"></i> An error occurred. Please try again.');
+            setTimeout(function() {
+                $('#error_msg_signup').hide();
+            }, 3000);
+        }
+    });
+});
 </script>
 <!-- OTP VERIFICATION  -->
 <script>

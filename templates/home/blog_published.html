@@ -1,0 +1,7 @@
+{% for story in stories %}
+<li class="blog-item">
+    <a href="{% url 'blog' story.uuid %}"><h3>{{story.title}}</h3></a>
+    <p>{{story.subtitle}}</p>
+    <span class="blog-date">{{story.publication_date | date }}</span>
+</li>
+{% endfor %}

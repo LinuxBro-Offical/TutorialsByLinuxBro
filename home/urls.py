@@ -4,7 +4,8 @@ from .views import (LandingPageView, BlogPageView,
                     MyProfileView, WalletView, RecentTransactions,
                     BlogListView, FollowAuthorView, SaveStoryView,
                     LikeStoryView, CommentAjaxView, DeleteCommentView,
-                    FilterStoriesByTagView)
+                    FilterStoriesByTagView, LoadMoreBlogsView, LoginView,
+                    CustomLogoutView, AjaxSignupView, AuthorEditView)
 
 urlpatterns = [
     path('', LandingPageView.as_view(), name="home"),
@@ -21,4 +22,9 @@ urlpatterns = [
     path('comments/', CommentAjaxView.as_view(), name='comments_ajax'),
     path('delete/comment/', DeleteCommentView.as_view(), name='delete_comment'),
     path('filter-stories/', FilterStoriesByTagView.as_view(), name='filter_stories_by_tag'),
+    path('load-more-blogs/', LoadMoreBlogsView.as_view(), name='load_more_blogs'),
+    path('login/', LoginView.as_view(), name='login'),
+    path('logout/', CustomLogoutView.as_view(), name='logout'),
+    path('ajax-signup/', AjaxSignupView.as_view(), name='ajax_signup'),
+    path('author/edit/', AuthorEditView.as_view(), name='author_edit'),
 ]

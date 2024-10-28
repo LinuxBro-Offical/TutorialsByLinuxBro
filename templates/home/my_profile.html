@@ -156,6 +156,11 @@
         font-size: 0.9rem;
         color: #333;
     }
+    .followers{
+        font-weight: 600;
+        font-size: 1rem;
+        color: coral;
+    }
 </style>
 
 <div class="contents">
@@ -163,7 +168,7 @@
     <div class="author-header">
         <img src="{% static 'images/profile.jpg' %}" alt="Author Image">
         <div>
-            <h1>{{author.full_name | title}}</h1>
+            <h1>{{author.full_name | title}} <a class="btn" href="{% url 'author_edit' %}"><i class="fas fa-edit text-dark"></i></a></h1>
             <p>{{author.bio}}</p>
         </div>
     </div>
@@ -171,15 +176,15 @@
     <!-- Author Stats -->
     <div class="author-stats">
         <div>
-            <span>120</span>
+            <span>{{saved_stories.count}}</span>
             Saved Blogs
         </div>
         <div>
-            <span>35</span>
+            <span>{{stories.count}}</span>
             Written Blogs
         </div>
         <div>
-            <span>500</span>
+            <span>{{followers.count}}</span>
             Followers
         </div>
     </div>
@@ -193,20 +198,19 @@
         </div>
         <div id="published" class="tab-content active">
             <ul class="blog-list">
+                {% for story in stories %}
                 <li class="blog-item">
-                    <h3>Top 10 Angular Tutorials You Must Read</h3>
-                    <p>A deep dive into the most essential Angular tutorials that every developer should follow.</p>
-                    <span class="blog-date">Aug 10, 2024</span>
+                    <a href="{% url 'blog' story.uuid %}"><h3>{{story.title}}</h3></a>
+                    <p>{{story.subtitle}}</p>
+                    <span class="blog-date">{{story.publication_date | date }}</span>
                 </li>
-                <li class="blog-item">
-                    <h3>Understanding Django ORM: The Complete Guide</h3>
-                    <p>A comprehensive guide to mastering Django ORM, covering advanced techniques and best practices.</p>
-                    <span class="blog-date">Jul 25, 2024</span>
-                </li>
+                {% endfor %}
             </ul>
+            {% if stories.count >= 3%}
             <div class="view-all-blogs">
-                <a href="#">View All Published Blogs</a>
+                <a href="#" id="view-more">View All Published Blogs</a>
             </div>
+            {% endif %}
         </div>
         <div id="pending" class="tab-content">
             <ul class="blog-list">
@@ -231,46 +235,61 @@
     <div>
         <h2 class="section-title">Saved Blogs</h2>
         <ul class="blog-list">
-            <li class="blog-item">
-                <h3>Advanced Django Techniques for Scaling Your Web App</h3>
-                <p>Explore advanced techniques for optimizing and scaling Django applications.</p>
-                <span class="blog-date">Jul 15, 2024</span>
-            </li>
-            <li class="blog-item">
-                <h3>10 Best Python Libraries for Data Science in 2024</h3>
-                <p>A curated list of the top Python libraries every data scientist should know in 2024.</p>
-                <span class="blog-date">Jun 5, 2024</span>
-            </li>
+            {% for story in saved_stories %}
+                <li class="blog-item">
+                    <a href="{% url 'blog' story.story.uuid %}"><h3>{{story.story.title}}</h3></a>
+                    <p>{{story.story.subtitle}}</p>
+                    <span class="blog-date">{{story.story.publication_date | date }}</span>
+                </li>
+            {% endfor %}
         </ul>
+        {% if saved_stories.count >= 3%}
         <div class="view-all-blogs">
-            <a href="#">View All Saved Blogs</a>
+            <a href="{% url 'blog-list-slug' 'saved' %}">View All Saved Blogs</a>
         </div>
+        {% endif %}
     </div>
 
     <!-- Followers Section -->
     <div class="followers-section">
         <div class="followers-header">
             <h2>Followers</h2>
-            <a href="#" class="view-all-followers">View All</a>
+            <a href="#" class="view-all-followers" data-toggle="modal" data-target="#exampleModalCenter">View All</a>
         </div>
-        <div class="d-flex flex-wrap">
+        <div class="d-flex flex-wrap align-items-end">
+            {% for user in followers|slice:":10" %}
             <div class="follower">
-                <img src="{% static 'images/profile.jpg' %}" alt="Follower Image">
-                <span>John Doe</span>
+                <a href="{% url 'author_profile' user.uuid %}"><img src="{% static 'images/profile.jpg' %}" alt="Follower Image"></a>
+                <span>{{user}}</span>
             </div>
-            <div class="follower">
-                <img src="{% static 'images/profile.jpg' %}" alt="Follower Image">
-                <span>Jane Smith</span>
-            </div>
-            <div class="follower">
-                <img src="{% static 'images/profile.jpg' %}" alt="Follower Image">
-                <span>Mark Johnson</span>
-            </div>
+            {% endfor %}
             <!-- Add more followers as needed -->
         </div>
     </div>
 </div>
-
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-body">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <div class="d-flex flex-column">
+                <div class="followers mb-2">
+                    Followers
+                </div>
+                {% for user in followers %}
+                <div class="follower d-flex align-items-start">
+                    <a href="{% url 'author_profile' user.uuid %}"><img src="{% static 'images/profile.jpg' %}" alt="Follower Image"></a>
+                    <span class="ml-2">{{user | title}}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
 <script>
     document.querySelectorAll('.tab').forEach(tab => {
         tab.addEventListener('click', function() {
@@ -283,6 +302,39 @@
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
             // Show the clicked tab's content
             document.getElementById(this.dataset.tab).classList.add('active');
+        });
+        let page = 1;  // Track the current page
+    });
+</script>
+{% endblock %}
+{% block script %}
+<script>
+    $(document).ready(function () {
+        let page = 1;  // Track the current page
+
+        $('#view-more').on('click', function (e) {
+            e.preventDefault();
+            page += 1;  // Increment the page for the next batch of records
+
+            $.ajax({
+                url: "{% url 'load_more_blogs' %}",  // URL of the CBV handling the AJAX request
+                type: 'GET',
+                data: {
+                    'page': page
+                },
+                success: function (response) {
+                    console.log(response)
+                    if (response.has_more_stories) {
+                        $('#published .blog-list').append(response.html);  // Append the new stories
+                    } else {
+                        $('#published .blog-list').append(response.html);
+                        $('#view-more').hide();  // Hide the button when no more stories
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log('Error:', error);
+                }
+            });
         });
     });
 </script>

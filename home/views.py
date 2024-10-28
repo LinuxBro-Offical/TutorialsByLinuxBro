@@ -1,6 +1,6 @@
-from django.views.generic import TemplateView, DetailView
+from django.views.generic import TemplateView, DetailView, UpdateView
 from .models import Story, Author, Saved, Response, StoryView, Tag
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from django.http import JsonResponse
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -9,7 +9,11 @@ from django.db.models import Count
 from django.template.loader import render_to_string
 from braces.views import JSONResponseMixin
 from django.middleware.csrf import get_token
-
+from django.core.paginator import Paginator
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth.models import User
+from .forms import AuthorForm
 
 class LandingPageView(TemplateView):
     template_name = 'home/home_contents.html'
@@ -93,11 +97,13 @@ class MyProfileView(LoginRequiredMixin, TemplateView):
 
         # Add author details to context
         context['author'] = author
+        saved_stories = Saved.objects.filter(user=author)[:3]
 
         # Retrieve stories published by the author
-        stories = Story.objects.filter(author=author,
-                                       approval_status='approved')
+        stories = Story.objects.filter(author=author).order_by('-publication_date')[:3]
         context['stories'] = stories
+        context['saved_stories'] = saved_stories
+        context['followers'] = author.followers.all()
 
         return context
 
@@ -237,7 +243,7 @@ class SaveStoryView(LoginRequiredMixin, View):
 
     def handle_no_permission(self):
         return JsonResponse({'error': 'You must be logged in to save a story.'}, status=403)
-    
+
 
 class LikeStoryView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
@@ -273,11 +279,17 @@ class CommentAjaxView(View, JSONResponseMixin):
         # Fetch all comments related to the story (excluding empty comments)
         comments = story.interactions.exclude(comment='')
 
+        # Check if the user is authenticated before accessing author details
+        if self.request.user.is_authenticated:
+            user = self.request.user.author
+        else:
+            user = None
+
         csrf_token = get_token(self.request) or None
         # Render the comments list into a partial template
         comments_html = render_to_string(self.template_name, {
             'comments': comments,
-            'user': self.request.user.author or None,
+            'user': user,
             'csrf_token': csrf_token
         })
         
@@ -376,3 +388,110 @@ class FilterStoriesByTagView(View):
 
         # Send the rendered HTML back to the frontend
         return JsonResponse({'blog_html': blog_html})
+
+
+class LoadMoreBlogsView(View):
+    def get(self, request, *args, **kwargs):
+        page = int(request.GET.get('page', 1))
+
+        print("Page recieved", page)
+        
+        author = get_object_or_404(Author, user=self.request.user)
+
+        stories = Story.objects.filter(
+                    author=author).order_by('-publication_date')
+        
+        # Use Django's Paginator to paginate stories (3 per page)
+        paginator = Paginator(stories, 3)
+
+        try:
+            stories_page = paginator.page(page)
+        except Exception:
+            return JsonResponse({'has_more_stories': False})
+        
+        # Render the new stories to a string using a template
+        html = render_to_string('home/blog_published.html',
+                                {'stories': stories_page})
+
+        return JsonResponse({
+            'html': html,
+            'has_more_stories': stories_page.has_next()
+        })
+
+
+class LoginView(View):
+    def post(self, request, *args, **kwargs):
+        mobile = request.POST.get('mobile')
+        password = request.POST.get('password')
+        
+        # Assuming the User model uses mobile or email for login
+        user = authenticate(request, username=mobile, password=password)
+        
+        if user is not None:
+            login(request, user)
+            return JsonResponse({'success': True})
+        else:
+            return JsonResponse({'success': False, 'error': 'Invalid mobile number or password'})
+
+
+class CustomLogoutView(View):
+    def get(self, request, *args, **kwargs):
+        # Call the logout method to log the user out
+        logout(request)
+        # Redirect to the home page
+        return redirect('home') 
+
+
+class AjaxSignupView(View):
+    def post(self, request, *args, **kwargs):
+        try:
+            name = request.POST.get('name')
+            mobile = request.POST.get('mobile')
+            password = request.POST.get('password')
+            cpassword = request.POST.get('cpassword')
+
+            if password != cpassword:
+                return JsonResponse({'success': False, 'error': 'Passwords do not match'})
+            
+            if User.objects.filter(username=mobile).exists():
+                return JsonResponse({'success': False, 'error': 'Mobile number already registered'})
+            
+            # Create a new user
+            user = User.objects.create(
+                username=mobile,
+                first_name=name,
+                password=make_password(password)
+            )
+            auther = Author.objects.create(
+                user=user,
+                full_name=user.name
+            )
+
+            return JsonResponse({'success': True})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+
+
+class AuthorEditView(LoginRequiredMixin, UpdateView):
+    model = Author
+    form_class = AuthorForm
+    template_name = 'home/profile_update.html'
+
+    def get_object(self):
+        # Ensure the view edits only the current user's author profile
+        return get_object_or_404(Author, user=self.request.user)
+
+    def form_valid(self, form):
+        # Handle AJAX form submission
+        if self.request.is_ajax():
+            form.save()
+            data = {
+                'message': 'Author profile updated successfully.'
+            }
+            return JsonResponse(data)
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        if self.request.is_ajax():
+            return JsonResponse({'errors': form.errors}, status=400)
+        return super().form_invalid(form)
