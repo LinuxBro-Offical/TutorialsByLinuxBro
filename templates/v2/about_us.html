@@ -1,0 +1,431 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>About Us - LINUX ! BRO</title>
+        <link rel="apple-touch-icon" sizes="180x180" href="{% static 'v2/img/favicons/apple-touch-icon.png'%}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{% static 'v2/img/favicons/favicon-32x32.png'%}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{% static 'v2/img/favicons/favicon-16x16.png'%}">
+        <link rel="shortcut icon" type="image/x-icon" href="{% static 'v2/img/favicons/favicon.ico'%}">
+        <link rel="manifest" href="{% static 'v2/img/favicons/manifest.json'%}">
+        <meta name="msapplication-TileImage" content="{% static 'v2/img/favicons/mstile-150x150.png'%}">
+        <meta name="theme-color" content="#ffffff">
+        <script src="{% static 'v2/vendors/overlayscrollbars/OverlayScrollbars.min.js'%}"></script>
+        <link href="{% static 'v2/vendors/swiper/swiper-bundle.min.css'%}" rel="stylesheet">
+        <link href="{% static 'v2/css/theme.min.css'%}" rel="stylesheet" />
+        <link href="{% static 'v2/css/user.min.css'%}" rel="stylesheet" />
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@100;200;300;400;500;600;700;900&amp;family=Roboto:wght@100;300;400;500;700;900&amp;display=swap" rel="stylesheet">
+        <style>
+            .team-member {
+                text-align: center;
+                margin-bottom: 2rem;
+            }
+            .team-member img {
+                width: 200px;
+                height: 200px;
+                border-radius: 50%;
+                object-fit: cover;
+                margin-bottom: 1rem;
+                border: 4px solid #f0f0f0;
+            }
+            .team-member h5 {
+                font-size: 1.25rem;
+                font-weight: 600;
+                margin-bottom: 0.5rem;
+                color: #222;
+            }
+            .team-member p {
+                color: #666;
+                font-size: 0.95rem;
+            }
+            .video-section {
+                background: #f8f9fa;
+                padding: 4rem 0;
+                margin: 4rem 0;
+                position: relative;
+            }
+            section .bg-holder {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                top: 0;
+                left: 0;
+                z-index: 1;
+                background-size: cover;
+                background-repeat: no-repeat;
+            }
+            section .bg-holder::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+            }
+            .btn-play {
+                width: 80px;
+                height: 80px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1.5rem;
+                border: 2px solid #fff;
+                transition: all 0.3s;
+            }
+            .btn-play:hover {
+                background: rgba(255, 255, 255, 0.2);
+                transform: scale(1.1);
+            }
+            .promote-section {
+                background: #222;
+                color: #fff;
+                padding: 4rem 0;
+                margin: 4rem 0;
+            }
+            .promote-section h2 {
+                color: #fff;
+                margin-bottom: 1rem;
+            }
+            .project-section {
+                background: #f8f9fa;
+                padding: 4rem 0;
+                margin: 4rem 0;
+            }
+        </style>
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-xl navbar-dark bg-dark fixed-top py-0">
+            <div class="container">
+                <a class="navbar-brand fw-normal ls-2" href="/">LINUXBRO</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav2"
+                   aria-controls="nav2" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="nav2">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="{% url 'our_story' %}">About Us</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'contact' %}">Contact Us</a>
+                        </li>
+                    </ul>
+                </div>
+                {% if user.is_authenticated %}
+                <div class="dropdown">
+                    <a class="nav-link text-white d-flex align-items-center" href="#" id="accountDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        {% if user.author.profile_picture %}
+                        <img src="{{ user.author.profile_picture.url }}" alt="{{ user.username }}" class="rounded-circle me-2" width="30" height="30" style="object-fit: cover;">
+                        {% else %}
+                        <span class="far fa-user-circle me-2 fs-4"></span>
+                        {% endif %}
+                        <span class="dropdown-toggle">{{ user.username|title }}</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="accountDropdown">
+                        <li><a class="dropdown-item" href="{% url 'my_profile' %}"><span class="fas fa-user me-2"></span>My Profile</a></li>
+                        <li><a class="dropdown-item" href="{% url 'filter-search-results-slug' 'saved' %}"><span class="fas fa-bookmark me-2"></span>Saved Reads</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{% url 'logout' %}"><span class="fas fa-sign-out-alt me-2"></span>Logout</a></li>
+                    </ul>
+                </div>
+                {% else %}
+                <a class="btn btn-sm my-2 my-sm-0 btn-outline-secondary" type="button" data-bs-toggle="modal" data-bs-target="#authModal">Login</a>
+                {% endif %}
+            </div>
+        </nav>
+        <main class="main" id="top">
+            <div class="preloader" id="preloader" data-preloader>
+                <div class="preloader-wrapper big active" data-preloader>
+                    <div class="spinner-layer spinner-white-only">
+                        <div class="circle-clipper left">
+                            <div class="circle"></div>
+                        </div>
+                        <div class="gap-patch">
+                            <div class="circle"></div>
+                        </div>
+                        <div class="circle-clipper right">
+                            <div class="circle"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <section class="py-0 overflow-hidden bg-1100" style="padding-top: 76px;" data-zanim-timeline="{}" data-zanim-trigger="scroll">
+                <div class="position-relative pt-10 pb-8">
+                    <div class="header-text text-center">
+                        <div class="overflow-hidden">
+                            <h1 class="display-3 fs-7 text-white fw-lighter ls-2" data-zanim-xs='{"duration":2,"delay":0}'>
+                                About Us
+                            </h1>
+                        </div>
+                        <div class="overflow-hidden">
+                            <div class="d-flex justify-content-center" data-zanim-xs='{"duration":2,"delay":0.1}'>
+                                <nav aria-label="breadcrumb">
+                                    <ol class="breadcrumb text-uppercase ls-2">
+                                        <li class="breadcrumb-item"><a class="text-400 hover-color-white" href="{% url 'home' %}">Home</a></li>
+                                        <li class="breadcrumb-item active text-white" aria-current="page">About Us</li>
+                                    </ol>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <!-- We're Creative Section -->
+                            <div class="mb-8">
+                                <h2 class="fw-bold mb-4">{{ about_content.creative_title }}</h2>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <p class="lead mb-4">
+                                            {{ about_content.creative_lead|linebreaks }}
+                                        </p>
+                                        <p>
+                                            {{ about_content.creative_paragraph1|linebreaks }}
+                                        </p>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <p>
+                                            {{ about_content.creative_paragraph2|linebreaks }}
+                                        </p>
+                                        <p>
+                                            {{ about_content.creative_paragraph3|linebreaks }}
+                                        </p>
+                                        <p>
+                                            {{ about_content.creative_paragraph4|linebreaks }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- We're Friendly Section -->
+                            <div class="mb-8">
+                                <h2 class="fw-bold mb-4">{{ about_content.friendly_title }}</h2>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <p class="lead mb-4">
+                                            {{ about_content.friendly_lead|linebreaks }}
+                                        </p>
+                                        <p>
+                                            {{ about_content.friendly_paragraph1|linebreaks }}
+                                        </p>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <p>
+                                            {{ about_content.friendly_paragraph2|linebreaks }}
+                                        </p>
+                                        <p>
+                                            {{ about_content.friendly_paragraph3|linebreaks }}
+                                        </p>
+                                        <p>
+                                            {{ about_content.friendly_paragraph4|linebreaks }}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Watch Our Video Section -->
+                            <section class="py-8 py-md-10 text-center position-relative overflow-hidden">
+                                <div class="bg-holder" style="background-image:url({% static 'v2/img/backgrounds/our-video-bg.jpg' %});background-position: 63% 50%;"></div>
+                                <!--/.bg-holder-->
+                                <div class="container position-relative" style="z-index: 2;">
+                                    <div class="row justify-content-center" data-zanim-timeline="{}" data-zanim-trigger="scroll">
+                                        <div class="col-lg-8">
+                                            <div class="row align-items-center">
+                                                <div class="col-md-5 text-md-end">
+                                                    <h2 class="font-base text-white mb-0 fs-3 lh-1">
+                                                        <span class="d-block" data-zanim-xs='{"from":{"opacity":0,"x":-30},"to":{"opacity":1,"x":0},"duration":1.5,"delay":0}'>{{ about_content.video_title_line1 }}</span>
+                                                        <span class="d-block" data-zanim-xs='{"from":{"opacity":0,"x":-30},"to":{"opacity":1,"x":0},"duration":1.5,"delay":0.1}'>{{ about_content.video_title_line2 }}</span>
+                                                    </h2>
+                                                </div>
+                                                <div class="col-md-2 my-3 my-md-0">
+                                                    <a class="video-modal btn btn-outline-white hvr-sweep-top rounded-circle p-0 btn-play mx-auto" href="#!" data-bigpicture='{"ytSrc":"{{ about_content.video_url }}","ytNoCookie":false,"allowfullscreen":true}'>
+                                                        <span class="fas fa-play" data-fa-transform="grow-1 right-2"></span>
+                                                    </a>
+                                                </div>
+                                                <div class="col-md-5 text-md-start">
+                                                    <div class="overflow-hidden">
+                                                        <p class="text-white mb-0" data-zanim-xs='{"from":{"opacity":0,"x":30},"to":{"opacity":1,"x":0},"duration":1.5,"delay":0.1}'>
+                                                            {{ about_content.video_description|linebreaksbr }}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div><!-- end of .container-->
+                            </section>
+
+                            <!-- Promote Your Company Section -->
+                            <div class="promote-section">
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-lg-12 text-center">
+                                            <h2 class="fw-bold mb-4">{{ about_content.promote_title }}</h2>
+                                            <p class="lead mb-4">{{ about_content.promote_lead }}</p>
+                                            <p class="mb-4">
+                                                {{ about_content.promote_description|linebreaks }}
+                                            </p>
+                                            <a href="{{ about_content.promote_button_link }}" class="btn btn-light btn-lg">{{ about_content.promote_button_text }}</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Meet The Team Section -->
+                            <div class="mb-8" style="margin-top: 4rem;">
+                                <div class="text-center mb-6">
+                                    <h2 class="fw-bold mb-2">{{ about_content.team_title }}</h2>
+                                    <p class="lead">{{ about_content.team_subtitle }}</p>
+                                </div>
+                                <div class="row justify-content-center" id="team-members-container">
+                                    {% for member in team_members %}
+                                    <div class="col-lg-4 col-md-6 mb-4">
+                                        <div class="team-member">
+                                            {% if member.profile_picture %}
+                                            <img src="{{ member.profile_picture.url }}" alt="{{ member.name }}" class="img-fluid">
+                                            {% else %}
+                                            <div class="team-member-placeholder" style="width: 200px; height: 200px; border-radius: 50%; background: #f0f0f0; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                                                <span class="far fa-user-circle" style="font-size: 120px; color: #ddd;"></span>
+                                            </div>
+                                            {% endif %}
+                                            <h5>{{ member.name }}</h5>
+                                            <p>{{ member.position }}</p>
+                                            {% if member.bio %}
+                                            <p class="small text-muted">{{ member.bio|truncatewords:20 }}</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    {% empty %}
+                                    <div class="col-12 text-center">
+                                        <p class="text-muted">No team members added yet.</p>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <!-- Make a Project With Us Section -->
+                            <div class="project-section">
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-lg-12 text-center">
+                                            <h2 class="fw-bold mb-4">{{ about_content.project_title }}</h2>
+                                            <p class="lead mb-4">{{ about_content.project_subtitle }}</p>
+                                            <p class="mb-4">
+                                                {{ about_content.project_description|linebreaks }}
+                                            </p>
+                                            <a href="{{ about_content.project_button_link }}" class="btn btn-dark btn-lg">{{ about_content.project_button_text }}</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <section class="bg-1100 py-6 pb-9 px-3 px-lg-0">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-4 pe-lg-4 mb-4 mb-lg-0">
+                        <h5 class="text-white mb-3">{{ footer_content.mission_title }}</h5>
+                        <p class="text-700">{{ footer_content.mission_text|linebreaks }}</p>
+                        <ul class="list-inline mb-0">
+                            <li class="list-inline-item me-0"><a class="text-900 hover-color-white pe-2" href="{{ footer_content.facebook_url }}"><span class="fab fa-facebook-f"></span></a></li>
+                            <li class="list-inline-item me-0"><a class="text-900 hover-color-white px-2" href="{{ footer_content.twitter_url }}"><span class="fab fa-twitter"></span></a></li>
+                            <li class="list-inline-item me-0"><a class="text-900 hover-color-white px-2" href="{{ footer_content.linkedin_url }}"><span class="fab fa-linkedin-in"></span></a></li>
+                            <li class="list-inline-item me-0"><a class="text-900 hover-color-white px-2" href="{{ footer_content.github_url }}"><span class="fab fa-github"></span></a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-8">
+                        <div class="row">
+                            <div class="col-6 col-md-3 ps-lg-4 mb-4 mb-lg-0">
+                                <h5 class="text-white mb-3">Company</h5>
+                                <ul class="list-unstyled mb-0">
+                                    <li class="mb-1"><a class="text-700 hover-color-white" href="{% url 'our_story' %}">About</a></li>
+                                    <li class="mb-1"><a class="text-700 hover-color-white" href="{% url 'contact' %}">Contact</a></li>
+                                    <li class="mb-1"><a class="text-700 hover-color-white" href="{% url 'home' %}">Blog</a></li>
+                                </ul>
+                            </div>
+                            <div class="col-6 col-md-3 ps-4 mb-4 mb-lg-0">
+                                <h5 class="text-white mb-3">Resources</h5>
+                                <ul class="list-unstyled mb-0">
+                                    <li class="mb-1"><a class="text-700 hover-color-white" href="{% url 'home' %}">Tutorials</a></li>
+                                    <li class="mb-1"><a class="text-700 hover-color-white" href="{% url 'home' %}">Stories</a></li>
+                                    {% if user.is_authenticated %}
+                                    <li class="mb-1"><a class="text-700 hover-color-white" href="{% url 'my_profile' %}">My Profile</a></li>
+                                    <li class="mb-1"><a class="text-700 hover-color-white" href="{% url 'filter-search-results-slug' 'saved' %}">Saved Reads</a></li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                            <div class="col-md-6 ps-md-4">
+                                <h5 class="text-white mb-3">LATEST BLOGS</h5>
+                                <ul class="list-unstyled mb-0">
+                                    {% for story in popular_stories|slice:":3" %}
+                                    <li class="mb-3">
+                                        <a class="text-700 hover-color-white" href="{% url 'blog' story.uuid %}">{{ story.title }}</a>
+                                        <p class="text-900 hover-color-white mb-0">{{ story.publication_date|date:"M d, Y" }}</p>
+                                    </li>
+                                    {% empty %}
+                                    <li class="mb-3">
+                                        <p class="text-700 mb-0">No blog posts yet.</p>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- end of .container-->
+        </section><!-- <section> close ============================-->
+        <!-- ============================================-->
+        <footer class="footer text-center bg-black py-3 position-absolute w-100 bottom-0">
+            <div class="container">
+                <div class="row justify-content-between">
+                    <div class="col-12 col-md-auto mb-1 mb-md-0">
+                        <p class="mb-0">Linux Bro &copy; {% now "Y" %}<span class="mx-2">|</span><span class="text-900 hover-color-white"> Empowering Tech Enthusiasts</span></p>
+                    </div>
+                    <div class="col-12 col-md-auto">
+                        <p class="mb-0">Made with<span class="fas fa-heart mx-2"></span>by <a class="footer-link" href="{% url 'our_story' %}" target="_blank">Linux Bro Team</a></p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <script src="{% static 'v2/vendors/popper/popper.min.js'%}"></script>
+        <script src="{% static 'v2/vendors/bootstrap/bootstrap.min.js'%}"></script>
+        <script src="{% static 'v2/vendors/anchorjs/anchor.min.js'%}"></script>
+        <script src="{% static 'v2/vendors/is/is.min.js'%}"></script>
+        <script src="{% static 'v2/vendors/fontawesome/all.min.js'%}"></script>
+        <script src="{% static 'v2/vendors/lodash/lodash.min.js'%}"></script>
+        <script src="{% static 'v2/vendors/imagesloaded/imagesloaded.pkgd.min.js'%}"></script>
+        <script src="{% static 'v2/vendors/gsap/gsap.js'%}"></script>
+        <script src="{% static 'v2/vendors/gsap/customEase.js'%}"></script>
+        <script src="{% static 'v2/vendors/bigpicture/BigPicture.js'%}"></script>
+        <script src="{% static 'v2/vendors/countup/countUp.umd.js'%}"></script>
+        <script src="{% static 'v2/vendors/progressbar/progressbar.min.js'%}"></script>
+        <script src="{% static 'v2/vendors/hover-dir/hoverDir.min.js'%}"></script>
+        <script src="{% static 'v2/vendors/isotope-layout/isotope.pkgd.min.js'%}"></script>
+        <script src="{% static 'v2/vendors/isotope-packery/packery-mode.pkgd.min.js'%}"></script>
+        <script src="{% static 'v2/vendors/swiper/swiper-bundle.min.js'%}"></script>
+        <script src="{% static 'v2/js/theme.js'%}"></script>
+        <script>
+            // Ensure BigPicture is initialized
+            document.addEventListener('DOMContentLoaded', function() {
+                if (typeof bigPictureInit === 'function') {
+                    bigPictureInit();
+                }
+            });
+        </script>
+    </body>
+</html>
+
+

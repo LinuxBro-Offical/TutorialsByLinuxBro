@@ -1,0 +1,61 @@
+{% load static %}
+{% with current_level=level|default:0 %}
+<div class="comment mb-3">
+    <div class="d-flex align-items-start">
+        <img class="rounded-circle me-2" src="{% static 'images/profile.jpg' %}" width="45" height="45" alt="">
+        <div class="flex-1">
+            <p class="mb-1">
+                <a class="fw-semibold text-dark me-1" href="#!">{{ comment.author|title }}</a>
+                <span class="text-muted small">{{ comment.date|timesince }} ago</span>
+            </p>
+            <p class="mb-1 small text-body">{{ comment.comment }}</p>
+
+            <div class="d-flex align-items-center mb-1">
+                {% if current_level < 3 %}
+                <a href="#!" class="text-700 small me-2 reply-btn" data-comment-id="{{ comment.id }}" data-author-name="{{ comment.author.user.username }}">
+                    💬 Reply
+                </a>
+                {% endif %}
+                {% if user %}
+                <a href="#!" class="text-700 small me-2 comment-like-btn" data-comment-id="{{ comment.id }}">
+                    {% if comment.is_liked %}
+                    <span class="fas fa-heart text-danger like-icon" data-fa-transform="shrink-3"></span>
+                    {% else %}
+                    <span class="far fa-heart like-icon" data-fa-transform="shrink-3"></span>
+                    {% endif %}
+                    <span class="comment-like-count ms-1">{{ comment.get_like_count|default:0 }}</span>
+                </a>
+                {% else %}
+                <a href="#!" class="text-700 small me-2" data-bs-toggle="modal" data-bs-target="#authModal">
+                    <span class="far fa-heart" data-fa-transform="shrink-3"></span>
+                    <span class="ms-1">{{ comment.get_like_count|default:0 }}</span>
+                </a>
+                {% endif %}
+                {% if comment.replies.all.count > 0 %}
+                    <a href="#!" class="text-700 small toggle-replies" data-target="replies-{{ comment.id }}">
+                        ▶ {{ comment.replies.all.count }} Replies
+                    </a>
+                {% endif %}
+                {% if comment.author|stringformat:"s" == user|stringformat:"s" %}
+                    <a class="text-700 small ms-2" href="#" data-comment-id="{{ comment.id }}">Delete</a>
+                {% endif %}
+            </div>
+
+            <!-- Replies Section -->
+            {% if comment.replies.all %}
+                <div id="replies-{{ comment.id }}" class="replies ps-4 mt-2 border-start border-2 d-none">
+                    {% for reply in comment.replies.all %}
+                        {% with next_level=current_level|add:1 %}
+                        {% include "v2/partials/comment.html" with comment=reply user=user level=next_level %}
+                        {% endwith %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endwith %}
+
+
+
+
