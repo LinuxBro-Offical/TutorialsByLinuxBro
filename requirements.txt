@@ -17,6 +17,7 @@ pathspec==0.12.1
 pillow==10.4.0
 platformdirs==4.3.8
 pycparser==2.23
+python-decouple==3.8
 pytokens==0.1.10
 requests==2.32.3
 requests-oauthlib==2.0.0
