@@ -1,5 +1,5 @@
 from django import forms
-from .models import Author
+from .models import Author, TeamMember
 
 
 class AuthorForm(forms.ModelForm):
@@ -14,4 +14,18 @@ class AuthorForm(forms.ModelForm):
             'website': forms.URLInput(attrs={'class': 'form-control'}),
             'twitter_handle': forms.TextInput(attrs={'class': 'form-control'}),
             'linkedin_profile': forms.URLInput(attrs={'class': 'form-control'}),
+        }
+
+
+class TeamMemberForm(forms.ModelForm):
+    class Meta:
+        model = TeamMember
+        fields = ['name', 'position', 'profile_picture', 'bio', 'order', 'is_active']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'position': forms.TextInput(attrs={'class': 'form-control'}),
+            'profile_picture': forms.FileInput(attrs={'class': 'form-control'}),
+            'bio': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'order': forms.NumberInput(attrs={'class': 'form-control'}),
+            'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }

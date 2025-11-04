@@ -1,0 +1,10 @@
+{% load static %}
+{% for comment in comments %}
+{% if not comment.parent %}
+<div class="comment-item {% if forloop.counter > 2 %}d-none extra-comment{% endif %}">
+    {% include "v2/partials/comment.html" with comment=comment user=user %}
+</div>
+{% endif %}
+{% endfor %}
+
+

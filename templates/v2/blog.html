@@ -1,0 +1,400 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>LINUX ! BRO</title>
+        <link rel="apple-touch-icon" sizes="180x180" href="{% static 'v2/img/favicons/apple-touch-icon.png'%}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{% static 'v2/img/favicons/favicon-32x32.png'%}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{% static 'v2/img/favicons/favicon-16x16.png'%}">
+        <link rel="shortcut icon" type="image/x-icon" href="{% static 'v2/img/favicons/favicon.ico'%}">
+        <link rel="manifest" href="{% static 'v2/img/favicons/manifest.json'%}">
+        <meta name="msapplication-TileImage" content="{% static 'v2/img/favicons/mstile-150x150.png'%}">
+        <meta name="theme-color" content="#ffffff">
+        <script src="{% static 'v2/vendors/overlayscrollbars/OverlayScrollbars.min.js'%}"></script>
+        <link href="{% static 'v2/vendors/swiper/swiper-bundle.min.css'%}" rel="stylesheet">
+        <link href="{% static 'v2/css/theme.min.css'%}" rel="stylesheet" />
+        <link href="{% static 'v2/css/user.min.css'%}" rel="stylesheet" />
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@100;200;300;400;500;600;700;900&amp;family=Roboto:wght@100;300;400;500;700;900&amp;display=swap" rel="stylesheet">
+        <style>
+            .modal-content{ border-radius: 0 10px 30px rgba(17,24,39,0.08); box-shadow:0 10px 30px rgba(17,24,39,0.08)}
+            .modal-header{ border:0; padding-top:1.25rem; padding-bottom:.25rem }
+            .modal-title{ margin:0 auto; font-weight:700 }
+            .auth-btn{ background: #fff; border:1px solid #e6e9ef; box-shadow:0 4px 14px rgba(13,18,29,0.04); height:46px; border-radius:10px }
+            .auth-btn img{ filter: none; }
+            .auth-note{ color:var(--muted); font-size:.85rem }
+            .create-note{ margin-top:1rem; font-size:.9rem; color:var(--muted) }
+            .create-note strong{ color:#111827 }
+            .ad-container {
+               margin: 1.5rem 0;
+               display: flex;
+               justify-content: center;
+               align-items: center;
+               width: 100%;
+            }
+            .ad-container iframe,
+            .ad-container ins,
+            .ad-container div {
+               display: block;
+               max-width: 100%;
+               margin: 0 auto;
+            }
+            /* Common ad sizes will work automatically */
+            /* AdSense and Meta Ads handle their own dimensions */
+        </style>
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-dark navbar-theme fixed-top p-0" data-navbar-on-scroll="data-navbar-on-scroll">
+            <div class="container">
+                <a class="navbar-brand fw-normal ls-2" href="/">LINUXBRO</a>
+                <button class="navbar-toggler p-0" type="button" data-bs-toggle="collapse" data-bs-target="#primaryNavbarCollapse" aria-controls="primaryNavbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="primaryNavbarCollapse">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'our_story' %}">About Us</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'contact' %}">Contact Us</a>
+                        </li>
+                    </ul>
+                </div>
+                {% if user.is_authenticated %}
+                <div class="dropdown">
+                    <a class="nav-link text-white d-flex align-items-center" href="#" id="accountDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        {% if user.author.profile_picture %}
+                        <img src="{{ user.author.profile_picture.url }}" alt="{{ user.username }}" class="rounded-circle me-2" width="30" height="30" style="object-fit: cover;">
+                        {% else %}
+                        <span class="far fa-user-circle me-2 fs-4"></span>
+                        {% endif %}
+                        <span class="dropdown-toggle">{{ user.username|title }}</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="accountDropdown">
+                        <li><a class="dropdown-item" href="{% url 'my_profile' %}"><span class="fas fa-user me-2"></span>My Profile</a></li>
+                        <li><a class="dropdown-item" href="{% url 'filter-search-results-slug' 'saved' %}"><span class="fas fa-bookmark me-2"></span>Saved Reads</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{% url 'logout' %}"><span class="fas fa-sign-out-alt me-2"></span>Logout</a></li>
+                    </ul>
+                </div>
+                {% else %}
+                <a class="btn btn-sm my-2 my-sm-0 btn-outline-secondary" type="button" data-bs-toggle="modal" data-bs-target="#authModal">Login</a>
+                {% endif %}
+            </div>
+        </nav>
+        <main class="main" id="top">
+            <div class="preloader" id="preloader" data-preloader>
+                <div class="preloader-wrapper big active" data-preloader>
+                    <div class="spinner-layer spinner-white-only">
+                        <div class="circle-clipper left">
+                            <div class="circle"></div>
+                        </div>
+                        <div class="gap-patch">
+                            <div class="circle"></div>
+                        </div>
+                        <div class="circle-clipper right">
+                            <div class="circle"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <section class="py-0 overflow-hidden">
+                <div class="swiper theme-slider" data-swiper='{"autoplay":true,"loop":true,"loopedSlides":5,"slideToClickedSlide":true}'>
+                    <div class="swiper-wrapper">
+                        {% for story in banner_stories|slice:":3" %}
+                        <div class="swiper-slide">
+                            {% if story.banner_image %}
+                            <img class="w-100 vh-50 fit-cover slider-classic" src="{{ story.banner_image.url }}" alt="image" style="object-position: center 77%;" />
+                            {% endif %}
+                            <div class="header-overlay text-center" data-zanim-timeline='{"delay":0.1}'>
+                                <div class="d-flex flex-center pt-10 pb-8">
+                                    <div class="header-overlay"></div>
+                                    <div class="header-text">
+                                        <div class="overflow-hidden">
+                                            <h1 class="display-3 text-white fs-5 fs-md-7" data-zanim-xs='{"duration":2,"delay":0}'>{{ story.title }}</h1>
+                                        </div>
+                                        <div class="overflow-hidden">
+                                            <p class="text-uppercase text-400 ls-3 mt-2" data-zanim-xs='{"duration":2,"delay":0.1}'>{{ story.subtitle}}</p>
+                                        </div>
+                                        <div data-zanim-xs='{"from":{"opacity":0,"y":30},"to":{"opacity":1,"y":0},"duration":1.5,"delay":0.5}'>
+                                            <a class="btn btn-sm btn-outline-light hvr-sweep-top mt-2 px-4" href="{% url 'blog' story.uuid %}">Read more</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="swiper-nav">
+                        <div class="swiper-button-prev"></div>
+                        <div class="swiper-button-next"></div>
+                    </div>
+                </div>
+            </section>
+            <section>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-7">
+                            {% for story in stories %}
+                            <div class="mb-6">
+                                {% if story.cover_image %}
+                                <a href="{% url 'blog' story.uuid %}">
+                                <img class="img-fluid rounded" src="{{ story.cover_image.url }}" alt="{{ story.title }} cover image" />
+                                </a>
+                                {% endif %}
+                                <h4 class="font-base text-transform-none fw-medium lh-2 mt-3">
+                                    <a class="text-black" href="{% url 'blog' story.uuid %}">{{ story.title }}</a>
+                                </h4>
+                                <div class="mb-3">
+                                    By <a class="text-700" href="{% url 'author_profile' story.author.uuid %}">{{ story.author.user.username | title }}</a>
+                                    <span class="mx-2 text-700">|</span>
+                                    <a class="text-700" href="blog.html#!">{{ story.publication_date|date:"j M, Y" }}</a>
+                                    <span class="mx-2 text-700">|</span>
+                                    <a class="text-700" href="{% url 'blog' story.uuid %}">{{story.interactions.count}} Comments</a>
+                                    <span class="mx-2 text-700">|</span>
+                                    <a class="text-700" href="blog.html#!">{{story.tags.first | title }}</a>
+                                </div>
+                                <p>{{story.content_blocks.first.text_content}}..</p>
+                                <a class="text-dark fw-semi-bold" href="{% url 'blog' story.uuid %}">
+                                Read more<span class="fas fa-angle-right ms-1 text-900" data-fa-transform="down-2"></span>
+                                </a>
+                            </div>
+                            {% endfor %}
+                            <div class="col-12 p-0">
+                                <div class="d-flex mt-7">
+                                    <nav aria-label="Page navigation example">
+                                        <ul class="pagination pagination-rounded">
+                                            <!-- Previous  -->
+                                            {% if page_obj.has_previous %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                                                <span class="fas fa-angle-left"></span>
+                                                </a>
+                                            </li>
+                                            {% else %}
+                                            <li class="page-item disabled">
+                                                <a class="page-link" href="#" aria-label="Previous">
+                                                <span class="fas fa-angle-left"></span>
+                                                </a>
+                                            </li>
+                                            {% endif %}
+                                            <!-- Pagination  -->
+                                            {% for num in page_obj.paginator.page_range %}
+                                            {% if num == page_obj.number %}
+                                            <li class="page-item active">
+                                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                            </li>
+                                            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                            </li>
+                                            {% endif %}
+                                            {% endfor %}
+                                            <!-- Next  -->
+                                            {% if page_obj.has_next %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                                                <span class="fas fa-angle-right"></span>
+                                                </a>
+                                            </li>
+                                            {% else %}
+                                            <li class="page-item disabled">
+                                                <a class="page-link" href="#" aria-label="Next">
+                                                <span class="fas fa-angle-right"></span>
+                                                </a>
+                                            </li>
+                                            {% endif %}
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-5 ps-lg-7">
+                            <div class="form-group">
+                                <form method="get" action="{% url 'filter-search-results' %}">
+                                    <input class="form-control" type="text" name="q" placeholder="Search..." />
+                                </form>
+                            </div>
+                            {% if ad_spaces.top %}
+                            {% for ad in ad_spaces.top %}
+                            <div class="ad-container mb-4 mt-4">
+                                {{ ad.ad_code|safe }}
+                            </div>
+                            {% endfor %}
+                            {% endif %}
+                            <h4 class="mt-4 mb-3 fw-normal">Popular Posts</h4>
+                            {% for story in popular_stories %}
+                            <div class="d-flex mb-3">
+                                <a href="single-post.html">
+                                <img class="rounded" src="../assets/img/projects/13.jpg" width="120" alt="" />
+                                </a>
+                                <div class="flex-1 ms-3">
+                                    <h5 class="lh-sm mt-0 text-transform-none fs-0 mb-1 fw-semi-bold font-base">
+                                        <a class="text-900" href="{% url 'blog' story.uuid %}">{{story.title}}</a>
+                                    </h5>
+                                    <p class="text-600 mb-0">{{ story.publication_date|date:"j M, Y" }}</p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            {% if ad_spaces.middle %}
+                            {% for ad in ad_spaces.middle %}
+                            <div class="ad-container mb-4 mt-4">
+                                {{ ad.ad_code|safe }}
+                            </div>
+                            {% endfor %}
+                            {% endif %}
+                            <h4 class="mt-5 mb-3 fw-normal">Popular Tags</h4>
+                            {% for tag in tags %}
+                            <a class="btn btn-dark btn-sm hvr-sweep-top me-1 mb-1" href="{% url 'filter-search-results-slug' tag.name %}">{{tag.name}}</a>
+                            {% endfor %}
+                            <h4 class="mt-5 mb-3 fw-normal">Categories</h4>
+                            <ul class="list-unstyled">
+                                {% for obj in categories %}
+                                <li class="mb-2">
+                                    <a class="text-800" href="{% url 'filter-search-results-slug' obj.name %}">
+                                    <span class="fas fa-angle-right me-2" data-fa-transform="shrink-3"></span>{{obj.name}}
+                                    </a>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            {% if ad_spaces.bottom %}
+                            {% for ad in ad_spaces.bottom %}
+                            <div class="ad-container mb-4 mt-4">
+                                {{ ad.ad_code|safe }}
+                            </div>
+                            {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <section class="bg-1100 py-6 pb-9 px-3 px-lg-0">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-4 pe-lg-4 mb-4 mb-lg-0">
+                        <h5 class="text-white mb-3">{{ footer_content.mission_title }}</h5>
+                        <p class="text-700">{{ footer_content.mission_text|linebreaks }}</p>
+                        <ul class="list-inline mb-0">
+                            <li class="list-inline-item me-0"><a class="text-900 hover-color-white pe-2" href="{{ footer_content.facebook_url }}"><span class="fab fa-facebook-f"></span></a></li>
+                            <li class="list-inline-item me-0"><a class="text-900 hover-color-white px-2" href="{{ footer_content.twitter_url }}"><span class="fab fa-twitter"></span></a></li>
+                            <li class="list-inline-item me-0"><a class="text-900 hover-color-white px-2" href="{{ footer_content.linkedin_url }}"><span class="fab fa-linkedin-in"></span></a></li>
+                            <li class="list-inline-item me-0"><a class="text-900 hover-color-white px-2" href="{{ footer_content.github_url }}"><span class="fab fa-github"></span></a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-8">
+                        <div class="row">
+                            <div class="col-6 col-md-3 ps-lg-4 mb-4 mb-lg-0">
+                                <h5 class="text-white mb-3">Company</h5>
+                                <ul class="list-unstyled mb-0">
+                                    <li class="mb-1"><a class="text-700 hover-color-white" href="{% url 'our_story' %}">About</a></li>
+                                    <li class="mb-1"><a class="text-700 hover-color-white" href="{% url 'contact' %}">Contact</a></li>
+                                    <li class="mb-1"><a class="text-700 hover-color-white" href="{% url 'home' %}">Blog</a></li>
+                                </ul>
+                            </div>
+                            <div class="col-6 col-md-3 ps-4 mb-4 mb-lg-0">
+                                <h5 class="text-white mb-3">Resources</h5>
+                                <ul class="list-unstyled mb-0">
+                                    <li class="mb-1"><a class="text-700 hover-color-white" href="{% url 'home' %}">Tutorials</a></li>
+                                    <li class="mb-1"><a class="text-700 hover-color-white" href="{% url 'home' %}">Stories</a></li>
+                                    {% if user.is_authenticated %}
+                                    <li class="mb-1"><a class="text-700 hover-color-white" href="{% url 'my_profile' %}">My Profile</a></li>
+                                    <li class="mb-1"><a class="text-700 hover-color-white" href="{% url 'filter-search-results-slug' 'saved' %}">Saved Reads</a></li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                            <div class="col-md-6 ps-md-4">
+                                <h5 class="text-white mb-3">LATEST BLOGS</h5>
+                                <ul class="list-unstyled mb-0">
+                                    {% for story in popular_stories|slice:":3" %}
+                                    <li class="mb-3">
+                                        <a class="text-700 hover-color-white" href="{% url 'blog' story.uuid %}">{{ story.title }}</a>
+                                        <p class="text-900 hover-color-white mb-0">{{ story.publication_date|date:"M d, Y" }}</p>
+                                    </li>
+                                    {% empty %}
+                                    <li class="mb-3">
+                                        <p class="text-700 mb-0">No blog posts yet.</p>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- end of .container-->
+        </section><!-- <section> close ============================-->
+        <!-- ============================================-->
+        <footer class="footer text-center bg-black py-3 position-absolute w-100 bottom-0">
+            <div class="container">
+                <div class="row justify-content-between">
+                    <div class="col-12 col-md-auto mb-1 mb-md-0">
+                        <p class="mb-0">Linux Bro &copy; {% now "Y" %}<span class="mx-2">|</span><span class="text-900 hover-color-white"> Empowering Tech Enthusiasts</span></p>
+                    </div>
+                    <div class="col-12 col-md-auto">
+                        <p class="mb-0">Made with<span class="fas fa-heart mx-2"></span>by <a class="footer-link" href="{% url 'our_story' %}" target="_blank">Linux Bro Team</a></p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <!-- Authentication Modal -->
+        <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center px-4">
+                    <h5 id="authModalLabel" class="mb-1 fw-bold text-uppercase ls-2" style="font-size: 0.9rem;">
+                        Log in to <span style="color: #fb641b;">LINUX</span><span class="text-dark">BRO</span>
+                    </h5>
+                    <p class="text-muted mb-3">Choose your preferred sign-in method</p>
+                    <div class="d-grid gap-3">
+                        <a href="{% url 'google_login' %}" class="auth-btn d-flex align-items-center justify-content-center gap-2">
+                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" width="18" alt="Google icon">
+                        <span class="fw-medium">Continue with Google</span>
+                        </a>
+                        <a href="{% url 'github_login' %}" class="auth-btn d-flex align-items-center justify-content-center gap-2">
+                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" width="18" alt="GitHub icon">
+                        <span class="fw-medium">Continue with GitHub</span>
+                        </a>
+                        <a href="{% url 'apple_login' %}" class="auth-btn d-flex align-items-center justify-content-center gap-2">
+                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/apple/apple-original.svg" width="18" alt="Apple icon">
+                        <span class="fw-medium">Continue with Apple</span>
+                        </a>
+                        <a href="{% url 'twitter_login' %}" class="auth-btn d-flex align-items-center justify-content-center gap-2">
+                        <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/x.svg" width="18" alt="X icon">
+                        <span class="fw-medium">Continue with X</span>
+                        </a>
+                    </div>
+                    <!-- the requested note when no account exists -->
+                    <p class="create-note text-center">Don't have an account? <strong>We'll create one for you</strong> automatically when you sign in with any provider.</p>
+                    <p class="small text-muted mt-2 mb-2">By continuing, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.</p>
+                </div>
+            </div>
+        </div>
+        <!-- Authentication Modal End -->
+        <a class="btn-back-to-top" href="blog.html#top"><img src="../assets/img/line-icons/upload-arrow.svg" width="8" alt=""></a>
+        <script src="{% static 'v2/vendors/popper/popper.min.js'%}"></script>
+        <script src="{% static 'v2/vendors/bootstrap/bootstrap.min.js'%}"></script>
+        <script src="{% static 'v2/vendors/anchorjs/anchor.min.js'%}"></script>
+        <script src="{% static 'v2/vendors/is/is.min.js'%}"></script>
+        <script src="{% static 'v2/vendors/fontawesome/all.min.js'%}"></script>
+        <script src="{% static 'v2/vendors/lodash/lodash.min.js'%}"></script>
+        <script src="{% static 'v2/vendors/imagesloaded/imagesloaded.pkgd.min.js'%}"></script>
+        <script src="{% static 'v2/vendors/gsap/gsap.js'%}"></script>
+        <script src="{% static 'v2/vendors/gsap/customEase.js'%}"></script>
+        <script src="{% static 'v2/vendors/bigpicture/BigPicture.js'%}"></script>
+        <script src="{% static 'v2/vendors/countup/countUp.umd.js'%}"></script>
+        <script src="{% static 'v2/vendors/progressbar/progressbar.min.js'%}"></script>
+        <script src="{% static 'v2/vendors/hover-dir/hoverDir.min.js'%}"></script>
+        <script src="{% static 'v2/vendors/isotope-layout/isotope.pkgd.min.js'%}"></script>
+        <script src="{% static 'v2/vendors/isotope-packery/packery-mode.pkgd.min.js'%}"></script>
+        <script src="{% static 'v2/vendors/swiper/swiper-bundle.min.js'%}"></script>
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyARdVcREeBK44lIWnv5-iPijKqvlSAVwbw&callback=initMap" async></script>
+        <script src="{% static 'v2/js/theme.js'%}"></script>
+    </body>
+</html>

@@ -4,3 +4,9 @@ db.sqlite3
 *.pyo
 *.pyd
 *.whl
+.env
+.env.local
+.env.*.local
+
+# Media files
+media/

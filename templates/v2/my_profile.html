@@ -1,0 +1,787 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>My Profile - LINUX ! BRO</title>
+        <link rel="apple-touch-icon" sizes="180x180" href="{% static 'v2/img/favicons/apple-touch-icon.png'%}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{% static 'v2/img/favicons/favicon-32x32.png'%}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{% static 'v2/img/favicons/favicon-16x16.png'%}">
+        <link rel="shortcut icon" type="image/x-icon" href="{% static 'v2/img/favicons/favicon.ico'%}">
+        <link rel="manifest" href="{% static 'v2/img/favicons/manifest.json'%}">
+        <meta name="msapplication-TileImage" content="{% static 'v2/img/favicons/mstile-150x150.png'%}">
+        <meta name="theme-color" content="#ffffff">
+        <script src="{% static 'v2/vendors/overlayscrollbars/OverlayScrollbars.min.js'%}"></script>
+        <link href="{% static 'v2/vendors/swiper/swiper-bundle.min.css'%}" rel="stylesheet">
+        <link href="{% static 'v2/css/theme.min.css'%}" rel="stylesheet" />
+        <link href="{% static 'v2/css/user.min.css'%}" rel="stylesheet" />
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@100;200;300;400;500;600;700;900&amp;family=Roboto:wght@100;300;400;500;700;900&amp;display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+        <style>
+            .modal-content{ border-radius: 0 10px 30px rgba(17,24,39,0.08); box-shadow:0 10px 30px rgba(17,24,39,0.08)}
+            .modal-header{ border:0; padding-top:1.25rem; padding-bottom:.25rem }
+            .modal-title{ margin:0 auto; font-weight:700; display: contents; }
+            .auth-btn{ background: #fff; border:1px solid #e6e9ef; box-shadow:0 4px 14px rgba(13,18,29,0.04); height:46px; border-radius:10px }
+            .auth-btn img{ filter: none; }
+            .auth-note{ color:var(--muted); font-size:.85rem }
+            .create-note{ margin-top:1rem; font-size:.9rem; color:var(--muted) }
+            .create-note strong{ color:#111827 }
+            .profile-sidebar {
+                background: #fff;
+                box-shadow: 0 2px 12px rgba(44,62,80,0.04);
+                border: 1px solid #ececec;
+                padding: 0;
+                margin-bottom: 2rem;
+            }
+        .toast-success {
+            background-color: #000000;
+            color: #f0f0f0;
+            border-left: 5px solid #fb641b;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        .toast-info {
+            background-color: #000000;
+            color: #f0f0f0;
+            border-left: 5px solid #3498db;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        .toast-error {
+            background-color: #2b2b2b;
+            color: #f0f0f0;
+            border-left: 5px solid #e74c3c;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        .toast-warning {
+            background-color: #2b2b2b;
+            color: #f0f0f0;
+            border-left: 5px solid #f39c12;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        .profile-image-container {
+                text-align: center;
+                margin-bottom: 1.5rem;
+                padding-top: 2rem;
+                position: relative;
+            }
+            .profile-image-container img {
+                width: 120px;
+                height: 120px;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 3px solid #f0f0f0;
+                cursor: pointer;
+                transition: opacity 0.3s;
+            }
+            .profile-image-container img:hover {
+                opacity: 0.8;
+            }
+            .profile-image-placeholder {
+                width: 120px;
+                height: 120px;
+                border-radius: 50%;
+                border: 3px solid #f0f0f0;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 60px;
+                color: #ddd;
+                cursor: pointer;
+            }
+            .hidden-file-input {
+                display: none;
+            }
+            .profile-edit-btn-small {
+                background: none;
+                border: none;
+                color: #666;
+                font-size: 0.9rem;
+                padding: 0.25rem 0.5rem;
+                margin-left: 0.5rem;
+                cursor: pointer;
+                transition: color 0.3s;
+            }
+            .profile-edit-btn-small:hover {
+                color: #222;
+            }
+            .profile-info h4 {
+                font-size: 1.5rem;
+                font-weight: 600;
+                color: #222;
+                margin-bottom: 0.5rem;
+                text-align: center;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .profile-info .bio {
+                color: #666;
+                font-size: 0.95rem;
+                margin-bottom: 1.5rem;
+                text-align: center;
+            }
+            .profile-stats {
+                display: flex;
+                justify-content: center;
+                gap: 3rem;
+                margin-bottom: 1.5rem;
+                padding-top: 1rem;
+                border-top: 1px solid #e9ecef;
+            }
+            .profile-stat {
+                text-align: center;
+                cursor: pointer;
+            }
+            .profile-stat-label {
+                cursor: pointer;
+            }
+            .profile-stat.stat-clickable:hover .profile-stat-number,
+            .profile-stat.stat-clickable:hover .profile-stat-label {
+                color: #fb641b;
+                transition: color 0.3s;
+            }
+            .profile-stat-number {
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: #222;
+                display: block;
+            }
+            .profile-stat-label {
+                font-size: 0.85rem;
+                color: #666;
+                margin-top: 0.25rem;
+            }
+            .sidebar-section {
+                margin-bottom: 2rem;
+            }
+            .sidebar-section .card {
+                border-radius: 0;
+                border: 1px solid #ececec;
+            }
+            .sidebar-section .card-header {
+                border-bottom: 1px solid #ececef;
+                padding: 1rem;
+            }
+            .sidebar-section h5 {
+                font-size: 1.1rem;
+                font-weight: 600;
+                color: #222;
+                margin-bottom: 0;
+            }
+            .story-mini-item {
+                margin-bottom: 1rem;
+                padding-bottom: 1rem;
+                border-bottom: 1px solid #f0f0f0;
+            }
+            .story-mini-item:last-child {
+                border-bottom: none;
+                margin-bottom: 0;
+            }
+            .story-mini-item h6 {
+                font-size: 0.95rem;
+                font-weight: 600;
+                margin-bottom: 0.25rem;
+                text-transform: none;
+            }
+            .story-mini-item h6 a {
+                text-transform: none;
+            }
+            .story-mini-item .story-date {
+                font-size: 0.85rem;
+                color: #999;
+            }
+            .story-mini-item.extra-item {
+                display: none;
+            }
+            #load-more-liked, #load-more-saved {
+                color: #222;
+                font-size: 0.875rem;
+                font-weight: 600;
+                text-decoration: none;
+                cursor: pointer;
+            }
+            #load-more-liked:hover, #load-more-saved:hover {
+                color: #fb641b;
+                text-decoration: underline;
+            }
+            .author-mini-item {
+                display: flex;
+                align-items: center;
+                margin-bottom: 1rem;
+                padding-bottom: 1rem;
+                border-bottom: 1px solid #f0f0f0;
+            }
+            .author-mini-item:last-child {
+                border-bottom: none;
+                margin-bottom: 0;
+            }
+            .author-mini-item img {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                object-fit: cover;
+                margin-right: 0.75rem;
+            }
+            .author-mini-item .author-name {
+                font-size: 0.9rem;
+                font-weight: 600;
+                color: #222;
+            }
+            .form-group {
+                margin-bottom: 1rem;
+            }
+            .form-group label {
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 0.5rem;
+            }
+            .nav-tabs {
+                border-bottom: 1px solid #dee2e6;
+            }
+            .nav-tabs .nav-link {
+                border: none;
+                color: #666;
+                font-weight: 600;
+                padding: 0.75rem 1rem;
+                text-transform: capitalize;
+            }
+            .nav-tabs .nav-link.active {
+                color: #222;
+                border-bottom: 2px solid #222;
+                background: transparent;
+            }
+        </style>
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-xl navbar-dark bg-dark fixed-top py-0">
+            <div class="container">
+                <a class="navbar-brand fw-normal ls-2" href="/">LINUXBRO</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav2"
+                   aria-controls="nav2" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="nav2">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'our_story' %}">About Us</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'contact' %}">Contact Us</a>
+                        </li>
+                    </ul>
+                </div>
+                {% if user.is_authenticated %}
+                <div class="dropdown">
+                    <a class="nav-link text-white d-flex align-items-center" href="#" id="accountDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        {% if user.author.profile_picture %}
+                        <img src="{{ user.author.profile_picture.url }}" alt="{{ user.username }}" class="rounded-circle me-2" width="30" height="30" style="object-fit: cover;">
+                        {% else %}
+                        <span class="far fa-user-circle me-2 fs-4"></span>
+                        {% endif %}
+                        <span class="dropdown-toggle">{{ user.username|title }}</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="accountDropdown">
+                        <li><a class="dropdown-item" href="{% url 'my_profile' %}"><span class="fas fa-user me-2"></span>My Profile</a></li>
+                        <li><a class="dropdown-item" href="{% url 'filter-search-results-slug' 'saved' %}"><span class="fas fa-bookmark me-2"></span>Saved Reads</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="{% url 'logout' %}"><span class="fas fa-sign-out-alt me-2"></span>Logout</a></li>
+                    </ul>
+                </div>
+                {% else %}
+                <a class="btn btn-sm my-2 my-sm-0 btn-outline-secondary" type="button" data-bs-toggle="modal" data-bs-target="#authModal">Login</a>
+                {% endif %}
+            </div>
+        </nav>
+        <main class="main" id="top">
+            <div class="preloader" id="preloader" data-preloader>
+                <div class="preloader-wrapper big active" data-preloader>
+                    <div class="spinner-layer spinner-white-only">
+                        <div class="circle-clipper left">
+                            <div class="circle"></div>
+                        </div>
+                        <div class="gap-patch">
+                            <div class="circle"></div>
+                        </div>
+                        <div class="circle-clipper right">
+                            <div class="circle"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <section class="py-0 overflow-hidden bg-1100" style="padding-top: 76px;" data-zanim-timeline="{}" data-zanim-trigger="scroll">
+                <div class="position-relative pt-10 pb-8">
+                    <div class="header-text text-center">
+                        <div class="overflow-hidden">
+                            <h1 class="display-3 fs-7 text-white fw-lighter ls-2" data-zanim-xs='{"duration":2,"delay":0}'>
+                                My Profile
+                            </h1>
+                        </div>
+                        <div class="overflow-hidden">
+                            <div class="d-flex justify-content-center" data-zanim-xs='{"duration":2,"delay":0.1}'>
+                                <nav aria-label="breadcrumb">
+                                    <ol class="breadcrumb text-uppercase ls-2">
+                                        <li class="breadcrumb-item"><a class="text-400 hover-color-white" href="{% url 'home' %}">Home</a></li>
+                                        <li class="breadcrumb-item active text-white" aria-current="page">Profile</li>
+                                    </ol>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-7 mb-4 mb-lg-0">
+                            <!-- Profile Information -->
+                            <div class="card profile-sidebar" style="width: 100%;">
+                                <div class="profile-image-container">
+                                    {% if author.profile_picture %}
+                                    <img src="{{ author.profile_picture.url }}" alt="{{ author.full_name }}" id="profileImage">
+                                    {% else %}
+                                    <span class="far fa-user-circle profile-image-placeholder" id="profileImage"></span>
+                                    {% endif %}
+                                    <input type="file" id="profilePictureInput" class="hidden-file-input" accept="image/*">
+                                </div>
+                                <div class="profile-info">
+                                    <h4>
+                                        {{ author.full_name|title|default:author.user.username|title }}
+                                        <button class="profile-edit-btn-small" data-bs-toggle="modal" data-bs-target="#editProfileModal" title="Edit Profile">
+                                            <span class="fas fa-edit"></span>
+                                        </button>
+                                    </h4>
+                                    {% if author.bio %}
+                                    <p class="bio">{{ author.bio }}</p>
+                                    {% endif %}
+                                    <div class="profile-stats">
+                                        <div class="profile-stat stat-clickable" data-bs-toggle="modal" data-bs-target="#followingModal">
+                                            <span class="profile-stat-number">{{ followed_authors.count }}</span>
+                                            <span class="profile-stat-label">Following</span>
+                                        </div>
+                                        <div class="profile-stat">
+                                            <span class="profile-stat-number">{{ saved_stories.count }}</span>
+                                            <span class="profile-stat-label">Saved Reads</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+ 
+                            <!-- Liked Stories and Saved Stories Combined -->
+                            <div class="card sidebar-section" style="width: 100%;">
+                                <div class="card-header">
+                                    <ul class="nav nav-tabs" id="storiesTabs" role="tablist">
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link active" id="liked-tab" data-bs-toggle="tab" data-bs-target="#liked" type="button" role="tab" aria-controls="liked" aria-selected="true">
+                                                Liked Stories
+                                            </button>
+                                        </li>
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link" id="saved-tab" data-bs-toggle="tab" data-bs-target="#saved" type="button" role="tab" aria-controls="saved" aria-selected="false">
+                                                Saved Stories
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="card-body">
+                                    <div class="tab-content" id="storiesTabContent">
+                                        <div class="tab-pane fade show active" id="liked" role="tabpanel" aria-labelledby="liked-tab">
+                                            {% if liked_stories %}
+                                            <div id="liked-stories-list">
+                                                {% for story in liked_stories %}
+                                                <div class="story-mini-item {% if forloop.counter > 3 %}extra-item{% endif %}">
+                                                    <h6><a href="{% url 'blog' story.uuid %}" class="text-black" style="text-transform: none;">{{ story.title }}</a></h6>
+                                                    <div class="story-date">{{ story.publication_date|date:"j M, Y" }}</div>
+                                                </div>
+                                                {% endfor %}
+                                            </div>
+                                            {% if liked_stories|length > 3 %}
+                                            <div class="text-center mt-3">
+                                                <a href="#!" id="load-more-liked" class="small fw-semibold">View more liked stories</a>
+                                            </div>
+                                            {% endif %}
+                                            {% else %}
+                                            <p class="text-muted">No liked stories yet.</p>
+                                            {% endif %}
+                                        </div>
+                                        <div class="tab-pane fade" id="saved" role="tabpanel" aria-labelledby="saved-tab">
+                                            {% if saved_stories %}
+                                            <div id="saved-stories-list">
+                                                {% for saved_story in saved_stories %}
+                                                <div class="story-mini-item {% if forloop.counter > 3 %}extra-item{% endif %}">
+                                                    <h6><a href="{% url 'blog' saved_story.story.uuid %}" class="text-black" style="text-transform: none;">{{ saved_story.story.title }}</a></h6>
+                                                    <div class="story-date">{{ saved_story.story.publication_date|date:"j M, Y" }}</div>
+                                                </div>
+                                                {% endfor %}
+                                            </div>
+                                            {% if saved_stories|length > 3 %}
+                                            <div class="text-center mt-3">
+                                                <a href="#!" id="load-more-saved" class="small fw-semibold">View more saved stories</a>
+                                            </div>
+                                            {% endif %}
+                                            {% else %}
+                                            <p class="text-muted">No saved stories yet.</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-5 ps-lg-7">
+                            <div class="form-group">
+                                <form method="get" action="{% url 'filter-search-results' %}">
+                                    <input class="form-control" type="text" name="q" placeholder="Search..." />
+                                </form>
+                            </div>
+                            <h4 class="mt-4 mb-3 fw-normal">Popular Posts</h4>
+                            {% for story in popular_stories %}
+                            <div class="d-flex mb-3">
+                                <a href="{% url 'blog' story.uuid %}">
+                                <img class="rounded" src="../assets/img/projects/13.jpg" width="120" alt="" />
+                                </a>
+                                <div class="flex-1 ms-3">
+                                    <h5 class="lh-sm mt-0 text-transform-none fs-0 mb-1 fw-semi-bold font-base">
+                                        <a class="text-900" href="{% url 'blog' story.uuid %}">{{story.title}}</a>
+                                    </h5>
+                                    <p class="text-600 mb-0">{{ story.publication_date|date:"j M, Y" }}</p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            <h4 class="mt-5 mb-3 fw-normal">Popular Tags</h4>
+                            {% for tag in tags %}
+                            <a class="btn btn-dark btn-sm hvr-sweep-top me-1 mb-1" href="{% url 'filter-search-results-slug' tag.name %}">{{tag.name}}</a>
+                            {% endfor %}
+                            <h4 class="mt-5 mb-3 fw-normal">Categories</h4>
+                            <ul class="list-unstyled">
+                                {% for obj in categories %}
+                                <li class="mb-2">
+                                    <a class="text-800" href="{% url 'filter-search-results-slug' obj.name %}">
+                                    <span class="fas fa-angle-right me-2" data-fa-transform="shrink-3"></span>{{obj.name}}
+                                    </a>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <!-- Edit Profile Modal -->
+        <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editProfileModalLabel">Edit Profile</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="profileEditForm" method="post" action="{% url 'author_edit' %}" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="id_full_name">Full Name</label>
+                                <input type="text" class="form-control" id="id_full_name" name="full_name" value="{{ author.full_name|default:'' }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="id_bio">Bio</label>
+                                <textarea class="form-control" id="id_bio" name="bio" rows="4">{{ author.bio|default:'' }}</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="id_website">Website</label>
+                                <input type="url" class="form-control" id="id_website" name="website" value="{{ author.website|default:'' }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="id_twitter_handle">Twitter Handle</label>
+                                <input type="text" class="form-control" id="id_twitter_handle" name="twitter_handle" value="{{ author.twitter_handle|default:'' }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="id_linkedin_profile">LinkedIn Profile</label>
+                                <input type="url" class="form-control" id="id_linkedin_profile" name="linkedin_profile" value="{{ author.linkedin_profile|default:'' }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="id_sex">Gender</label>
+                                <select class="form-control" id="id_sex" name="sex">
+                                    <option value="">Select...</option>
+                                    <option value="M" {% if author.sex == 'M' %}selected{% endif %}>Male</option>
+                                    <option value="F" {% if author.sex == 'F' %}selected{% endif %}>Female</option>
+                                    <option value="O" {% if author.sex == 'O' %}selected{% endif %}>Other</option>
+                                </select>
+                            </div>
+                            <div class="d-grid gap-2 mt-4">
+                                <button type="submit" class="btn btn-dark">Save Changes</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Following Modal -->
+        <div class="modal fade" id="followingModal" tabindex="-1" aria-labelledby="followingModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="followingModalLabel">Following</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        {% if followed_authors %}
+                        <div class="list-group">
+                            {% for followed_author in followed_authors %}
+                            <div class="d-flex align-items-center mb-3 pb-3 border-bottom">
+                                {% if followed_author.profile_picture %}
+                                <img src="{{ followed_author.profile_picture.url }}" alt="{{ followed_author.full_name }}" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-right: 1rem;">
+                                {% else %}
+                                <span class="far fa-user-circle" style="font-size: 50px; color: #ddd; margin-right: 1rem;"></span>
+                                {% endif %}
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-0">
+                                        <a href="{% url 'author_profile' followed_author.uuid %}" class="text-black text-decoration-none">
+                                            {{ followed_author.full_name|title|default:followed_author.user.username|title }}
+                                        </a>
+                                    </h6>
+                                    {% if followed_author.bio %}
+                                    <small class="text-muted">{{ followed_author.bio|truncatewords:15 }}</small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <p class="text-muted text-center">You are not following anyone yet.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <section class="bg-1100 py-6 pb-9 px-3 px-lg-0">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-4 pe-lg-4 mb-4 mb-lg-0">
+                        <h5 class="text-white mb-3">{{ footer_content.mission_title }}</h5>
+                        <p class="text-700">{{ footer_content.mission_text|linebreaks }}</p>
+                        <ul class="list-inline mb-0">
+                            <li class="list-inline-item me-0"><a class="text-900 hover-color-white pe-2" href="{{ footer_content.facebook_url }}"><span class="fab fa-facebook-f"></span></a></li>
+                            <li class="list-inline-item me-0"><a class="text-900 hover-color-white px-2" href="{{ footer_content.twitter_url }}"><span class="fab fa-twitter"></span></a></li>
+                            <li class="list-inline-item me-0"><a class="text-900 hover-color-white px-2" href="{{ footer_content.linkedin_url }}"><span class="fab fa-linkedin-in"></span></a></li>
+                            <li class="list-inline-item me-0"><a class="text-900 hover-color-white px-2" href="{{ footer_content.github_url }}"><span class="fab fa-github"></span></a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-8">
+                        <div class="row">
+                            <div class="col-6 col-md-3 ps-lg-4 mb-4 mb-lg-0">
+                                <h5 class="text-white mb-3">Company</h5>
+                                <ul class="list-unstyled mb-0">
+                                    <li class="mb-1"><a class="text-700 hover-color-white" href="{% url 'our_story' %}">About</a></li>
+                                    <li class="mb-1"><a class="text-700 hover-color-white" href="{% url 'contact' %}">Contact</a></li>
+                                    <li class="mb-1"><a class="text-700 hover-color-white" href="{% url 'home' %}">Blog</a></li>
+                                </ul>
+                            </div>
+                            <div class="col-6 col-md-3 ps-4 mb-4 mb-lg-0">
+                                <h5 class="text-white mb-3">Resources</h5>
+                                <ul class="list-unstyled mb-0">
+                                    <li class="mb-1"><a class="text-700 hover-color-white" href="{% url 'home' %}">Tutorials</a></li>
+                                    <li class="mb-1"><a class="text-700 hover-color-white" href="{% url 'home' %}">Stories</a></li>
+                                    {% if user.is_authenticated %}
+                                    <li class="mb-1"><a class="text-700 hover-color-white" href="{% url 'my_profile' %}">My Profile</a></li>
+                                    <li class="mb-1"><a class="text-700 hover-color-white" href="{% url 'filter-search-results-slug' 'saved' %}">Saved Reads</a></li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                            <div class="col-md-6 ps-md-4">
+                                <h5 class="text-white mb-3">LATEST BLOGS</h5>
+                                <ul class="list-unstyled mb-0">
+                                    {% for story in popular_stories|slice:":3" %}
+                                    <li class="mb-3">
+                                        <a class="text-700 hover-color-white" href="{% url 'blog' story.uuid %}">{{ story.title }}</a>
+                                        <p class="text-900 hover-color-white mb-0">{{ story.publication_date|date:"M d, Y" }}</p>
+                                    </li>
+                                    {% empty %}
+                                    <li class="mb-3">
+                                        <p class="text-700 mb-0">No blog posts yet.</p>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- end of .container-->
+        </section><!-- <section> close ============================-->
+        <!-- ============================================-->
+        <footer class="footer text-center bg-black py-3 position-absolute w-100 bottom-0">
+            <div class="container">
+                <div class="row justify-content-between">
+                    <div class="col-12 col-md-auto mb-1 mb-md-0">
+                        <p class="mb-0">Linux Bro &copy; {% now "Y" %}<span class="mx-2">|</span><span class="text-900 hover-color-white"> Empowering Tech Enthusiasts</span></p>
+                    </div>
+                    <div class="col-12 col-md-auto">
+                        <p class="mb-0">Made with<span class="fas fa-heart mx-2"></span>by <a class="footer-link" href="{% url 'our_story' %}" target="_blank">Linux Bro Team</a></p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        <script src="{% static 'v2/vendors/popper/popper.min.js'%}"></script>
+        <script src="{% static 'v2/vendors/bootstrap/bootstrap.min.js'%}"></script>
+        <script src="{% static 'v2/vendors/anchorjs/anchor.min.js'%}"></script>
+        <script src="{% static 'v2/vendors/is/is.min.js'%}"></script>
+        <script src="{% static 'v2/vendors/fontawesome/all.min.js'%}"></script>
+        <script src="{% static 'v2/vendors/lodash/lodash.min.js'%}"></script>
+        <script src="{% static 'v2/vendors/imagesloaded/imagesloaded.pkgd.min.js'%}"></script>
+        <script src="{% static 'v2/vendors/gsap/gsap.js'%}"></script>
+        <script src="{% static 'v2/vendors/gsap/customEase.js'%}"></script>
+        <script src="{% static 'v2/vendors/bigpicture/BigPicture.js'%}"></script>
+        <script src="{% static 'v2/vendors/countup/countUp.umd.js'%}"></script>
+        <script src="{% static 'v2/vendors/progressbar/progressbar.min.js'%}"></script>
+        <script src="{% static 'v2/vendors/hover-dir/hoverDir.min.js'%}"></script>
+        <script src="{% static 'v2/vendors/isotope-layout/isotope.pkgd.min.js'%}"></script>
+        <script src="{% static 'v2/vendors/isotope-packery/packery-mode.pkgd.min.js'%}"></script>
+        <script src="{% static 'v2/vendors/swiper/swiper-bundle.min.js'%}"></script>
+        <script src="{% static 'v2/js/theme.js'%}"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+        <script>
+        toastr.options = { 
+            "closeButton": false, 
+            "debug": false, 
+            "newestOnTop": true,
+            "progressBar": false, 
+            "positionClass": "toast-top-right", 
+            "preventDuplicates": true,
+            "onclick": null, 
+            "showDuration": "300", 
+            "hideDuration": "1000", 
+            "timeOut": "2000",
+            "extendedTimeOut": "1000", 
+            "showEasing": "swing", 
+            "hideEasing": "linear",
+            "showMethod": "fadeIn", 
+            "hideMethod": "fadeOut" 
+        };
+            
+            $(document).ready(function() {
+                // Handle profile edit form submission
+                $('#profileEditForm').on('submit', function(e) {
+                    e.preventDefault();
+                    var formData = new FormData(this);
+                    
+                    $.ajax({
+                        url: $(this).attr('action'),
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        success: function(response) {
+                        if (response.message || response.success) {
+                            toastr.success("Profile updated successfully!");
+                            setTimeout(function() {
+                                location.reload();
+                            }, 1000);
+                        }
+                    },
+                    error: function(xhr) {
+                        var errorMsg = 'An error occurred. Please try again.';
+                        if (xhr.responseJSON) {
+                            if (xhr.responseJSON.error) {
+                                errorMsg = xhr.responseJSON.error;
+                            } else if (xhr.responseJSON.errors) {
+                                errorMsg = 'Error: ' + JSON.stringify(xhr.responseJSON.errors);
+                            }
+                        }
+                        toastr.error(errorMsg);
+                    }
+                    });
+                });
+
+                // Profile picture click handler - open file picker
+                $('#profileImage').on('click', function() {
+                    $('#profilePictureInput').click();
+                });
+
+                // Profile picture upload handler
+                $('#profilePictureInput').on('change', function(e) {
+                    var file = e.target.files[0];
+                    if (file) {
+                        var formData = new FormData();
+                        formData.append('profile_picture', file);
+                        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+                        // Show preview
+                        var reader = new FileReader();
+                        reader.onload = function(e) {
+                            var img = $('#profileImage');
+                            if (img.is('img')) {
+                                img.attr('src', e.target.result);
+                            } else {
+                                // Replace placeholder with image
+                                img.replaceWith('<img src="' + e.target.result + '" alt="Profile" id="profileImage" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid #f0f0f0; cursor: pointer; transition: opacity 0.3s;">');
+                            }
+                        };
+                        reader.readAsDataURL(file);
+
+                        // Upload via AJAX
+                        $.ajax({
+                            url: "{% url 'author_edit' %}",
+                            type: 'POST',
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            success: function(response) {
+                                if (response.message || response.success) {
+                                    toastr.success("Profile picture updated successfully!");
+                                    // Reload page after a short delay to show updated image
+                                    setTimeout(function() {
+                                        location.reload();
+                                    }, 1000);
+                                }
+                            },
+                            error: function(xhr) {
+                                var errorMsg = 'An error occurred. Please try again.';
+                                if (xhr.responseJSON) {
+                                    if (xhr.responseJSON.error) {
+                                        errorMsg = xhr.responseJSON.error;
+                                    } else if (xhr.responseJSON.errors) {
+                                        errorMsg = 'Error: ' + JSON.stringify(xhr.responseJSON.errors);
+                                    }
+                                }
+                                toastr.error(errorMsg);
+                            }
+                        });
+                    }
+                });
+
+                // Load More Liked Stories - same as blog detail page
+                $('#load-more-liked').on('click', function(e) {
+                    e.preventDefault();
+                    var hiddenItems = $('#liked-stories-list .extra-item');
+                    hiddenItems.removeClass('extra-item');
+                    $(this).hide();
+                });
+
+                // Load More Saved Stories - same as blog detail page
+                $('#load-more-saved').on('click', function(e) {
+                    e.preventDefault();
+                    var hiddenItems = $('#saved-stories-list .extra-item');
+                    hiddenItems.removeClass('extra-item');
+                    $(this).hide();
+                });
+            });
+        </script>
+    </body>
+</html>
+

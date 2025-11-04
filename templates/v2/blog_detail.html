@@ -1,0 +1,1134 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+   <head>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>Linuxbro</title>
+      <link rel="apple-touch-icon" sizes="180x180" href="{% static 'v2/img/favicons/apple-touch-icon.png'%}">
+      <link rel="icon" type="image/png" sizes="32x32" href="{% static 'v2/img/favicons/favicon-32x32.png'%}">
+      <link rel="icon" type="image/png" sizes="16x16" href="{% static 'v2/img/favicons/favicon-16x16.png'%}">
+      <link rel="shortcut icon" type="image/x-icon" href="{% static 'v2/img/favicons/favicon.ico'%}">
+      <link rel="manifest" href="{% static 'v2/img/favicons/manifest.json'%}">
+      <meta name="msapplication-TileImage" content="{% static 'v2/img/favicons/mstile-150x150.png'%}">
+      <meta name="theme-color" content="#ffffff">
+      <link href="{% static 'v2/vendors/glightbox/glightbox.min.css'%}" rel="stylesheet">
+      <link href="{% static 'v2/css/theme.min.css'%}" rel="stylesheet" />
+      <link href="{% static 'v2/css/user.min.css'%}" rel="stylesheet" />
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+      <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@100;200;300;400;500;600;700;900&amp;family=Roboto:wght@100;300;400;500;700;900&amp;display=swap" rel="stylesheet">
+      <style>
+         @media (min-width: 768px) {
+         section {
+         padding-top: 3.5rem;
+         padding-bottom: 7.5rem;
+         }
+         }
+         /* Toastr Custom Styles */
+         .toast-success {
+         background-color: #000000;
+         color: #f0f0f0;
+         border-left: 5px solid #fb641b;
+         font-family: 'Inter', sans-serif;
+         font-weight: 500;
+         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+         }
+         .toast-info {
+         background-color: #000000;
+         color: #f0f0f0;
+         border-left: 5px solid #3498db;
+         }
+         .toast-warning {
+         background-color: #2b2b2b;
+         color: #f0f0f0;
+         border-left: 5px solid #f39c12;
+         }
+         .toast-error {
+         background-color: #2b2b2b;
+         color: #f0f0f0;
+         border-left: 5px solid #e74c3c;
+         }
+         /* Modal and Auth Custom Styles */
+         .modal-content {
+         border-radius: 0 10px 30px rgba(17, 24, 39, 0.08);
+         box-shadow: 0 10px 30px rgba(17, 24, 39, 0.08)
+         }
+         .modal-header {
+         border: 0;
+         padding-top: 1.25rem;
+         padding-bottom: .25rem
+         }
+         .modal-title {
+         margin: 0 auto;
+         font-weight: 700
+         }
+         .auth-btn {
+         background: #fff;
+         border: 1px solid #e6e9ef;
+         box-shadow: 0 4px 14px rgba(13, 18, 29, 0.04);
+         height: 46px;
+         border-radius: 10px
+         }
+         .auth-btn img {
+         filter: none;
+         }
+         .auth-note {
+         color: var(--muted);
+         font-size: .85rem
+         }
+         .create-note {
+         margin-top: 1rem;
+         font-size: .9rem;
+         color: var(--muted)
+         }
+         .create-note strong {
+         color: #111827
+         }
+         /* small responsive tweak */
+         @media (max-width:420px) {
+         .modal-body {
+         padding-left: 1.25rem;
+         padding-right: 1.25rem
+         }
+         }
+         .clap-icon svg, .clap-icon i {
+         display: inline-block;
+         transition: transform 0.3s ease, color 0.3s ease;
+         }
+         /* ❤️ Like pop animation */
+         @keyframes pop-like {
+         0% { transform: scale(1); }
+         40% { transform: scale(1.4);}
+         60% { transform: scale(1.2); }
+         100% { transform: scale(1);}
+         }
+         /* 🤍 Unlike fade animation */
+         @keyframes fade-unlike {
+         0% { transform: scale(1); opacity: 1;}
+         40% { transform: scale(0.9); opacity: 0.6;}
+         100% { transform: scale(1); opacity: 1;}
+         }
+         /* Apply animations */
+         .animate-like {
+         animation: pop-like 0.4s ease-in-out forwards;
+         transform: scale(1.1);
+         }
+         .animate-unlike {
+         animation: fade-unlike 0.4s ease-in-out forwards;
+         transform: scale(1.1);
+         }
+         .clap-icon:hover svg,
+         .clap-icon:hover i {
+         transform: scale(1.1);
+         }
+         #load-more-comments {
+         color: #303030 !important;
+         cursor: pointer;
+         transition: 0.2s;
+         }
+         #load-more-comments:hover {
+         text-decoration: underline;
+         }
+         /* Equal height cards for related posts */
+         .related-posts-row .col-md-6,
+         .related-posts-row .col-lg-4 {
+         display: flex;
+         }
+         .related-post-card {
+         width: 100%;
+         display: flex;
+         flex-direction: column;
+         }
+         .related-post-card .p-3 {
+         flex: 1;
+         display: flex;
+         flex-direction: column;
+         }
+         .related-post-card .card-content {
+         flex: 1;
+         }
+         /* Ensure constant image height */
+         .related-post-card > a {
+         display: block;
+         height: 200px;
+         overflow: hidden;
+         border: 1px solid #dee2e6;
+         border-bottom: none;
+         border-radius: 0.375rem 0.375rem 0 0;
+         }
+         .related-post-card > a img {
+         object-fit: cover;
+         height: 200px;
+         width: 100%;
+         display: block;
+         }
+         /* Author image styling */
+         .related-post-card .author-avatar {
+         display: inline-block;
+         width: 40px;
+         height: 40px;
+         border-radius: 50%;
+         overflow: hidden;
+         border: 1px solid #dee2e6;
+         flex-shrink: 0;
+         }
+         .related-post-card .author-avatar img {
+         width: 100%;
+         height: 100%;
+         object-fit: cover;
+         border: none;
+         }
+         .related-post-card .author-avatar .fa-user-circle {
+         display: block;
+         width: 100%;
+         height: 100%;
+         line-height: 40px;
+         text-align: center;
+         font-size: 2.5rem;
+         }
+         /* Comment icon styling */
+         .related-post-card .fa-comment {
+         color: #6c757d;
+         font-size: 0.875rem;
+         }
+         /* Limit paragraph to 3 lines for consistent card height */
+         .related-post-card .card-content p {
+         display: -webkit-box;
+         -webkit-line-clamp: 3;
+         -webkit-box-orient: vertical;
+         overflow: hidden;
+         text-overflow: ellipsis;
+         line-height: 1.5;
+         min-height: 4.5em; /* 3 lines * 1.5 line-height */
+         margin-bottom: 0.5rem;
+         }
+         /* Reduce space between read more and author section */
+         .related-post-card .card-content a.text-dark {
+         margin-bottom: 0.75rem !important;
+         }
+         .related-post-card hr {
+         margin-top: 0.75rem;
+         margin-bottom: 0.75rem;
+         }
+         .btn-play {
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+            font-size: 1.5rem;
+         }
+         .btn-play:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.1);
+         }
+         .video-content-block {
+            position: relative;
+            min-height: 400px;
+            background-position: center;
+            background-size: cover;
+            background-repeat: no-repeat;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            margin: 2rem 0;
+         }
+         .video-content-block::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1;
+         }
+         .video-content-block .video-content {
+            position: relative;
+            z-index: 2;
+         }
+         .ad-container {
+            margin: 1.5rem 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+         }
+         .ad-container iframe,
+         .ad-container ins,
+         .ad-container div {
+            display: block;
+            max-width: 100%;
+            margin: 0 auto;
+         }
+         /* Common ad sizes will work automatically */
+         /* AdSense and Meta Ads handle their own dimensions */
+      </style>
+      <script src="{% static 'v2/vendors/overlayscrollbars/OverlayScrollbars.min.js'%}"></script>
+   </head>
+   <body>
+      <nav class="navbar navbar-expand-xl navbar-dark bg-dark py-0">
+         <div class="container ">
+            <a class="navbar-brand fw-normal ls-2" href="/">LINUXBRO</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav2"
+               aria-controls="nav2" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="nav2">
+                  <ul class="navbar-nav me-auto">
+                     <li class="nav-item">
+                        <a class="nav-link" href="{% url 'our_story' %}">About Us</a>
+                     </li>
+                     <li class="nav-item">
+                        <a class="nav-link" href="{% url 'contact' %}">Contact Us</a>
+                     </li>
+               </ul>
+            </div>
+            {% if user.is_authenticated %}
+            <div class="dropdown">
+                <a class="nav-link text-white d-flex align-items-center" href="#" id="accountDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    {% if user.author.profile_picture %}
+                    <img src="{{ user.author.profile_picture.url }}" alt="{{ user.username }}" class="rounded-circle me-2" width="30" height="30" style="object-fit: cover;">
+                    {% else %}
+                    <span class="far fa-user-circle me-2 fs-4"></span>
+                    {% endif %}
+                    <span class="dropdown-toggle">{{ user.username|title }}</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="accountDropdown">
+                    <li><a class="dropdown-item" href="{% url 'my_profile' %}"><span class="fas fa-user me-2"></span>My Profile</a></li>
+                    <li><a class="dropdown-item" href="{% url 'filter-search-results-slug' 'saved' %}"><span class="fas fa-bookmark me-2"></span>Saved Reads</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="{% url 'logout' %}"><span class="fas fa-sign-out-alt me-2"></span>Logout</a></li>
+                </ul>
+            </div>
+            {% else %}
+            <a class="btn btn-sm my-2 my-sm-0 btn-outline-secondary" type="button" data-bs-toggle="modal"
+               data-bs-target="#authModal">Login</a>
+            {% endif %}
+         </div>
+      </nav>
+      <main class="main" id="top">
+         <div class="preloader" id="preloader" data-preloader>
+            <div class="preloader-wrapper big active" data-preloader>
+               <div class="spinner-layer spinner-white-only">
+                  <div class="circle-clipper left">
+                     <div class="circle"></div>
+                  </div>
+                  <div class="gap-patch">
+                     <div class="circle"></div>
+                  </div>
+                  <div class="circle-clipper right">
+                     <div class="circle"></div>
+                  </div>
+               </div>
+            </div>
+         </div>
+         <section class="text-center overflow-hidden py-0" data-zanim-timeline="{}" data-zanim-trigger="scroll">
+            <div class="bg-holder overlay parallax" style="background-image:url(../assets/img/headers/header-9.jpg);">
+            </div>
+         </section>
+         <section>
+            <div class="container">
+               <div class="row">
+                  <div class="col-lg-7 mb-4 mb-lg-0">
+                     {% if story.cover_image %}
+                     <img class="img-fluid rounded" src="{{ story.cover_image.url}}" alt="" />
+                     {% endif %}
+                     <h2 class="mt-4 text-transform-none fw-medium">{{ story.title }}</h2>
+                     <div class="mb-3">
+                        By <a class="text-700" href="{% url 'author_profile' story.author.uuid %}">{{ story.author.user.username | title }}</a>
+                        <span class="mx-2 text-700">|</span>
+                        <a class="text-700" href="blog.html#!">{{ story.publication_date|date:"j M, Y" }}</a>
+                        <span class="mx-2 text-700">|</span>
+                        <a class="text-700" href="#comments" id="comment-count-link">{{comment_count}}
+                        Comments</a>
+                        <span class="mx-2 text-700">|</span>
+                        <a class="text-700" href="{% url 'blog' story.uuid %}" id="fav_count">{{like_count}}
+                        Favorites</a>
+                        <span class="mx-2 text-700">|</span>
+                        <a class="text-700" href="blog.html#!">{{story.category | title }}</a>
+                     </div>
+                     {% for block in content_blocks %}
+                     {% if block.content_type == 'paragraph' %}
+                     <p>{{ block.text_content }}</p>
+                     {% elif block.content_type == 'image' %}
+                     {% if block.image_content %}
+                     <div class="col-6 pe-1">
+                        <a href="{{ block.image_content.url }}" data-gallery="posts">
+                        <img class="img-fluid rounded mb-2" src="{{ block.image_content.url }}" alt="" />
+                        </a>
+                     </div>
+                     {% endif %}
+                     {% elif block.content_type == 'blockquote' %}
+                     <p
+                        class="fs-1 ps-3 ps-md-4 border-start border-500 fst-italic py-3 my-4 text-700">
+                        {{ block.text_content }}
+                     </p>
+                     {% elif block.content_type == 'youtube' %}
+                     {% if block.video_url %}
+                     {% with video_id=block.get_youtube_video_id %}
+                     {% if video_id %}
+                     <div class="video-content-block mb-4 mt-4" style="background-image: url('https://img.youtube.com/vi/{{ video_id }}/maxresdefault.jpg');">
+                        <div class="video-content d-flex align-items-center justify-content-center" style="min-height: 400px;">
+                           <div class="text-center">
+                              <a class="video-modal btn btn-outline-white hvr-sweep-top rounded-circle p-0 btn-play mx-auto" 
+                                 href="#!" 
+                                 data-bigpicture='{"ytSrc":"{{ video_id }}","ytNoCookie":false,"allowfullscreen":true}'>
+                                 <span class="fas fa-play" data-fa-transform="grow-1 right-2"></span>
+                              </a>
+                              {% if block.text_content %}
+                              <p class="text-white mt-3 mb-0">{{ block.text_content }}</p>
+                              {% endif %}
+                           </div>
+                        </div>
+                     </div>
+                     {% else %}
+                     <div class="alert alert-warning">
+                        <p class="mb-0"><strong>Invalid YouTube video URL:</strong> {{ block.video_url }}</p>
+                        <p class="mb-0 small mt-2">Please enter a valid YouTube video ID (e.g., "M06YHZ9YUdI") or URL (e.g., "https://youtu.be/M06YHZ9YUdI").</p>
+                     </div>
+                     {% endif %}
+                     {% endwith %}
+                     {% endif %}
+                     {% endif %}
+                     {% endfor %}
+                     <div class="row align-items-center justify-content-between">
+                        <div class="col-auto d-flex align-items-center">
+                           <p class="fw-bold mb-0 me-2">Share on</p>
+                           <ul class="list-inline mb-0">
+                              <li class="list-inline-item border-end pe-1">
+                                 <a class="text-900 px-2" href="#"><span class="fab fa-facebook-f"
+                                    data-fa-transform="grow-5"></span></a>
+                              </li>
+                              <li class="list-inline-item border-end pe-1">
+                                 <a class="text-900 px-2" href="#"><span class="fab fa-twitter"
+                                    data-fa-transform="grow-5"></span></a>
+                              </li>
+                              <li class="list-inline-item">
+                                 <a class="text-900 px-2" href="#"><span class="fab fa-linkedin-in"
+                                    data-fa-transform="grow-5"></span></a>
+                              </li>
+                           </ul>
+                        </div>
+                        <div class="col-auto d-flex align-items-center ">
+                           <p class="fw-bold mb-0 me-2">Save as</p>
+                           <ul class="list-inline mb-0">
+                              {% if not user.is_authenticated %}
+                              <li class="list-inline-item border-end pe-1">
+                                 <a class="text-900 px-2" href="#" type="button" data-bs-placement="top" title="Favorites" data-bs-toggle="modal"
+                                    data-bs-target="#authModal"><span class="far fa-heart"
+                                    data-fa-transform="grow-5"></span></a>
+                              </li>
+                              <li class="list-inline-item pe-1">
+                                 <a class="text-900 px-2" href="#" type="button" data-bs-toggle="modal"
+                                    data-bs-target="#authModal" data-bs-placement="top" title="Bookmark">
+                                 <span class="far fa-bookmark" data-fa-transform="grow-5"
+                                    data-story-id="{{ story.id }}"></span>
+                                 </a>
+                              </li>
+                              {% else %}
+                              <li class="list-inline-item border-end pe-1">
+                                 <a class="text-900 px-2 clap-icon" href="#" type="button" data-bs-toggle="tooltip" data-bs-placement="top" title="Favorites">
+                                 {% if is_liked %}
+                                 <span class="fas fa-heart text-danger" data-fa-transform="grow-5"></span>
+                                 {% else %}
+                                 <span class="far fa-heart" data-fa-transform="grow-5"></span>
+                                 {% endif %}
+                                 </a>
+                              </li>
+                              <li class="list-inline-item pe-1">
+                                 <a class="bookmark-icon text-900 px-2" href="#" type="button"
+                                    data-bs-toggle="tooltip" data-bs-placement="top" title="Bookmark">
+                                 {% if is_saved_story %}
+                                 <span class="fas fa-bookmark text-info" data-fa-transform="grow-5"
+                                    data-story-id="{{ story.id }}"></span>
+                                 {% else %}
+                                 <span class="far fa-bookmark animate-like" data-fa-transform="grow-5"
+                                    data-story-id="{{ story.id }}"></span>
+                                 {% endif %}
+                                 </a>
+                              </li>
+                              {% endif %}
+                           </ul>
+                        </div>
+                     </div>
+                     <div class="row">
+                        <div class="col-12">
+                           <h4 class="font-base border-bottom pb-2 my-4 fw-normal" id="comments">
+                              {{ comment_count }} Comments
+                           </h4>
+                           <div id="comment-list">
+                              {% for comment in comments %}
+                              {% if not comment.parent %}
+                              <div class="comment-item {% if forloop.counter > 2 %}d-none extra-comment{% endif %}">
+                                 {% include "v2/partials/comment.html" with comment=comment user=user %}
+                              </div>
+                              {% endif %}
+                              {% endfor %}
+                           </div>
+                           {% if comments.count > 2 %}
+                           <div class="text-center mt-3">
+                              <a href="#!" id="load-more-comments" class="text-primary small fw-semibold">
+                              View more comments
+                              </a>
+                           </div>
+                           {% endif %}
+                        </div>
+                        <div class="col-12">
+                           {% if user.is_authenticated %}
+                           <form class="mt-5" id="comment-form">
+                              <h4 class="fw-normal mb-3 font-base">Leave a comment</h4>
+                              <div class="row g-0">
+                                 <div class="col-12 mb-3">
+                                    <div class="form-group">
+                                       <textarea class="form-control" id="comment-text" rows="5"
+                                          placeholder="Your Comment"></textarea>
+                                       <input type="hidden" id="parent_id" name="parent_id" value="" />
+                                    </div>
+                                 </div>
+                                 <div class="d-grid">
+                                    <button class="btn btn-dark hvr-sweep-top" id="submit-comment"
+                                       type="submit">Post</button>
+                                 </div>
+                              </div>
+                           </form>
+                           {% else %}
+                           <div class="mt-5">
+                              <h4 class="fw-normal mb-3 font-base">Leave a comment</h4>
+                              <p class="text-muted">Please <a href="#" data-bs-toggle="modal" data-bs-target="#authModal">login</a> to leave a comment.</p>
+                           </div>
+                           {% endif %}
+                        </div>
+                     </div>
+                  </div>
+                  <div class="col-lg-5 ps-lg-7">
+                     <div class="form-group">
+                        <form method="get" action="{% url 'filter-search-results' %}">
+                            <input class="form-control" type="text" name="q" placeholder="Search..." />
+                        </form>
+                     </div>
+                     {% if ad_spaces.top %}
+                     {% for ad in ad_spaces.top %}
+                     <div class="ad-container mb-4 mt-4">
+                        {{ ad.ad_code|safe }}
+                     </div>
+                     {% endfor %}
+                     {% endif %}
+                     <h4 class="mt-4 mb-3 fw-normal">Popular Posts</h4>
+                     {% for story in popular_stories %}
+                     <div class="d-flex mb-3">
+                        <a href="single-post.html">
+                        <img class="rounded" src="../assets/img/projects/13.jpg" width="120" alt="" />
+                        </a>
+                        <div class="flex-1 ms-3">
+                           <h5
+                              class="lh-sm mt-0 text-transform-none fs-0 mb-1 fw-semi-bold font-base">
+                              <a class="text-900" href="{% url 'blog' story.uuid %}">{{story.title}}</a>
+                           </h5>
+                           <p class="text-600 mb-0">{{ story.publication_date|date:"j M, Y" }}</p>
+                        </div>
+                     </div>
+                     {% endfor %}
+                     {% if ad_spaces.middle %}
+                     {% for ad in ad_spaces.middle %}
+                     <div class="ad-container mb-4 mt-4">
+                        {{ ad.ad_code|safe }}
+                     </div>
+                     {% endfor %}
+                     {% endif %}
+                     <h4 class="mt-5 mb-3 fw-normal">Popular Tags</h4>
+                     {% for tag in tags %}
+                     <a class="btn btn-dark btn-sm hvr-sweep-top me-1 mb-1"
+                        href="{% url 'filter-search-results-slug' tag.name %}">{{tag.name}}</a>
+                     {% endfor %}
+                     <h4 class="mt-5 mb-3 fw-normal">Categories</h4>
+                     <ul class="list-unstyled">
+                        {% for obj in categories %}
+                        <li class="mb-2">
+                           <a class="text-800" href="{% url 'filter-search-results-slug' obj.name %}">
+                           <span class="fas fa-angle-right me-2"
+                              data-fa-transform="shrink-3"></span>{{obj.name}}
+                           </a>
+                        </li>
+                        {% endfor %}
+                     </ul>
+                     {% if ad_spaces.bottom %}
+                     {% for ad in ad_spaces.bottom %}
+                     <div class="ad-container mb-4 mt-4">
+                        {{ ad.ad_code|safe }}
+                     </div>
+                     {% endfor %}
+                     {% endif %}
+                  </div>
+               </div>
+               {% if related_stories %}
+               <div class="row related-posts-row">
+                  <div class="col-12">
+                     <h4 class="fw-normal mb-3 mt-6">Related Posts</h4>
+                  </div>
+                  {% for related_story in related_stories %}
+                  <div class="col-md-6 col-lg-4 mb-4">
+                     <div class="related-post-card">
+                        <a href="{% url 'blog' related_story.uuid %}">
+                           {% if related_story.cover_image %}
+                           <img class="img-fluid rounded-top" src="{{ related_story.cover_image.url }}"
+                              alt="{{ related_story.title }}" />
+                           {% endif %}
+                        </a>
+                        <div class="p-3 border rounded-bottom border-top-0">
+                           <div class="card-content">
+                              <h5 class="font-base text-transform-none fw-medium lh-1">
+                                 <a class="text-black" href="{% url 'blog' related_story.uuid %}">
+                                    {{ related_story.title }}
+                                 </a>
+                              </h5>
+                              <p>
+                                 {% if related_story.content_blocks.first.text_content %}
+                                    {{ related_story.content_blocks.first.text_content }}
+                                 {% else %}
+                                    {{ related_story.subtitle|default:"Read more about this story." }}
+                                 {% endif %}
+                              </p>
+                              <a class="text-dark fw-semi-bold d-inline-block read-more-link"
+                                 href="{% url 'blog' related_story.uuid %}">
+                                 Read more<span class="fas fa-angle-right ms-1 text-900"
+                                 data-fa-transform="down-2"></span>
+                              </a>
+                           </div>
+                           <hr />
+                           <div class="row justify-content-between align-items-center">
+                              <div class="col pe-0">
+                                 <div class="d-flex">
+                                    {% if related_story.author.profile_picture %}
+                                    <a href="{% url 'author_profile' related_story.author.uuid %}" class="author-avatar">
+                                       <img src="{{ related_story.author.profile_picture.url }}"
+                                          alt="{{ related_story.author.full_name }}" />
+                                    </a>
+                                    {% else %}
+                                    <a href="{% url 'author_profile' related_story.author.uuid %}" class="author-avatar">
+                                       <span class="far fa-user-circle text-muted"></span>
+                                    </a>
+                                    {% endif %}
+                                    <div class="flex-1 ms-3">
+                                       <h6 class="mb-0 fw-semi-bold ls-1">
+                                          <a class="text-dark" href="{% url 'author_profile' related_story.author.uuid %}">
+                                             {{ related_story.author.user.username|title }}
+                                          </a>
+                                       </h6>
+                                       <p class="mb-0">{{ related_story.publication_date|date:"j M, Y" }}</p>
+                                    </div>
+                                 </div>
+                              </div>
+                              <div class="col-auto">
+                                 <a class="mb-0 d-flex align-items-center d-block text-800"
+                                    href="{% url 'blog' related_story.uuid %}#comments">
+                                    <span class="me-2">{{ related_story.comment_count|default:0 }}</span>
+                                    <span class="far fa-comment" style="font-size: 0.875rem;"></span>
+                                 </a>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+                  {% endfor %}
+               </div>
+               {% endif %}
+            </div>
+         </section>
+      </main>
+      <section class="bg-1100 py-6 pb-9 px-3 px-lg-0">
+         <div class="container">
+            <div class="row">
+               <div class="col-lg-4 pe-lg-4 mb-4 mb-lg-0">
+                  <h5 class="text-white mb-3">{{ footer_content.mission_title }}</h5>
+                  <p class="text-700">{{ footer_content.mission_text|linebreaks }}</p>
+                  <ul class="list-inline mb-0">
+                     <li class="list-inline-item me-0"><a class="text-900 hover-color-white pe-2" href="{{ footer_content.facebook_url }}"><span class="fab fa-facebook-f"></span></a></li>
+                     <li class="list-inline-item me-0"><a class="text-900 hover-color-white px-2" href="{{ footer_content.twitter_url }}"><span class="fab fa-twitter"></span></a></li>
+                     <li class="list-inline-item me-0"><a class="text-900 hover-color-white px-2" href="{{ footer_content.linkedin_url }}"><span class="fab fa-linkedin-in"></span></a></li>
+                     <li class="list-inline-item me-0"><a class="text-900 hover-color-white px-2" href="{{ footer_content.github_url }}"><span class="fab fa-github"></span></a></li>
+                  </ul>
+               </div>
+               <div class="col-lg-8">
+                  <div class="row">
+                     <div class="col-6 col-md-3 ps-lg-4 mb-4 mb-lg-0">
+                        <h5 class="text-white mb-3">Company</h5>
+                        <ul class="list-unstyled mb-0">
+                           <li class="mb-1"><a class="text-700 hover-color-white" href="{% url 'our_story' %}">About</a></li>
+                           <li class="mb-1"><a class="text-700 hover-color-white" href="{% url 'contact' %}">Contact</a></li>
+                           <li class="mb-1"><a class="text-700 hover-color-white" href="{% url 'home' %}">Blog</a></li>
+                        </ul>
+                     </div>
+                     <div class="col-6 col-md-3 ps-4 mb-4 mb-lg-0">
+                        <h5 class="text-white mb-3">Resources</h5>
+                        <ul class="list-unstyled mb-0">
+                           <li class="mb-1"><a class="text-700 hover-color-white" href="{% url 'home' %}">Tutorials</a></li>
+                           <li class="mb-1"><a class="text-700 hover-color-white" href="{% url 'home' %}">Stories</a></li>
+                           {% if user.is_authenticated %}
+                           <li class="mb-1"><a class="text-700 hover-color-white" href="{% url 'my_profile' %}">My Profile</a></li>
+                           <li class="mb-1"><a class="text-700 hover-color-white" href="{% url 'filter-search-results-slug' 'saved' %}">Saved Reads</a></li>
+                           {% endif %}
+                        </ul>
+                     </div>
+                     <div class="col-md-6 ps-md-4">
+                        <h5 class="text-white mb-3">LATEST BLOGS</h5>
+                        <ul class="list-unstyled mb-0">
+                           {% for story in popular_stories|slice:":3" %}
+                           <li class="mb-3">
+                              <a class="text-700 hover-color-white" href="{% url 'blog' story.uuid %}">{{ story.title }}</a>
+                              <p class="text-900 hover-color-white mb-0">{{ story.publication_date|date:"M d, Y" }}</p>
+                           </li>
+                           {% empty %}
+                           <li class="mb-3">
+                              <p class="text-700 mb-0">No blog posts yet.</p>
+                           </li>
+                           {% endfor %}
+                        </ul>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div><!-- end of .container-->
+      </section><!-- <section> close ============================-->
+      <!-- ============================================-->
+      <footer class="footer text-center bg-black py-3 position-absolute w-100 bottom-0">
+         <div class="container">
+            <div class="row justify-content-between">
+               <div class="col-12 col-md-auto mb-1 mb-md-0">
+                  <p class="mb-0">Linux Bro &copy; {% now "Y" %}<span class="mx-2">|</span><span class="text-900 hover-color-white"> Empowering Tech Enthusiasts</span></p>
+               </div>
+               <div class="col-12 col-md-auto">
+                  <p class="mb-0">Made with<span class="fas fa-heart mx-2"></span>by <a class="footer-link" href="{% url 'our_story' %}" target="_blank">Linux Bro Team</a></p>
+               </div>
+            </div>
+         </div>
+      </footer>
+      <a class="btn-back-to-top" href="single-post.html#top"><img src="../assets/img/line-icons/upload-arrow.svg"
+         width="8" alt=""></a>
+      <!-- Modal  -->
+      <div class="modal fade" id="authModal" tabindex="-1" aria-labelledby="authModalLabel" aria-hidden="true">
+         <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+               <div class="modal-header">
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+               </div>
+               <div class="modal-body text-center px-4">
+                  <h5 id="authModalLabel" class="mb-1 fw-bold text-uppercase ls-2" style="font-size: 0.9rem;">
+                     Log in to <span style="color: #fb641b;">LINUX</span><span class="text-dark">BRO</span>
+                  </h5>
+                  <p class="text-muted mb-3">Choose your preferred sign-in method</p>
+                  <div class="d-grid gap-3">
+                     <a href="{% url 'google_login' %}" class="auth-btn d-flex align-items-center justify-content-center gap-2">
+                     <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg"
+                        width="18" alt="Google icon">
+                     <span class="fw-medium">Continue with Google</span>
+                     </a>
+                     <a href="{% url 'github_login' %}" class="auth-btn d-flex align-items-center justify-content-center gap-2">
+                     <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg"
+                        width="18" alt="GitHub icon">
+                     <span class="fw-medium">Continue with GitHub</span>
+                     </a>
+                     <a href="{% url 'apple_login' %}" class="auth-btn d-flex align-items-center justify-content-center gap-2">
+                     <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/apple/apple-original.svg"
+                        width="18" alt="Apple icon">
+                     <span class="fw-medium">Continue with Apple</span>
+                     </a>
+                     <a href="{% url 'twitter_login' %}" class="auth-btn d-flex align-items-center justify-content-center gap-2">
+                     <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/x.svg" width="18"
+                        alt="X icon">
+                     <span class="fw-medium">Continue with X</span>
+                     </a>
+                  </div>
+                  <p class="create-note text-center">Don't have an account? <strong>We'll create one for you</strong>
+                     automatically when you sign in with any provider.
+                  </p>
+                  <p class="small text-muted mt-2 mb-2">By continuing, you agree to our <a href="#">Terms of
+                     Service</a> and <a href="#">Privacy Policy</a>.
+                  </p>
+               </div>
+            </div>
+         </div>
+      </div>
+      <script src="{% static 'v2/vendors/popper/popper.min.js'%}"></script>
+      <script src="{% static 'v2/vendors/bootstrap/bootstrap.min.js'%}"></script>
+      <script src="{% static 'v2/vendors/anchorjs/anchor.min.js'%}"></script>
+      <script src="{% static 'v2/vendors/is/is.min.js'%}"></script>
+      <script src="{% static 'v2/vendors/glightbox/glightbox.min.js'%}"> </script>
+      <script src="{% static 'v2/vendors/fontawesome/all.min.js'%}"></script>
+      <script src="{% static 'v2/vendors/lodash/lodash.min.js'%}"></script>
+      <script src="{% static 'v2/vendors/imagesloaded/imagesloaded.pkgd.min.js'%}"></script>
+      <script src="{% static 'v2/vendors/gsap/gsap.js'%}"></script>
+      <script src="{% static 'v2/vendors/gsap/customEase.js'%}"></script>
+      <script src="{% static 'v2/vendors/bigpicture/BigPicture.js'%}"></script>
+      <script src="{% static 'v2/js/theme.js'%}"></script>
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+      <script>
+         toastr.options = { "closeButton": false, "debug": false, "newestOnTop": true,
+                 "progressBar": false, "positionClass": "toast-top-right", "preventDuplicates": true,
+                 "onclick": null, "showDuration": "300", "hideDuration": "1000", "timeOut": "2000",
+                 "extendedTimeOut": "1000", "showEasing": "swing", "hideEasing": "linear",
+                 "showMethod": "fadeIn", "hideMethod": "fadeOut" 
+         };
+         $(document).ready(function () {
+             // Saving Story 
+             $(document).on('click', '.bookmark-icon', function (e) {
+                 e.preventDefault();
+                 var icon = $(this).children().first();
+                 console.log(icon)
+                 var storyId = icon.data('story-id');
+                 $.ajax({
+                     type: 'POST',
+                     url: "{% url 'save-story' %}",
+                     data: {
+                     'story_id': storyId,
+                     'csrfmiddlewaretoken': '{{ csrf_token }}'
+                     },
+                     success: function (response) {
+                     if (response.status === 'saved') {
+                         icon.removeClass('far').addClass('fas text-info animate-like');
+                         toastr.success("Story saved successfully!");
+                     } else if (response.status === 'unsaved') {
+                         icon.removeClass('fas text-info animate-dislike').addClass('far');
+                         toastr.info("Story removed from bookmarks!");
+                     } else {
+                         console.log('Unexpected response:', response);
+                     }
+                     },
+                     error: function () {
+                         alert('An error occurred. Please try again.');
+                     }
+                 });
+             });
+             // Liking the story
+             $(document).on('click', '.clap-icon', function (e) {
+                 e.preventDefault();
+                 var icon = $(this).children().first();
+                 console.log("Found icon element:", icon);
+                 var storyId = '{{ story.id }}';
+                 var currentCount = parseInt($('#fav_count').text(), 10);
+                 $.ajax({
+                     url: '{% url "like_story" %}',
+                     type: 'POST',
+                     data: {
+                         'story_id': storyId,
+                         'csrfmiddlewaretoken': '{{ csrf_token }}'
+                     },
+                     success: function (response) {
+                         console.log("Response:", response);
+                         var likeCount = response.like_count;
+                         if (response.liked === true) {
+                             icon.removeClass('far').addClass('fas text-danger animate-like').removeClass('far animate-unlike');
+                             toastr.success("Saved to your favorites ❤️");
+                             $('#fav_count').html((currentCount + 1) + " Favorites");
+                         } else{
+                             icon.removeClass('fas text-danger').addClass('far animate-unlike')
+                             toastr.info("Removed from your favorites");
+                             $('#fav_count').html((currentCount - 1) + " Favorites");
+                         }
+         
+                         setTimeout(() => {
+                             icon.removeClass('animate-like animate-unlike');
+                         }, 400);
+         console.log("Updated icon class:", $icon.attr('class'));
+         
+         // Optional: update like count beside the icon
+         $this.siblings('.like-count').text(likeCount);
+         },
+         error: function (xhr, status, error) {
+         console.log("An error occurred: " + error);
+         }
+         });
+         });
+         });
+         
+         // Track open reply sections
+         var openReplySections = new Set();
+         
+         // Initialize open reply sections on page load
+         $(document).ready(function() {
+             $('.replies:not(.d-none)').each(function() {
+                 var repliesId = $(this).attr('id');
+                 if (repliesId) {
+                     var commentId = repliesId.replace('replies-', '');
+                     openReplySections.add(commentId);
+                 }
+             });
+         });
+         
+         // Function to restore open reply sections
+         function restoreOpenReplySections() {
+             openReplySections.forEach(function(commentId) {
+                 var repliesSection = $('#replies-' + commentId);
+                 if (repliesSection.length && repliesSection.hasClass('d-none')) {
+                     repliesSection.removeClass('d-none');
+                     var toggleBtn = $('.toggle-replies[data-target="replies-' + commentId + '"]');
+                     if (toggleBtn.length) {
+                         var replyCount = repliesSection.find('.comment').length;
+                         toggleBtn.html('▼ Hide Replies');
+                     }
+                 }
+             });
+         }
+         
+         // Toggle replies handler - track open state
+         $(document).on('click', '.toggle-replies', function(e) {
+             e.preventDefault();
+             var targetId = $(this).data('target');
+             var repliesSection = $('#' + targetId);
+             
+             if (repliesSection.hasClass('d-none')) {
+                 repliesSection.removeClass('d-none');
+                 var replyCount = repliesSection.find('.comment').length;
+                 $(this).html('▼ Hide Replies');
+                 // Store that this section is open
+                 var commentId = targetId.replace('replies-', '');
+                 openReplySections.add(commentId);
+             } else {
+                 repliesSection.addClass('d-none');
+                 var replyCount = repliesSection.find('.comment').length;
+                 $(this).html('▶ ' + replyCount + ' Replies');
+                 // Remove from open sections
+                 var commentId = targetId.replace('replies-', '');
+                 openReplySections.delete(commentId);
+             }
+         });
+         
+         // Comment Form Submission
+         $(document).on('submit', '#comment-form', function(e) {
+             e.preventDefault();
+             
+             var commentText = $('#comment-text').val().trim();
+             var parentId = $('#parent_id').val();
+             var storyId = '{{ story.id }}';
+             var isReply = parentId !== '';
+             
+             if (!commentText) {
+                 toastr.warning("Please enter a comment before submitting.");
+                 return;
+             }
+             
+             // Remove @username if present (for replies, we'll store it separately)
+             var cleanCommentText = commentText;
+             if (commentText.startsWith('@')) {
+                 var match = commentText.match(/^@(\S+)\s+/);
+                 if (match) {
+                     cleanCommentText = commentText.replace(/^@\S+\s+/, '');
+                 }
+             }
+             
+             $.ajax({
+                 url: "{% url 'comments_ajax' %}",
+                 type: 'POST',
+                 data: {
+                     'story_id': storyId,
+                     'comment': cleanCommentText,
+                     'parent_id': parentId || '',
+                     'csrfmiddlewaretoken': '{{ csrf_token }}'
+                 },
+                 success: function(response) {
+                     // Clear the form
+                     $('#comment-text').val('');
+                     $('#parent_id').val('');
+                     
+                     if (response.is_reply && response.reply_html) {
+                         // It's a reply - append only the new reply
+                         var repliesSection = $('#replies-' + response.parent_id);
+                         
+                         // Create replies section if it doesn't exist
+                         if (repliesSection.length === 0) {
+                             // Find the parent comment by looking for the reply button with matching data-comment-id
+                             var replyBtn = $('.reply-btn[data-comment-id="' + response.parent_id + '"]');
+                             if (replyBtn.length) {
+                                 var parentComment = replyBtn.closest('.comment');
+                                 if (parentComment.length) {
+                                     var repliesContainer = $('<div id="replies-' + response.parent_id + '" class="replies ps-4 mt-2 border-start border-2"></div>');
+                                     parentComment.find('.flex-1').append(repliesContainer);
+                                     repliesSection = repliesContainer;
+                                     
+                                     // Add toggle button if it doesn't exist
+                                     if (replyBtn.length) {
+                                         var toggleBtn = $('<a href="#!" class="text-700 small toggle-replies" data-target="replies-' + response.parent_id + '">▶ 1 Replies</a>');
+                                         replyBtn.after(' ');
+                                         replyBtn.after(toggleBtn);
+                                     }
+                                 }
+                             }
+                         }
+                         
+                         // Show replies section if hidden
+                         repliesSection.removeClass('d-none');
+                         
+                         // Append the new reply
+                         repliesSection.append(response.reply_html);
+                         
+                         // Mark this section as open
+                         openReplySections.add(response.parent_id.toString());
+                         
+                         // Update reply count in toggle button
+                         var replyCount = repliesSection.find('.comment').length;
+                         var toggleBtn = $('.toggle-replies[data-target="replies-' + response.parent_id + '"]');
+                         if (toggleBtn.length) {
+                             toggleBtn.html('▼ Hide Replies');
+                         }
+                         
+                         // Update comment count
+                         var commentCount = response.comment_count || parseInt($('#comment-count-link').text().replace(/\D/g, '')) + 1;
+                         $('#comment-count-link').html(commentCount + ' Comments');
+                         $('#comments h4').html(commentCount + ' Comments');
+                         
+                         toastr.success("Reply posted successfully!");
+                         
+                         // Scroll to the new reply
+                         setTimeout(function() {
+                             var newReply = repliesSection.find('.comment').last();
+                             if (newReply.length) {
+                                 $('html, body').animate({
+                                     scrollTop: newReply.offset().top - 100
+                                 }, 500);
+                             }
+                         }, 100);
+                         
+                     } else if (response.comments_html) {
+                         // It's a top-level comment - refresh the entire list
+                         $('#comment-list').html(response.comments_html);
+                         
+                         // Restore open reply sections
+                         restoreOpenReplySections();
+                         
+                         // Update comment count
+                         var commentCount = response.comment_count || $('#comment-list .comment-item').length;
+                         $('#comment-count-link').html(commentCount + ' Comments');
+                         $('#comments h4').html(commentCount + ' Comments');
+                         
+                         // Show all comments (remove d-none from extra-comment)
+                         $('#comment-list .extra-comment').removeClass('d-none');
+                         
+                         // Hide load more button if all comments are visible
+                         if ($('#comment-list .extra-comment').length === 0) {
+                             $('#load-more-comments').hide();
+                         }
+                         
+                         toastr.success("Comment posted successfully!");
+                         
+                         // Scroll to comments section
+                         $('html, body').animate({
+                             scrollTop: $('#comments').offset().top - 100
+                         }, 500);
+                     }
+                 },
+                 error: function(xhr, status, error) {
+                     console.error("Error submitting comment:", error);
+                     if (xhr.status === 403) {
+                         toastr.error("Please login to post a comment.");
+                     } else {
+                         toastr.error("An error occurred. Please try again.");
+                     }
+                 }
+             });
+         });
+         
+         // Comment Like Handler
+         $(document).on('click', '.comment-like-btn', function(e) {
+             e.preventDefault();
+             var commentId = $(this).data('comment-id');
+             var likeBtn = $(this);
+             var likeIcon = likeBtn.find('.like-icon');
+             var likeCountSpan = likeBtn.find('.comment-like-count');
+             var currentCount = parseInt(likeCountSpan.text()) || 0;
+             
+             $.ajax({
+                 url: "{% url 'like_comment' %}",
+                 type: 'POST',
+                 data: {
+                     'comment_id': commentId,
+                     'csrfmiddlewaretoken': '{{ csrf_token }}'
+                 },
+                 success: function(response) {
+                     if (response.liked) {
+                         // Liked
+                         likeIcon.removeClass('far').addClass('fas text-danger');
+                         likeCountSpan.text(response.like_count);
+                         toastr.success("Comment liked!");
+                     } else {
+                         // Unliked
+                         likeIcon.removeClass('fas text-danger').addClass('far');
+                         likeCountSpan.text(response.like_count);
+                         toastr.info("Comment unliked");
+                     }
+                 },
+                 error: function(xhr, status, error) {
+                     console.error("Error liking comment:", error);
+                     if (xhr.status === 403) {
+                         toastr.error("Please login to like comments.");
+                     } else {
+                         toastr.error("An error occurred. Please try again.");
+                     }
+                 }
+             });
+         });
+         
+         // Reply Button Click Handler
+         $(document).on('click', '.reply-btn', function(e) {
+             e.preventDefault();
+             var commentId = $(this).data('comment-id');
+             var authorName = $(this).data('author-name');
+             
+             // Set the parent_id
+             $('#parent_id').val(commentId);
+             
+             // Focus on comment textarea and populate with @author_name
+             var commentTextarea = $('#comment-text');
+             commentTextarea.val('@' + authorName + ' ');
+             commentTextarea.focus();
+             
+             // Scroll to comment form
+             $('html, body').animate({
+                 scrollTop: $('#comment-form').offset().top - 100
+             }, 500);
+         });
+      </script> 
+      <script>
+         document.addEventListener("DOMContentLoaded", function() {
+             const loadMoreBtn = document.getElementById("load-more-comments");
+             if (loadMoreBtn) {
+                 loadMoreBtn.addEventListener("click", function (e) {
+                 e.preventDefault();
+                 const hiddenComments = document.querySelectorAll(".extra-comment.d-none");
+                 hiddenComments.forEach((el) => el.classList.remove("d-none"));
+                 loadMoreBtn.style.display = "none";
+                 });
+             }
+         });
+      </script>
+      <script>
+         // Initialize BigPicture for video modals
+         document.addEventListener('DOMContentLoaded', function() {
+            // Use theme.js's bigPictureInit function if available
+            if (typeof bigPictureInit === 'function') {
+               bigPictureInit();
+            } else if (typeof BigPicture !== 'undefined') {
+               // Fallback: manual initialization
+               document.querySelectorAll('[data-bigpicture]').forEach(function(element) {
+                  element.addEventListener('click', function(e) {
+                     e.preventDefault();
+                     var config = JSON.parse(this.getAttribute('data-bigpicture'));
+                     BigPicture({
+                        el: this,
+                        ytSrc: config.ytSrc,
+                        ytNoCookie: config.ytNoCookie !== undefined ? config.ytNoCookie : false,
+                        allowfullscreen: config.allowfullscreen !== undefined ? config.allowfullscreen : true,
+                        noLoader: config.noLoader !== undefined ? config.noLoader : true
+                     });
+                  });
+               });
+            }
+         });
+      </script>
+   </body>
+</html>
