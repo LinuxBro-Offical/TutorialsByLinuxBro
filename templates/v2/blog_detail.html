@@ -1,22 +1,120 @@
+{% extends "v2/base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en-US" dir="ltr">
-   <head>
-      <meta charset="utf-8">
-      <meta http-equiv="X-UA-Compatible" content="IE=edge">
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-      <title>Linuxbro</title>
-      <link rel="apple-touch-icon" sizes="180x180" href="{% static 'v2/img/favicons/apple-touch-icon.png'%}">
-      <link rel="icon" type="image/png" sizes="32x32" href="{% static 'v2/img/favicons/favicon-32x32.png'%}">
-      <link rel="icon" type="image/png" sizes="16x16" href="{% static 'v2/img/favicons/favicon-16x16.png'%}">
-      <link rel="shortcut icon" type="image/x-icon" href="{% static 'v2/img/favicons/favicon.ico'%}">
-      <link rel="manifest" href="{% static 'v2/img/favicons/manifest.json'%}">
-      <meta name="msapplication-TileImage" content="{% static 'v2/img/favicons/mstile-150x150.png'%}">
-      <meta name="theme-color" content="#ffffff">
+
+{# SEO Overrides #}
+{% block title %}{{ story.title }} | Linux Bro{% endblock %}
+
+{% block meta_description %}{% if story.meta_description %}{{ story.meta_description }}{% elif story.subtitle %}{{ story.subtitle }}{% elif story.content_blocks.first.text_content %}{{ story.content_blocks.first.text_content|truncatewords:25 }}{% else %}Read {{ story.title }} on Linux Bro{% endif %}{% endblock %}
+
+{% block meta_keywords %}{% if story.meta_keywords %}{{ story.meta_keywords }}{% else %}{{ story.tags.all|join:", " }}{% if story.category %}, {{ story.category.name }}{% endif %}{% endif %}{% endblock %}
+
+{% block canonical_url %}{% if request.is_secure %}https{% else %}http{% endif %}://{{ request.get_host }}{% url 'blog' story.uuid %}{% endblock %}
+
+{% block og_type %}article{% endblock %}
+
+{% block og_title %}{{ story.title }}{% endblock %}
+
+{% block og_description %}{% if story.meta_description %}{{ story.meta_description }}{% elif story.subtitle %}{{ story.subtitle }}{% elif story.content_blocks.first.text_content %}{{ story.content_blocks.first.text_content|truncatewords:25 }}{% else %}Read {{ story.title }} on Linux Bro{% endif %}{% endblock %}
+
+{% block twitter_title %}{{ story.title }}{% endblock %}
+
+{% block twitter_description %}{% if story.meta_description %}{{ story.meta_description }}{% elif story.subtitle %}{{ story.subtitle }}{% elif story.content_blocks.first.text_content %}{{ story.content_blocks.first.text_content|truncatewords:25 }}{% else %}Read {{ story.title }} on Linux Bro{% endif %}{% endblock %}
+
+{% block og_image %}{% if story.cover_image %}{% if request.is_secure %}https{% else %}http{% endif %}://{{ request.get_host }}{{ story.cover_image.url }}{% else %}{{ block.super }}{% endif %}{% endblock %}
+
+{% block twitter_image %}{% if story.cover_image %}{% if request.is_secure %}https{% else %}http{% endif %}://{{ request.get_host }}{{ story.cover_image.url }}{% else %}{{ block.super }}{% endif %}{% endblock %}
+
+{% block structured_data %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "{{ story.title|escapejs }}",
+  "description": "{% if story.meta_description %}{{ story.meta_description|escapejs }}{% elif story.subtitle %}{{ story.subtitle|escapejs }}{% elif story.content_blocks.first.text_content %}{{ story.content_blocks.first.text_content|truncatewords:25|escapejs }}{% else %}Read {{ story.title|escapejs }} on Linux Bro{% endif %}",
+  "image": "{% if story.cover_image %}{% if request.is_secure %}https{% else %}http{% endif %}://{{ request.get_host }}{{ story.cover_image.url }}{% endif %}",
+  "author": {
+    "@type": "Person",
+    "name": "{{ story.author.user.get_full_name|default:story.author.user.username|escapejs }}"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Linux Bro",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "{% if request.is_secure %}https{% else %}http{% endif %}://{{ request.get_host }}{% static 'v2/img/linux_bro_banner.png' %}"
+    }
+  },
+  "datePublished": "{{ story.publication_date|date:'c' }}",
+  "dateModified": "{{ story.publication_date|date:'c' }}",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "{% if request.is_secure %}https{% else %}http{% endif %}://{{ request.get_host }}{% url 'blog' story.uuid %}"
+  }
+}
+</script>
+{% endblock %}
+
+{% block extra_css %}
       <link href="{% static 'v2/vendors/glightbox/glightbox.min.css'%}" rel="stylesheet">
       <link href="{% static 'v2/css/theme.min.css'%}" rel="stylesheet" />
       <link href="{% static 'v2/css/user.min.css'%}" rel="stylesheet" />
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+      <!-- Prism.js for code syntax highlighting -->
+      <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+      <style>
+         /* VS Code Color Scheme */
+         .code-block-wrapper .token.comment,
+         .code-block-wrapper .token.prolog,
+         .code-block-wrapper .token.doctype,
+         .code-block-wrapper .token.cdata {
+            color: #6a9955;
+            font-style: italic;
+         }
+         .code-block-wrapper .token.punctuation {
+            color: #d4d4d4;
+         }
+         .code-block-wrapper .token.property,
+         .code-block-wrapper .token.tag,
+         .code-block-wrapper .token.boolean,
+         .code-block-wrapper .token.number,
+         .code-block-wrapper .token.constant,
+         .code-block-wrapper .token.symbol,
+         .code-block-wrapper .token.deleted {
+            color: #569cd6;
+         }
+         .code-block-wrapper .token.selector,
+         .code-block-wrapper .token.attr-name,
+         .code-block-wrapper .token.string,
+         .code-block-wrapper .token.char,
+         .code-block-wrapper .token.builtin,
+         .code-block-wrapper .token.inserted {
+            color: #ce9178;
+         }
+         .code-block-wrapper .token.operator,
+         .code-block-wrapper .token.entity,
+         .code-block-wrapper .token.url,
+         .code-block-wrapper .language-css .token.string,
+         .code-block-wrapper .style .token.string {
+            color: #d4d4d4;
+         }
+         .code-block-wrapper .token.atrule,
+         .code-block-wrapper .token.attr-value,
+         .code-block-wrapper .token.keyword {
+            color: #c586c0;
+         }
+         .code-block-wrapper .token.function,
+         .code-block-wrapper .token.class-name {
+            color: #4ec9b0;
+         }
+         .code-block-wrapper .token.regex,
+         .code-block-wrapper .token.important,
+         .code-block-wrapper .token.variable {
+            color: #dcdcaa;
+         }
+         .code-block-wrapper .token.namespace {
+            opacity: 0.8;
+         }
+      </style>
       <link rel="preconnect" href="https://fonts.googleapis.com">
       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
       <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@100;200;300;400;500;600;700;900&amp;family=Roboto:wght@100;300;400;500;700;900&amp;display=swap" rel="stylesheet">
@@ -97,6 +195,128 @@
          .clap-icon svg, .clap-icon i {
          display: inline-block;
          transition: transform 0.3s ease, color 0.3s ease;
+         }
+         /* Code Block Styles - VS Code Design */
+         .code-block-wrapper {
+            border-radius: 0;
+            overflow: hidden;
+            background: #1e1e1e;
+            margin: 1.5rem 0;
+            border: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+         }
+         .code-block-header {
+            background: #252526;
+            padding: 0;
+            border-bottom: 1px solid #3e3e42;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 35px;
+         }
+         .code-tab {
+            background: #1e1e1e;
+            border-right: none;
+            padding: 0.5rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex: 0 0 auto;
+         }
+         .code-file-icon {
+            width: 16px;
+            height: 16px;
+            opacity: 0.7;
+         }
+         .code-language-label {
+            font-size: 0.8125rem;
+            font-weight: 400;
+            color: #cccccc;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+         }
+         .code-actions {
+            display: flex;
+            align-items: center;
+            padding-right: 0.5rem;
+            gap: 0.25rem;
+         }
+         .copy-code-btn {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            background: transparent;
+            border: none;
+            color: #cccccc;
+            border-radius: 3px;
+            transition: all 0.15s ease;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+         }
+         .copy-code-btn:hover {
+            background: #2a2d2e;
+            color: #ffffff;
+         }
+         .copy-code-btn:active {
+            background: #37373d;
+         }
+         .copy-code-btn.copied {
+            color: #4ec9b0;
+         }
+         .copy-code-btn.copied:hover {
+            background: #2a2d2e;
+         }
+         .code-block-wrapper pre {
+            margin: 0;
+            padding: 0;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            overflow-x: auto;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            position: relative;
+         }
+         .code-block-wrapper pre::-webkit-scrollbar {
+            height: 14px;
+         }
+         .code-block-wrapper pre::-webkit-scrollbar-track {
+            background: #1e1e1e;
+         }
+         .code-block-wrapper pre::-webkit-scrollbar-thumb {
+            background: #424242;
+            border: 3px solid #1e1e1e;
+            border-radius: 7px;
+         }
+         .code-block-wrapper pre::-webkit-scrollbar-thumb:hover {
+            background: #4e4e4e;
+         }
+         .code-block-wrapper code {
+            font-family: 'Consolas', 'Courier New', monospace;
+            background: transparent;
+            padding: 1rem 1.25rem;
+            color: inherit;
+            font-size: 0.875rem;
+            display: block;
+            white-space: pre;
+         }
+         @media (max-width: 768px) {
+            .code-block-wrapper {
+               margin: 1.25rem 0;
+            }
+            .code-block-header {
+               min-height: 32px;
+            }
+            .code-tab {
+               padding: 0.4rem 0.75rem;
+            }
+            .code-block-wrapper pre {
+               font-size: 0.8125rem;
+            }
+            .code-block-wrapper code {
+               font-size: 0.8125rem;
+               padding: 0.875rem 1rem;
+            }
          }
          /* ❤️ Like pop animation */
          @keyframes pop-like {
@@ -269,9 +489,9 @@
          /* Common ad sizes will work automatically */
          /* AdSense and Meta Ads handle their own dimensions */
       </style>
-      <script src="{% static 'v2/vendors/overlayscrollbars/OverlayScrollbars.min.js'%}"></script>
-   </head>
-   <body>
+{% endblock %}
+
+{% block content %}
       <nav class="navbar navbar-expand-xl navbar-dark bg-dark py-0">
          <div class="container ">
             <a class="navbar-brand fw-normal ls-2" href="/">LINUXBRO</a>
@@ -337,7 +557,7 @@
                <div class="row">
                   <div class="col-lg-7 mb-4 mb-lg-0">
                      {% if story.cover_image %}
-                     <img class="img-fluid rounded" src="{{ story.cover_image.url}}" alt="" />
+                     <img class="img-fluid rounded" src="{{ story.cover_image.url}}" alt="{{ story.title }} - Cover Image" title="{{ story.title }}" />
                      {% endif %}
                      <h2 class="mt-4 text-transform-none fw-medium">{{ story.title }}</h2>
                      <div class="mb-3">
@@ -360,7 +580,7 @@
                      {% if block.image_content %}
                      <div class="col-6 pe-1">
                         <a href="{{ block.image_content.url }}" data-gallery="posts">
-                        <img class="img-fluid rounded mb-2" src="{{ block.image_content.url }}" alt="" />
+                        <img class="img-fluid rounded mb-2" src="{{ block.image_content.url }}" alt="{{ story.title }} - Content Image" title="{{ story.title }}" />
                         </a>
                      </div>
                      {% endif %}
@@ -394,6 +614,28 @@
                      </div>
                      {% endif %}
                      {% endwith %}
+                     {% endif %}
+                     {% elif block.content_type == 'code' %}
+                     {% if block.text_content %}
+                     <div class="code-block-wrapper">
+                        <div class="code-block-header">
+                           <div class="code-tab">
+                              <svg class="code-file-icon" viewBox="0 0 16 16" fill="currentColor">
+                                 <path d="M13.5 2H6.914a1.5 1.5 0 0 0-1.06.44L2.44 5.854A1.5 1.5 0 0 0 2 6.914V13.5A1.5 1.5 0 0 0 3.5 15h10a1.5 1.5 0 0 0 1.5-1.5v-10A1.5 1.5 0 0 0 13.5 2zM13 14H4V4h7v3h2v7z"/>
+                              </svg>
+                              <span class="code-language-label">
+                                 {% if block.code_language %}{{ block.code_language }}{% else %}code{% endif %}
+                              </span>
+                           </div>
+                           <div class="code-actions">
+                              <button class="copy-code-btn" data-code-block-id="code-block-{{ block.id }}" title="Copy">
+                                 <i class="fas fa-copy"></i>
+                                 <span class="copy-text">Copy</span>
+                              </button>
+                           </div>
+                        </div>
+                        <pre><code class="language-{% if block.code_language %}{{ block.code_language }}{% else %}text{% endif %}" id="code-block-{{ block.id }}">{{ block.text_content }}</code></pre>
+                     </div>
                      {% endif %}
                      {% endif %}
                      {% endfor %}
@@ -522,8 +764,12 @@
                      <h4 class="mt-4 mb-3 fw-normal">Popular Posts</h4>
                      {% for story in popular_stories %}
                      <div class="d-flex mb-3">
-                        <a href="single-post.html">
-                        <img class="rounded" src="../assets/img/projects/13.jpg" width="120" alt="" />
+                        <a href="{% url 'blog' story.uuid %}">
+                        {% if story.cover_image %}
+                        <img class="rounded" src="{{ story.cover_image.url }}" width="120" alt="{{ story.title }} - Cover Image" title="{{ story.title }}" />
+                        {% else %}
+                        <img class="rounded" src="{% static 'v2/img/blog_image.jpg' %}" width="120" alt="{{ story.title }} - Cover Image" title="{{ story.title }}" />
+                        {% endif %}
                         </a>
                         <div class="flex-1 ms-3">
                            <h5
@@ -577,7 +823,7 @@
                         <a href="{% url 'blog' related_story.uuid %}">
                            {% if related_story.cover_image %}
                            <img class="img-fluid rounded-top" src="{{ related_story.cover_image.url }}"
-                              alt="{{ related_story.title }}" />
+                              alt="{{ related_story.title }} - Cover Image" title="{{ related_story.title }}" />
                            {% endif %}
                         </a>
                         <div class="p-3 border rounded-bottom border-top-0">
@@ -723,22 +969,25 @@
                   </h5>
                   <p class="text-muted mb-3">Choose your preferred sign-in method</p>
                   <div class="d-grid gap-3">
+                     {% if GOOGLE_CLIENT_ID %}
+                     <div id="google-signin-button" class="auth-btn d-flex align-items-center justify-content-center gap-2" style="cursor: pointer;">
+                         <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg"
+                            width="18" alt="Google icon">
+                         <span class="fw-medium">Continue with Google</span>
+                     </div>
+                     {% else %}
                      <a href="{% url 'google_login' %}" class="auth-btn d-flex align-items-center justify-content-center gap-2">
                      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg"
                         width="18" alt="Google icon">
                      <span class="fw-medium">Continue with Google</span>
                      </a>
+                     {% endif %}
                      <a href="{% url 'github_login' %}" class="auth-btn d-flex align-items-center justify-content-center gap-2">
                      <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg"
                         width="18" alt="GitHub icon">
                      <span class="fw-medium">Continue with GitHub</span>
                      </a>
-                     <a href="{% url 'apple_login' %}" class="auth-btn d-flex align-items-center justify-content-center gap-2">
-                     <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/apple/apple-original.svg"
-                        width="18" alt="Apple icon">
-                     <span class="fw-medium">Continue with Apple</span>
-                     </a>
-                     <a href="{% url 'twitter_login' %}" class="auth-btn d-flex align-items-center justify-content-center gap-2">
+                     <a href="{% url 'twitter_oauth2_login' %}" class="auth-btn d-flex align-items-center justify-content-center gap-2">
                      <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/x.svg" width="18"
                         alt="X icon">
                      <span class="fw-medium">Continue with X</span>
@@ -754,6 +1003,264 @@
             </div>
          </div>
       </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'v2/vendors/overlayscrollbars/OverlayScrollbars.min.js'%}"></script>
+<!-- Prism.js for code syntax highlighting -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script>
+   // Copy code button functionality - Fixed version
+   document.addEventListener('DOMContentLoaded', function() {
+      const copyButtons = document.querySelectorAll('.copy-code-btn');
+      
+      copyButtons.forEach(button => {
+         button.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Get the code block ID
+            const codeBlockId = this.getAttribute('data-code-block-id');
+            const codeElement = document.getElementById(codeBlockId);
+            
+            if (!codeElement) {
+               console.error('Code element not found');
+               return;
+            }
+            
+            // Get the text content from the code element
+            // This handles both plain text and Prism.js highlighted code
+            let codeText = '';
+            
+            // Try to get text from code element (works with Prism.js)
+            if (codeElement.textContent !== undefined) {
+               codeText = codeElement.textContent;
+            } else if (codeElement.innerText !== undefined) {
+               codeText = codeElement.innerText;
+            } else {
+               codeText = codeElement.innerHTML;
+               // Remove HTML tags if any
+               const tempDiv = document.createElement('div');
+               tempDiv.innerHTML = codeText;
+               codeText = tempDiv.textContent || tempDiv.innerText || '';
+            }
+            
+            // Clean up the text (remove extra whitespace but preserve structure)
+            codeText = codeText.trim();
+            
+            // Copy to clipboard
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+               navigator.clipboard.writeText(codeText).then(() => {
+                  // Success feedback
+                  const copyText = this.querySelector('.copy-text');
+                  const icon = this.querySelector('i');
+                  
+                  if (icon) {
+                     icon.className = 'fas fa-check';
+                  }
+                  if (copyText) {
+                     copyText.textContent = 'Copied!';
+                  }
+                  
+                  this.classList.add('copied');
+                  
+                  // Reset after 2 seconds
+                  setTimeout(() => {
+                     if (icon) {
+                        icon.className = 'fas fa-copy';
+                     }
+                     if (copyText) {
+                        copyText.textContent = 'Copy';
+                     }
+                     this.classList.remove('copied');
+                  }, 2000);
+               }).catch(err => {
+                  console.error('Failed to copy code:', err);
+                  // Fallback for older browsers
+                  fallbackCopyTextToClipboard(codeText, this);
+               });
+            } else {
+               // Fallback for browsers without clipboard API
+               fallbackCopyTextToClipboard(codeText, this);
+            }
+         });
+      });
+      
+      // Fallback copy function for older browsers
+      function fallbackCopyTextToClipboard(text, button) {
+         const textArea = document.createElement('textarea');
+         textArea.value = text;
+         textArea.style.position = 'fixed';
+         textArea.style.left = '-999999px';
+         textArea.style.top = '-999999px';
+         document.body.appendChild(textArea);
+         textArea.focus();
+         textArea.select();
+         
+         try {
+            const successful = document.execCommand('copy');
+            if (successful) {
+               const copyText = button.querySelector('.copy-text');
+               const icon = button.querySelector('i');
+               
+               if (icon) {
+                  icon.className = 'fas fa-check';
+               }
+               if (copyText) {
+                  copyText.textContent = 'Copied!';
+               }
+               
+               button.classList.add('copied');
+               
+               setTimeout(() => {
+                  if (icon) {
+                     icon.className = 'fas fa-copy';
+                  }
+                  if (copyText) {
+                     copyText.textContent = 'Copy';
+                  }
+                  button.classList.remove('copied');
+               }, 2000);
+            } else {
+               alert('Failed to copy code. Please select and copy manually.');
+            }
+         } catch (err) {
+            console.error('Fallback copy failed:', err);
+            alert('Failed to copy code. Please select and copy manually.');
+         } finally {
+            document.body.removeChild(textArea);
+         }
+      }
+   });
+</script>
+<!-- Prism.js for code syntax highlighting -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script>
+   // Copy code button functionality - Fixed version
+   document.addEventListener('DOMContentLoaded', function() {
+      const copyButtons = document.querySelectorAll('.copy-code-btn');
+      
+      copyButtons.forEach(button => {
+         button.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Get the code block ID
+            const codeBlockId = this.getAttribute('data-code-block-id');
+            const codeElement = document.getElementById(codeBlockId);
+            
+            if (!codeElement) {
+               console.error('Code element not found');
+               return;
+            }
+            
+            // Get the text content from the code element
+            // This handles both plain text and Prism.js highlighted code
+            let codeText = '';
+            
+            // Try to get text from code element (works with Prism.js)
+            if (codeElement.textContent !== undefined) {
+               codeText = codeElement.textContent;
+            } else if (codeElement.innerText !== undefined) {
+               codeText = codeElement.innerText;
+            } else {
+               codeText = codeElement.innerHTML;
+               // Remove HTML tags if any
+               const tempDiv = document.createElement('div');
+               tempDiv.innerHTML = codeText;
+               codeText = tempDiv.textContent || tempDiv.innerText || '';
+            }
+            
+            // Clean up the text (remove extra whitespace but preserve structure)
+            codeText = codeText.trim();
+            
+            // Copy to clipboard
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+               navigator.clipboard.writeText(codeText).then(() => {
+                  // Success feedback
+                  const copyText = this.querySelector('.copy-text');
+                  const icon = this.querySelector('i');
+                  
+                  if (icon) {
+                     icon.className = 'fas fa-check';
+                  }
+                  if (copyText) {
+                     copyText.textContent = 'Copied!';
+                  }
+                  
+                  this.classList.add('copied');
+                  
+                  // Reset after 2 seconds
+                  setTimeout(() => {
+                     if (icon) {
+                        icon.className = 'fas fa-copy';
+                     }
+                     if (copyText) {
+                        copyText.textContent = 'Copy';
+                     }
+                     this.classList.remove('copied');
+                  }, 2000);
+               }).catch(err => {
+                  console.error('Failed to copy code:', err);
+                  // Fallback for older browsers
+                  fallbackCopyTextToClipboard(codeText, this);
+               });
+            } else {
+               // Fallback for browsers without clipboard API
+               fallbackCopyTextToClipboard(codeText, this);
+            }
+         });
+      });
+      
+      // Fallback copy function for older browsers
+      function fallbackCopyTextToClipboard(text, button) {
+         const textArea = document.createElement('textarea');
+         textArea.value = text;
+         textArea.style.position = 'fixed';
+         textArea.style.left = '-999999px';
+         textArea.style.top = '-999999px';
+         document.body.appendChild(textArea);
+         textArea.focus();
+         textArea.select();
+         
+         try {
+            const successful = document.execCommand('copy');
+            if (successful) {
+               const copyText = button.querySelector('.copy-text');
+               const icon = button.querySelector('i');
+               
+               if (icon) {
+                  icon.className = 'fas fa-check';
+               }
+               if (copyText) {
+                  copyText.textContent = 'Copied!';
+               }
+               
+               button.classList.add('copied');
+               
+               setTimeout(() => {
+                  if (icon) {
+                     icon.className = 'fas fa-copy';
+                  }
+                  if (copyText) {
+                     copyText.textContent = 'Copy';
+                  }
+                  button.classList.remove('copied');
+               }, 2000);
+            } else {
+               alert('Failed to copy code. Please select and copy manually.');
+            }
+         } catch (err) {
+            console.error('Fallback copy failed:', err);
+            alert('Failed to copy code. Please select and copy manually.');
+         } finally {
+            document.body.removeChild(textArea);
+         }
+      }
+   });
+</script>
       <script src="{% static 'v2/vendors/popper/popper.min.js'%}"></script>
       <script src="{% static 'v2/vendors/bootstrap/bootstrap.min.js'%}"></script>
       <script src="{% static 'v2/vendors/anchorjs/anchor.min.js'%}"></script>
@@ -1130,5 +1637,77 @@
             }
          });
       </script>
-   </body>
-</html>
+      
+      {% if GOOGLE_CLIENT_ID %}
+      <script>
+      // Initialize Google Sign-In when modal is shown
+      document.addEventListener('DOMContentLoaded', function() {
+          const authModal = document.getElementById('authModal');
+          if (authModal) {
+              authModal.addEventListener('shown.bs.modal', function() {
+                  initializeGoogleSignIn();
+              });
+          }
+      });
+      
+      function initializeGoogleSignIn() {
+          if (typeof google !== 'undefined' && google.accounts) {
+              // Initialize for One Tap (optional)
+              google.accounts.id.initialize({
+                  client_id: '{{ GOOGLE_CLIENT_ID }}',
+                  callback: handleGoogleCredential
+              });
+              
+              // Attach click handler to Google button for OAuth flow
+              const googleButton = document.getElementById('google-signin-button');
+              if (googleButton) {
+                  googleButton.addEventListener('click', function(e) {
+                      e.preventDefault();
+                      // Redirect to allauth's Google OAuth flow
+                      window.location.href = '{% url "google_login" %}';
+                  });
+              }
+          }
+      }
+      
+      function handleGoogleCredential(response) {
+          // Handle One Tap credential if user selects it
+          if (response.credential) {
+              const form = document.createElement('form');
+              form.method = 'POST';
+              form.action = '/accounts/google/login/token/';
+              
+              const csrfToken = document.createElement('input');
+              csrfToken.type = 'hidden';
+              csrfToken.name = 'csrfmiddlewaretoken';
+              csrfToken.value = getCookie('csrftoken');
+              form.appendChild(csrfToken);
+              
+              const credentialInput = document.createElement('input');
+              credentialInput.type = 'hidden';
+              credentialInput.name = 'credential';
+              credentialInput.value = response.credential;
+              form.appendChild(credentialInput);
+              
+              document.body.appendChild(form);
+              form.submit();
+          }
+      }
+      
+      function getCookie(name) {
+          let cookieValue = null;
+          if (document.cookie && document.cookie !== '') {
+              const cookies = document.cookie.split(';');
+              for (let i = 0; i < cookies.length; i++) {
+                  const cookie = cookies[i].trim();
+                  if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                      cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                      break;
+                  }
+              }
+          }
+          return cookieValue;
+      }
+      </script>
+      {% endif %}
+{% endblock %}

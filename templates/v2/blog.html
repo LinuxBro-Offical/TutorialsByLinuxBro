@@ -1,18 +1,11 @@
+{% extends "v2/base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en-US" dir="ltr">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>LINUX ! BRO</title>
-        <link rel="apple-touch-icon" sizes="180x180" href="{% static 'v2/img/favicons/apple-touch-icon.png'%}">
-        <link rel="icon" type="image/png" sizes="32x32" href="{% static 'v2/img/favicons/favicon-32x32.png'%}">
-        <link rel="icon" type="image/png" sizes="16x16" href="{% static 'v2/img/favicons/favicon-16x16.png'%}">
-        <link rel="shortcut icon" type="image/x-icon" href="{% static 'v2/img/favicons/favicon.ico'%}">
-        <link rel="manifest" href="{% static 'v2/img/favicons/manifest.json'%}">
-        <meta name="msapplication-TileImage" content="{% static 'v2/img/favicons/mstile-150x150.png'%}">
-        <meta name="theme-color" content="#ffffff">
+
+{% block title %}Linux Bro - Tech Blog | Empowering Tech Enthusiasts{% endblock %}
+
+{% block meta_description %}Linux Bro - Empowering Tech Enthusiasts with tutorials, guides, and tech stories. Read the latest articles on Linux, programming, web development, and software engineering.{% endblock %}
+
+{% block extra_css %}
         <script src="{% static 'v2/vendors/overlayscrollbars/OverlayScrollbars.min.js'%}"></script>
         <link href="{% static 'v2/vendors/swiper/swiper-bundle.min.css'%}" rel="stylesheet">
         <link href="{% static 'v2/css/theme.min.css'%}" rel="stylesheet" />
@@ -46,8 +39,9 @@
             /* Common ad sizes will work automatically */
             /* AdSense and Meta Ads handle their own dimensions */
         </style>
-    </head>
-    <body>
+{% endblock %}
+
+{% block content %}
         <nav class="navbar navbar-expand-lg navbar-dark navbar-theme fixed-top p-0" data-navbar-on-scroll="data-navbar-on-scroll">
             <div class="container">
                 <a class="navbar-brand fw-normal ls-2" href="/">LINUXBRO</a>
@@ -108,7 +102,7 @@
                         {% for story in banner_stories|slice:":3" %}
                         <div class="swiper-slide">
                             {% if story.banner_image %}
-                            <img class="w-100 vh-50 fit-cover slider-classic" src="{{ story.banner_image.url }}" alt="image" style="object-position: center 77%;" />
+                            <img class="w-100 vh-50 fit-cover slider-classic" src="{{ story.banner_image.url }}" alt="{{ story.title }} - Banner Image" title="{{ story.title }}" style="object-position: center 77%;" />
                             {% endif %}
                             <div class="header-overlay text-center" data-zanim-timeline='{"delay":0.1}'>
                                 <div class="d-flex flex-center pt-10 pb-8">
@@ -229,8 +223,12 @@
                             <h4 class="mt-4 mb-3 fw-normal">Popular Posts</h4>
                             {% for story in popular_stories %}
                             <div class="d-flex mb-3">
-                                <a href="single-post.html">
-                                <img class="rounded" src="../assets/img/projects/13.jpg" width="120" alt="" />
+                                <a href="{% url 'blog' story.uuid %}">
+                                {% if story.cover_image %}
+                                <img class="rounded" src="{{ story.cover_image.url }}" width="120" alt="{{ story.title }} - Cover Image" title="{{ story.title }}" />
+                                {% else %}
+                                <img class="rounded" src="{% static 'v2/img/blog_image.jpg' %}" width="120" alt="{{ story.title }} - Cover Image" title="{{ story.title }}" />
+                                {% endif %}
                                 </a>
                                 <div class="flex-1 ms-3">
                                     <h5 class="lh-sm mt-0 text-transform-none fs-0 mb-1 fw-semi-bold font-base">
@@ -353,19 +351,22 @@
                     </h5>
                     <p class="text-muted mb-3">Choose your preferred sign-in method</p>
                     <div class="d-grid gap-3">
+                        {% if GOOGLE_CLIENT_ID %}
+                        <div id="google-signin-button" class="auth-btn d-flex align-items-center justify-content-center gap-2" style="cursor: pointer;">
+                            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" width="18" alt="Google icon">
+                            <span class="fw-medium">Continue with Google</span>
+                        </div>
+                        {% else %}
                         <a href="{% url 'google_login' %}" class="auth-btn d-flex align-items-center justify-content-center gap-2">
                         <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" width="18" alt="Google icon">
                         <span class="fw-medium">Continue with Google</span>
                         </a>
+                        {% endif %}
                         <a href="{% url 'github_login' %}" class="auth-btn d-flex align-items-center justify-content-center gap-2">
                         <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" width="18" alt="GitHub icon">
                         <span class="fw-medium">Continue with GitHub</span>
                         </a>
-                        <a href="{% url 'apple_login' %}" class="auth-btn d-flex align-items-center justify-content-center gap-2">
-                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/apple/apple-original.svg" width="18" alt="Apple icon">
-                        <span class="fw-medium">Continue with Apple</span>
-                        </a>
-                        <a href="{% url 'twitter_login' %}" class="auth-btn d-flex align-items-center justify-content-center gap-2">
+                        <a href="{% url 'twitter_oauth2_login' %}" class="auth-btn d-flex align-items-center justify-content-center gap-2">
                         <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/x.svg" width="18" alt="X icon">
                         <span class="fw-medium">Continue with X</span>
                         </a>
@@ -378,6 +379,9 @@
         </div>
         <!-- Authentication Modal End -->
         <a class="btn-back-to-top" href="blog.html#top"><img src="../assets/img/line-icons/upload-arrow.svg" width="8" alt=""></a>
+{% endblock %}
+
+{% block extra_scripts %}
         <script src="{% static 'v2/vendors/popper/popper.min.js'%}"></script>
         <script src="{% static 'v2/vendors/bootstrap/bootstrap.min.js'%}"></script>
         <script src="{% static 'v2/vendors/anchorjs/anchor.min.js'%}"></script>
@@ -396,5 +400,78 @@
         <script src="{% static 'v2/vendors/swiper/swiper-bundle.min.js'%}"></script>
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyARdVcREeBK44lIWnv5-iPijKqvlSAVwbw&callback=initMap" async></script>
         <script src="{% static 'v2/js/theme.js'%}"></script>
-    </body>
-</html>
+        
+        {% if GOOGLE_CLIENT_ID %}
+        <script>
+        // Initialize Google Sign-In when modal is shown
+        document.addEventListener('DOMContentLoaded', function() {
+            const authModal = document.getElementById('authModal');
+            if (authModal) {
+                authModal.addEventListener('shown.bs.modal', function() {
+                    initializeGoogleSignIn();
+                });
+            }
+        });
+        
+        function initializeGoogleSignIn() {
+            if (typeof google !== 'undefined' && google.accounts) {
+                // Initialize for One Tap (optional)
+                google.accounts.id.initialize({
+                    client_id: '{{ GOOGLE_CLIENT_ID }}',
+                    callback: handleGoogleCredential
+                });
+                
+                // Attach click handler to Google button for OAuth flow
+                const googleButton = document.getElementById('google-signin-button');
+                if (googleButton) {
+                    googleButton.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        // Redirect to allauth's Google OAuth flow
+                        // This will open in the same window, closing the modal
+                        window.location.href = '{% url "google_login" %}';
+                    });
+                }
+            }
+        }
+        
+        function handleGoogleCredential(response) {
+            // Handle One Tap credential if user selects it
+            if (response.credential) {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '/accounts/google/login/token/';
+                
+                const csrfToken = document.createElement('input');
+                csrfToken.type = 'hidden';
+                csrfToken.name = 'csrfmiddlewaretoken';
+                csrfToken.value = getCookie('csrftoken');
+                form.appendChild(csrfToken);
+                
+                const credentialInput = document.createElement('input');
+                credentialInput.type = 'hidden';
+                credentialInput.name = 'credential';
+                credentialInput.value = response.credential;
+                form.appendChild(credentialInput);
+                
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+        
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        </script>
+        {% endif %}
+{% endblock %}

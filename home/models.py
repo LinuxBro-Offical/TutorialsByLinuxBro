@@ -185,6 +185,21 @@ class Story(models.Model):
         verbose_name="Banner Image",
         help_text="Optional banner image for featured display.",
     )
+    # --- SEO fields ---
+    meta_description = models.CharField(
+        max_length=160,
+        null=True,
+        blank=True,
+        verbose_name="Meta Description",
+        help_text="SEO meta description (150-160 characters recommended). If left blank, will use subtitle or first content block.",
+    )
+    meta_keywords = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        verbose_name="Meta Keywords",
+        help_text="Comma-separated keywords for SEO. If left blank, will use tags and category.",
+    )
 
     def __str__(self):
         return self.title
@@ -259,6 +274,32 @@ class ContentBlock(models.Model):
         ("image", "Image"),
         ("blockquote", "Block Quote"),
         ("youtube", "YouTube Video"),
+        ("code", "Code Block"),
+    ]
+    
+    LANGUAGE_CHOICES = [
+        ("", "Plain Text"),
+        ("python", "Python"),
+        ("javascript", "JavaScript"),
+        ("java", "Java"),
+        ("cpp", "C++"),
+        ("c", "C"),
+        ("html", "HTML"),
+        ("css", "CSS"),
+        ("sql", "SQL"),
+        ("bash", "Bash/Shell"),
+        ("json", "JSON"),
+        ("xml", "XML"),
+        ("yaml", "YAML"),
+        ("markdown", "Markdown"),
+        ("php", "PHP"),
+        ("ruby", "Ruby"),
+        ("go", "Go"),
+        ("rust", "Rust"),
+        ("swift", "Swift"),
+        ("kotlin", "Kotlin"),
+        ("typescript", "TypeScript"),
+        ("dart", "Dart"),
     ]
 
     story = models.ForeignKey(
@@ -275,6 +316,13 @@ class ContentBlock(models.Model):
         null=True, 
         blank=True, 
         help_text="YouTube video ID (e.g., 'M06YHZ9YUdI') or full URL"
+    )
+    code_language = models.CharField(
+        max_length=20,
+        choices=LANGUAGE_CHOICES,
+        default="",
+        blank=True,
+        help_text="Programming language for syntax highlighting (only used for code blocks)"
     )
 
     class Meta:

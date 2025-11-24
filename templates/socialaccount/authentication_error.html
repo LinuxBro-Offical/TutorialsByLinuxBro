@@ -1,0 +1,39 @@
+{% extends "v2/base.html" %}
+{% load static %}
+{% load i18n %}
+
+{% block title %}Login Error | Linux Bro{% endblock %}
+
+{% block meta_description %}An error occurred while attempting to login via your third-party account.{% endblock %}
+
+{% block content %}
+<div class="container" style="min-height: 60vh; padding-top: 100px;">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body text-center p-5">
+                    <h1 class="h3 mb-4">Third-Party Login Failure</h1>
+                    <p class="text-muted mb-4">
+                        An error occurred while attempting to login via your third-party account.
+                    </p>
+                    
+                    {% if auth_error %}
+                    <div class="alert alert-warning">
+                        <strong>Provider:</strong> {{ auth_error.provider|title }} (Provider ID: {{ auth_error.provider }})<br>
+                        {% if auth_error.exception %}
+                        <strong>Error:</strong> {{ auth_error.exception }}
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    
+                    <div class="mt-4">
+                        <a href="{% url 'home' %}" class="btn btn-primary me-2">Go to Home</a>
+                        <a href="{% url 'google_login' %}" class="btn btn-outline-secondary">Try Again</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

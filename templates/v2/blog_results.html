@@ -223,7 +223,11 @@
                             {% for story in popular_stories %}
                             <div class="d-flex mb-3">
                                 <a href="single-post.html">
-                                <img class="rounded" src="../assets/img/projects/13.jpg" width="120" alt="" />
+                                {% if story.cover_image %}
+                                <img class="rounded" src="{{ story.cover_image.url }}" width="120" alt="{{ story.title }} - Cover Image" title="{{ story.title }}" />
+                                {% else %}
+                                <img class="rounded" src="{% static 'v2/img/blog_image.jpg' %}" width="120" alt="{{ story.title }} - Cover Image" title="{{ story.title }}" />
+                                {% endif %}
                                 </a>
                                 <div class="flex-1 ms-3">
                                     <h5 class="lh-sm mt-0 text-transform-none fs-0 mb-1 fw-semi-bold font-base">
@@ -340,11 +344,7 @@
                         <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" width="18" alt="GitHub icon">
                         <span class="fw-medium">Continue with GitHub</span>
                         </a>
-                        <a href="{% url 'apple_login' %}" class="auth-btn d-flex align-items-center justify-content-center gap-2">
-                        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/apple/apple-original.svg" width="18" alt="Apple icon">
-                        <span class="fw-medium">Continue with Apple</span>
-                        </a>
-                        <a href="{% url 'twitter_login' %}" class="auth-btn d-flex align-items-center justify-content-center gap-2">
+                        <a href="{% url 'twitter_oauth2_login' %}" class="auth-btn d-flex align-items-center justify-content-center gap-2">
                         <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/x.svg" width="18" alt="X icon">
                         <span class="fw-medium">Continue with X</span>
                         </a>

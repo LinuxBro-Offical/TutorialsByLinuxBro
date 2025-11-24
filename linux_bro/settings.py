@@ -11,8 +11,58 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 import os
+import sys
 from pathlib import Path
 from decouple import config, Csv
+
+# JWT compatibility fix for django-allauth - MUST be first, before ANY other imports
+# This ensures jwt.PyJWTError is always available (the main issue with django-allauth)
+def _patch_jwt_aggressively():
+    """Aggressively patch jwt module to ensure PyJWTError is available"""
+    try:
+        # Force import and patch
+        import importlib
+        jwt_module = importlib.import_module('jwt')
+        
+        # Import PyJWTError - this is what django-allauth needs
+        from jwt.exceptions import PyJWTError
+        
+        # ALWAYS set PyJWTError attribute (this is the critical fix)
+        jwt_module.PyJWTError = PyJWTError
+        
+        # Force into sys.modules
+        sys.modules['jwt'] = jwt_module
+        
+        # Also patch any existing references in sys.modules
+        for key in list(sys.modules.keys()):
+            if key == 'jwt':
+                try:
+                    mod = sys.modules[key]
+                    if hasattr(mod, '__name__') and mod.__name__ == 'jwt':
+                        mod.PyJWTError = PyJWTError
+                except (AttributeError, TypeError):
+                    pass
+        
+        return True
+    except (ImportError, AttributeError):
+        # Silently fail if jwt is not available
+        return False
+
+# Patch immediately
+_patch_jwt_aggressively()
+
+# Also set up a meta path finder to patch on every import
+class JWTPatcher:
+    """Meta path finder that patches jwt on import"""
+    def find_spec(self, name, path, target=None):
+        if name == 'jwt':
+            # Patch jwt when it's being imported
+            _patch_jwt_aggressively()
+        return None
+
+# Add to meta path (but only once)
+if not any(isinstance(finder, JWTPatcher) for finder in sys.meta_path):
+    sys.meta_path.insert(0, JWTPatcher())
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -40,6 +90,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',  # Required for allauth
+    # Import home first to apply JWT compatibility patch before allauth
+    'home',
     # Allauth apps
     'allauth',
     'allauth.account',
@@ -48,11 +100,10 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.github',
     'allauth.socialaccount.providers.facebook',
     'allauth.socialaccount.providers.apple',
-    'allauth.socialaccount.providers.twitter',
-    # Installed apps
+    'allauth.socialaccount.providers.twitter_oauth2',
+    # Other installed apps
     'accounts',
     'blog',
-    'home',
     'contact'
 ]
 
@@ -80,6 +131,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'home.context_processors.google_client_id',
             ],
         },
     },
@@ -94,9 +146,9 @@ AUTHENTICATION_BACKENDS = [
 SITE_ID = config('SITE_ID', default=1, cast=int)
 
 # Allauth settings
-ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
-ACCOUNT_EMAIL_REQUIRED = False
-ACCOUNT_USERNAME_REQUIRED = True
+# Updated to use new django-allauth settings format
+ACCOUNT_LOGIN_METHODS = {'username', 'email'}
+ACCOUNT_SIGNUP_FIELDS = ['email', 'username*', 'password1*', 'password2*']
 ACCOUNT_EMAIL_VERIFICATION = 'none'  # Set to 'mandatory' if you want email verification
 ACCOUNT_ADAPTER = 'home.adapters.AccountAdapter'
 SOCIALACCOUNT_ADAPTER = 'home.adapters.SocialAccountAdapter'
@@ -110,6 +162,9 @@ SOCIALACCOUNT_QUERY_EMAIL = True
 SOCIALACCOUNT_EMAIL_REQUIRED = False
 SOCIALACCOUNT_STORE_TOKENS = False
 SOCIALACCOUNT_LOGIN_ON_GET = True  # This skips the intermediate page!
+
+# Google Client ID for JavaScript SDK
+GOOGLE_CLIENT_ID = config('GOOGLE_CLIENT_ID', default='')
 
 # Social account providers
 SOCIALACCOUNT_PROVIDERS = {
@@ -154,12 +209,14 @@ SOCIALACCOUNT_PROVIDERS = {
             'key': config('APPLE_KEY', default='your.apple.key'),
         }
     },
-    'twitter': {
-        'APP': {
-            'client_id': config('TWITTER_CONSUMER_KEY', default='your.twitter.consumer.key'),
-            'secret': config('TWITTER_CONSUMER_SECRET', default='your.twitter.consumer.secret'),
-        }
-    }
+    # Twitter OAuth2 is configured via database (SocialApp model)
+    # Remove from settings to avoid conflicts with database apps
+    # 'twitter_oauth2': {
+    #     'APP': {
+    #         'client_id': config('TWITTER_CONSUMER_KEY', default='your.twitter.consumer.key'),
+    #         'secret': config('TWITTER_CONSUMER_SECRET', default='your.twitter.consumer.secret'),
+    #     }
+    # }
 }
 
 WSGI_APPLICATION = 'linux_bro.wsgi.application'

@@ -1,0 +1,81 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    {# SEO Meta Tags #}
+    <title>{% block title %}Linux Bro - Tech Blog | Empowering Tech Enthusiasts{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}Linux Bro - Empowering Tech Enthusiasts with tutorials, guides, and tech stories{% endblock %}">
+    <meta name="keywords" content="{% block meta_keywords %}linux, technology, tutorials, programming, tech blog, web development, software engineering{% endblock %}">
+    <meta name="author" content="Linux Bro">
+    
+    {# Canonical URL #}
+    <link rel="canonical" href="{% block canonical_url %}{% if request.is_secure %}https{% else %}http{% endif %}://{{ request.get_host }}{{ request.path }}{% endblock %}">
+    
+    {# Open Graph Tags (Facebook, LinkedIn) #}
+    <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+    <meta property="og:title" content="{% block og_title %}Linux Bro - Tech Blog | Empowering Tech Enthusiasts{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Linux Bro - Empowering Tech Enthusiasts with tutorials, guides, and tech stories{% endblock %}">
+    <meta property="og:image" content="{% block og_image %}{% if request.is_secure %}https{% else %}http{% endif %}://{{ request.get_host }}{% static 'v2/img/linux_bro_banner.png' %}{% endblock %}">
+    <meta property="og:url" content="{% block og_url %}{% if request.is_secure %}https{% else %}http{% endif %}://{{ request.get_host }}{{ request.path }}{% endblock %}">
+    <meta property="og:site_name" content="Linux Bro">
+    
+    {# Twitter Card Tags #}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{% block twitter_title %}Linux Bro - Tech Blog | Empowering Tech Enthusiasts{% endblock %}">
+    <meta name="twitter:description" content="{% block twitter_description %}Linux Bro - Empowering Tech Enthusiasts with tutorials, guides, and tech stories{% endblock %}">
+    <meta name="twitter:image" content="{% block twitter_image %}{% if request.is_secure %}https{% else %}http{% endif %}://{{ request.get_host }}{% static 'v2/img/linux_bro_banner.png' %}{% endblock %}">
+    
+    {# Favicons #}
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'v2/img/favicons/apple-touch-icon.png'%}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'v2/img/favicons/favicon-32x32.png'%}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'v2/img/favicons/favicon-16x16.png'%}">
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'v2/img/favicons/favicon.ico'%}">
+    <link rel="manifest" href="{% static 'v2/img/favicons/manifest.json'%}">
+    <meta name="msapplication-TileImage" content="{% static 'v2/img/favicons/mstile-150x150.png'%}">
+    <meta name="theme-color" content="#ffffff">
+    
+    {# CSS Files #}
+    {% block extra_css %}{% endblock %}
+    
+    {# Structured Data (JSON-LD) #}
+    {% block structured_data %}
+    {# Organization Schema #}
+    {% if footer_content %}
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Linux Bro",
+      "url": "{% if request.is_secure %}https{% else %}http{% endif %}://{{ request.get_host }}",
+      "logo": "{% if request.is_secure %}https{% else %}http{% endif %}://{{ request.get_host }}{% static 'v2/img/linux_bro_banner.png' %}",
+      "sameAs": [
+        {% if footer_content.facebook_url and footer_content.facebook_url != "#" %}"{{ footer_content.facebook_url }}"{% if footer_content.twitter_url or footer_content.linkedin_url or footer_content.github_url %},{% endif %}{% endif %}
+        {% if footer_content.twitter_url and footer_content.twitter_url != "#" %}"{{ footer_content.twitter_url }}"{% if footer_content.linkedin_url or footer_content.github_url %},{% endif %}{% endif %}
+        {% if footer_content.linkedin_url and footer_content.linkedin_url != "#" %}"{{ footer_content.linkedin_url }}"{% if footer_content.github_url %},{% endif %}{% endif %}
+        {% if footer_content.github_url and footer_content.github_url != "#" %}"{{ footer_content.github_url }}"{% endif %}
+      ]
+    }
+    </script>
+    {% endif %}
+    {% endblock %}
+    
+    {# Additional head content #}
+    {% block extra_head %}{% endblock %}
+    
+    {# Google Sign-In SDK #}
+    {% if GOOGLE_CLIENT_ID %}
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    {% endif %}
+</head>
+<body>
+    {% block content %}{% endblock %}
+    
+    {# JavaScript Files #}
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>
+

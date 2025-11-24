@@ -6,16 +6,16 @@ from .models import (Story, Author, Category,
 
 
 class ContentBlockAdmin(admin.ModelAdmin):
-    list_display = ('story', 'content_type', 'order', 'video_url_preview')
+    list_display = ('story', 'content_type', 'order', 'code_language', 'video_url_preview')
     search_fields = ('story__title', 'text_content', 'content_type', 'video_url')
-    list_filter = ('content_type', 'story__title')
+    list_filter = ('content_type', 'code_language', 'story__title')
     fieldsets = (
         ('Basic Information', {
             'fields': ('story', 'content_type', 'order')
         }),
         ('Content', {
-            'fields': ('text_content', 'image_content', 'video_url'),
-            'description': 'For YouTube videos, enter either the video ID (e.g., "M06YHZ9YUdI") or full URL (e.g., "https://youtu.be/M06YHZ9YUdI").'
+            'fields': ('text_content', 'image_content', 'video_url', 'code_language'),
+            'description': 'For YouTube videos, enter either the video ID (e.g., "M06YHZ9YUdI") or full URL (e.g., "https://youtu.be/M06YHZ9YUdI"). For code blocks, select the programming language for syntax highlighting.'
         }),
     )
     
@@ -45,7 +45,25 @@ class StoryViewAdmin(admin.ModelAdmin):
     viewed_by.short_description = 'Viewed By'
 
 
-admin.site.register(Story)
+class StoryAdmin(admin.ModelAdmin):
+    list_display = ('title', 'author', 'category', 'approval_status', 'publication_date')
+    list_filter = ('approval_status', 'category', 'publication_date')
+    search_fields = ('title', 'subtitle', 'author__user__username')
+    fieldsets = (
+        ('Basic Information', {
+            'fields': ('title', 'subtitle', 'author', 'category', 'sub_category', 'tags', 'approval_status')
+        }),
+        ('Content', {
+            'fields': ('cover_image', 'is_banner', 'banner_image')
+        }),
+        ('SEO Settings', {
+            'fields': ('meta_description', 'meta_keywords'),
+            'description': 'SEO optimization fields. Meta description should be 150-160 characters. Keywords should be comma-separated. If left blank, will use tags and category automatically.'
+        }),
+    )
+
+
+admin.site.register(Story, StoryAdmin)
 admin.site.register(Author)
 admin.site.register(Category)
 admin.site.register(SubCategory)

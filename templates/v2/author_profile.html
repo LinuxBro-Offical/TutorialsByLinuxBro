@@ -281,7 +281,7 @@
                             <div class="card profile-sidebar" style="width: 100%;">
                                 <div class="profile-image-container">
                                     {% if author.profile_picture %}
-                                    <img src="{{ author.profile_picture.url }}" alt="{{ author.full_name }}">
+                                    <img src="{{ author.profile_picture.url }}" alt="{{ author.full_name|default:author.user.username }} - Profile Picture" title="{{ author.full_name|default:author.user.username }}">
                                     {% else %}
                                     <span class="far fa-user-circle profile-image-placeholder"></span>
                                     {% endif %}
@@ -375,7 +375,11 @@
                             {% for story in popular_stories %}
                             <div class="d-flex mb-3">
                                 <a href="{% url 'blog' story.uuid %}">
-                                <img class="rounded" src="../assets/img/projects/13.jpg" width="120" alt="" />
+                                {% if story.cover_image %}
+                                <img class="rounded" src="{{ story.cover_image.url }}" width="120" alt="{{ story.title }} - Cover Image" title="{{ story.title }}" />
+                                {% else %}
+                                <img class="rounded" src="{% static 'v2/img/blog_image.jpg' %}" width="120" alt="{{ story.title }} - Cover Image" title="{{ story.title }}" />
+                                {% endif %}
                                 </a>
                                 <div class="flex-1 ms-3">
                                     <h5 class="lh-sm mt-0 text-transform-none fs-0 mb-1 fw-semi-bold font-base">

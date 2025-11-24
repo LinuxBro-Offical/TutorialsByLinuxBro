@@ -4,11 +4,12 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.db.models import Count, Q
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.middleware.csrf import get_token
 from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import render_to_string
 from django.views import View
+from django.views.decorators.http import require_http_methods
 from django.views.generic import DetailView, TemplateView
 
 # Local application imports
@@ -91,6 +92,10 @@ class LandingPageView(TemplateView):
                 ad_spaces[ad.position] = []
             ad_spaces[ad.position].append(ad)
         context["ad_spaces"] = ad_spaces
+        
+        # SEO context for homepage
+        context['seo_title'] = 'Linux Bro - Tech Blog | Empowering Tech Enthusiasts'
+        context['seo_description'] = 'Linux Bro - Empowering Tech Enthusiasts with tutorials, guides, and tech stories'
 
         return context
 
@@ -252,6 +257,11 @@ class BlogPageView(DetailView):
                 ad_spaces[ad.position] = []
             ad_spaces[ad.position].append(ad)
         context["ad_spaces"] = ad_spaces
+        
+        # SEO context
+        context['seo_title'] = self.object.title
+        context['seo_description'] = self.object.meta_description or self.object.subtitle or (self.object.content_blocks.first().text_content[:160] if self.object.content_blocks.exists() and self.object.content_blocks.first().text_content else "")
+        context['seo_image'] = self.object.cover_image.url if self.object.cover_image else None
         
         return context
 
@@ -725,7 +735,6 @@ class CommentAjaxView(View):
                 {"error": "You must have an author profile to comment."}, status=403
             )
 
-        print("parent:", parent_id)
         if comment_text and story_id:
             # Get the story the comment is associated with
             story = get_object_or_404(Story, id=story_id)
@@ -1123,4 +1132,17 @@ class FilterSearchResultsView(TemplateView):
         
         return context
 
+
+@require_http_methods(["GET"])
+def robots_txt(request):
+    """Generate robots.txt file"""
+    lines = [
+        "User-agent: *",
+        "Allow: /",
+        "Disallow: /admin/",
+        "Disallow: /accounts/",
+        "",
+        f"Sitemap: {request.build_absolute_uri('/sitemap.xml')}",
+    ]
+    return HttpResponse("\n".join(lines), content_type="text/plain")
 
