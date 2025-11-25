@@ -79,6 +79,11 @@ DEBUG = config('DEBUG', default=True, cast=bool)
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=Csv())
 
+# Security settings - Disable HTTPS redirects for HTTP-only deployment
+SECURE_SSL_REDIRECT = False  # Don't redirect HTTP to HTTPS
+SESSION_COOKIE_SECURE = False  # Allow cookies over HTTP
+CSRF_COOKIE_SECURE = False  # Allow CSRF cookies over HTTP
+SECURE_PROXY_SSL_HEADER = None  # Don't trust proxy headers for SSL
 
 # Application definition
 
@@ -154,7 +159,7 @@ ACCOUNT_ADAPTER = 'home.adapters.AccountAdapter'
 SOCIALACCOUNT_ADAPTER = 'home.adapters.SocialAccountAdapter'
 LOGIN_REDIRECT_URL = '/'  # Redirect after login
 ACCOUNT_LOGOUT_REDIRECT_URL = '/'  # Redirect after logout
-ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'http' if DEBUG else 'https'
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'http'  # Use HTTP (change to 'https' when SSL is configured)
 
 # Skip intermediate confirmation page for social logins
 SOCIALACCOUNT_AUTO_SIGNUP = True
@@ -271,10 +276,23 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
+# STATIC_ROOT is the absolute path to the directory where collectstatic will collect static files for deployment
+# For production, set this to match your nginx static files location
+# Development: use relative path, Production: use absolute path
+if DEBUG:
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+else:
+    # Production path - matches nginx configuration
+    STATIC_ROOT = '/home/ubuntu/TutorialsByLinuxBro/static'
 
 # Media files settings
 MEDIA_URL = 'media/'
+# For production, use absolute path matching nginx configuration
+if DEBUG:
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+else:
+    # Production path - matches nginx configuration
+    MEDIA_ROOT = '/home/ubuntu/TutorialsByLinuxBro/media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field

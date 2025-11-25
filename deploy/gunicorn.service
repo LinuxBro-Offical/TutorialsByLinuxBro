@@ -1,0 +1,21 @@
+[Unit]
+Description=Gunicorn daemon for Linux Bro Django application
+After=network.target
+
+[Service]
+User=ubuntu
+Group=www-data
+WorkingDirectory=/home/ubuntu/TutorialsByLinuxBro/linux_bro
+ExecStart=/home/ubuntu/env/bin/gunicorn \
+    --access-logfile - \
+    --workers 3 \
+    --bind 127.0.0.1:9090 \
+    --timeout 120 \
+    linux_bro.wsgi:application
+
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
+

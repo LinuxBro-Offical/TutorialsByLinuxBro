@@ -48,7 +48,7 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
         # If user is already logged in, link the account
         if request.user.is_authenticated:
             try:
-                sociallogin.connect(request, request.user)
+            sociallogin.connect(request, request.user)
                 return
             except Exception as e:
                 logger.warning(f"Error connecting social account to logged-in user: {str(e)}", exc_info=True)
@@ -179,12 +179,12 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
         try:
             full_name = user.get_full_name() or user.username or (user.email.split('@')[0] if user.email else 'User')
             author, created = Author.objects.get_or_create(
-                user=user,
-                defaults={
+            user=user,
+            defaults={
                     'full_name': full_name,
-                    'uuid': uuid.uuid4()
-                }
-            )
+                'uuid': uuid.uuid4()
+            }
+        )
             
             # Download and save profile picture from social account if available
             # Only download if author doesn't already have a profile picture

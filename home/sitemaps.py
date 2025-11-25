@@ -1,4 +1,5 @@
 from django.contrib.sitemaps import Sitemap
+from django.utils.text import slugify
 from .models import Story, Category, Tag
 
 
@@ -28,7 +29,7 @@ class CategorySitemap(Sitemap):
     
     def location(self, obj):
         from django.urls import reverse
-        return reverse('filter-search-results-slug', kwargs={'slug': obj.name})
+        return reverse('filter-search-results-slug', kwargs={'slug': slugify(obj.name)})
 
 
 class StaticSitemap(Sitemap):

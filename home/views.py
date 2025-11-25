@@ -1095,7 +1095,8 @@ class FilterSearchResultsView(TemplateView):
                 stories = Story.objects.none()
                 context["page_title"] = "Saved Reads"
         elif tag_slug:
-            # Tag filtering
+            # Try tag filtering first
+            tag = None
             try:
                 tag = Tag.objects.get(
                     Q(name=tag_slug) | Q(name=tag_slug.lower()) | Q(name=tag_slug.upper())
@@ -1104,8 +1105,27 @@ class FilterSearchResultsView(TemplateView):
                 context["page_title"] = f"Stories tagged: {tag.name}"
                 context["tag_name"] = tag.name
             except Tag.DoesNotExist:
-                stories = Story.objects.none()
-                context["page_title"] = "No Results Found"
+                # If tag not found, try category filtering by slugified name
+                from django.utils.text import slugify
+                try:
+                    # Find category by matching slugified name
+                    all_categories = Category.objects.all()
+                    category = None
+                    for cat in all_categories:
+                        if slugify(cat.name) == tag_slug:
+                            category = cat
+                            break
+                    
+                    if category:
+                        stories = stories.filter(category=category).distinct()
+                        context["page_title"] = f"Stories in category: {category.name}"
+                        context["category_name"] = category.name
+                    else:
+                        stories = Story.objects.none()
+                        context["page_title"] = "No Results Found"
+                except Exception:
+                    stories = Story.objects.none()
+                    context["page_title"] = "No Results Found"
         else:
             # Default: show all approved stories
             context["page_title"] = "All Stories"

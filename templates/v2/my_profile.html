@@ -465,7 +465,7 @@
                             <ul class="list-unstyled">
                                 {% for obj in categories %}
                                 <li class="mb-2">
-                                    <a class="text-800" href="{% url 'filter-search-results-slug' obj.name %}">
+                                    <a class="text-800" href="{% url 'filter-search-results-slug' obj.name|slugify %}">
                                     <span class="fas fa-angle-right me-2" data-fa-transform="shrink-3"></span>{{obj.name}}
                                     </a>
                                 </li>
