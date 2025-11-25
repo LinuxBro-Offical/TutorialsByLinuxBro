@@ -273,17 +273,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static')
-]
-# STATIC_ROOT is the absolute path to the directory where collectstatic will collect static files for deployment
-# For production, set this to match your nginx static files location
-# Development: use relative path, Production: use absolute path
-if DEBUG:
-    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-else:
-    # Production path - matches nginx configuration
-    STATIC_ROOT = '/home/ubuntu/TutorialsByLinuxBro/static'
+
+#STATICFILES_DIRS = [
+#    os.path.join(BASE_DIR, 'static')
+#]
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Media files settings
 MEDIA_URL = 'media/'
