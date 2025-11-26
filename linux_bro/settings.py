@@ -283,9 +283,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_URL = 'media/'
 # For production, use absolute path matching nginx configuration
 if DEBUG:
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 else:
-    # Production path - matches nginx configuration
     MEDIA_ROOT = '/home/ubuntu/TutorialsByLinuxBro/media'
 
 # Default primary key field type

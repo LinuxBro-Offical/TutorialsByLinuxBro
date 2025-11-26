@@ -48,7 +48,7 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
         # If user is already logged in, link the account
         if request.user.is_authenticated:
             try:
-            sociallogin.connect(request, request.user)
+                sociallogin.connect(request, request.user)
                 return
             except Exception as e:
                 logger.warning(f"Error connecting social account to logged-in user: {str(e)}", exc_info=True)

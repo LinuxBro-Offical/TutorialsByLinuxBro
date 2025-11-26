@@ -576,6 +576,8 @@
                      {% for block in content_blocks %}
                      {% if block.content_type == 'paragraph' %}
                      <p>{{ block.text_content }}</p>
+                     {% elif block.content_type == 'subheading' %}
+                     <h3 class="mt-4 mb-2 fw-semibold">{{ block.text_content }}</h3>
                      {% elif block.content_type == 'image' %}
                      {% if block.image_content %}
                      <div class="col-6 pe-1">

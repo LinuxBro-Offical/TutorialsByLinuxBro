@@ -271,6 +271,7 @@ class ContentBlock(models.Model):
 
     CONTENT_TYPE_CHOICES = [
         ("paragraph", "Paragraph"),
+        ("subheading", "Subheading"),
         ("image", "Image"),
         ("blockquote", "Block Quote"),
         ("youtube", "YouTube Video"),
