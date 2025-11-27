@@ -97,6 +97,8 @@ INSTALLED_APPS = [
     'django.contrib.sites',  # Required for allauth
     # Import home first to apply JWT compatibility patch before allauth
     'home',
+    # Storage backend for S3 media files
+    'storages',
     # Allauth apps
     'allauth',
     'allauth.account',
@@ -274,18 +276,41 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-#STATICFILES_DIRS = [
-#    os.path.join(BASE_DIR, 'static')
-#]
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATICFILES_DIRS = [
+   os.path.join(BASE_DIR, 'static') 
+]
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Media files settings
-MEDIA_URL = 'media/'
-# For production, use absolute path matching nginx configuration
+# Use local filesystem in development, S3 in production
 if DEBUG:
+    MEDIA_URL = 'media/'
     MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 else:
-    MEDIA_ROOT = '/home/ubuntu/TutorialsByLinuxBro/media'
+    # AWS S3 settings for media storage
+    AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
+    AWS_S3_REGION_NAME = config('AWS_S3_REGION_NAME', default=None)
+
+    # Optional custom domain (e.g., CDN or custom CNAME). If not provided, fall back to standard S3 domain.
+    _default_s3_domain = (
+        f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+        if not AWS_S3_REGION_NAME
+        else f"{AWS_STORAGE_BUCKET_NAME}.s3.{AWS_S3_REGION_NAME}.amazonaws.com"
+    )
+    AWS_S3_CUSTOM_DOMAIN = config('AWS_S3_CUSTOM_DOMAIN', default=_default_s3_domain)
+
+    # Recommended S3 settings for public media
+    AWS_DEFAULT_ACL = None
+    AWS_QUERYSTRING_AUTH = False
+    AWS_S3_FILE_OVERWRITE = False
+
+    # Use S3 for default file storage (media)
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+    # Media URL served from S3
+    MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
