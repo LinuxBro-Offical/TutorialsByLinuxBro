@@ -152,7 +152,9 @@
                                     <span class="mx-2 text-700">|</span>
                                     <a class="text-700" href="blog.html#!">{{story.tags.first | title }}</a>
                                 </div>
-                                <p>{{story.content_blocks.first.text_content}}..</p>
+                                {% if story.content_blocks.first.text_content %}
+                                <p>{{ story.content_blocks.first.text_content|striptags|truncatewords:40 }}</p>
+                                {% endif %}
                                 <a class="text-dark fw-semi-bold" href="{% url 'blog' story.uuid %}">
                                 Read more<span class="fas fa-angle-right ms-1 text-900" data-fa-transform="down-2"></span>
                                 </a>

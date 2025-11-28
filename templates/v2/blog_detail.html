@@ -4,7 +4,7 @@
 {# SEO Overrides #}
 {% block title %}{{ story.title }} | Linux Bro{% endblock %}
 
-{% block meta_description %}{% if story.meta_description %}{{ story.meta_description }}{% elif story.subtitle %}{{ story.subtitle }}{% elif story.content_blocks.first.text_content %}{{ story.content_blocks.first.text_content|truncatewords:25 }}{% else %}Read {{ story.title }} on Linux Bro{% endif %}{% endblock %}
+{% block meta_description %}{% if story.meta_description %}{{ story.meta_description }}{% elif story.subtitle %}{{ story.subtitle }}{% elif story.content_blocks.first.text_content %}{{ story.content_blocks.first.text_content|striptags|truncatewords:25 }}{% else %}Read {{ story.title }} on Linux Bro{% endif %}{% endblock %}
 
 {% block meta_keywords %}{% if story.meta_keywords %}{{ story.meta_keywords }}{% else %}{{ story.tags.all|join:", " }}{% if story.category %}, {{ story.category.name }}{% endif %}{% endif %}{% endblock %}
 
@@ -14,11 +14,11 @@
 
 {% block og_title %}{{ story.title }}{% endblock %}
 
-{% block og_description %}{% if story.meta_description %}{{ story.meta_description }}{% elif story.subtitle %}{{ story.subtitle }}{% elif story.content_blocks.first.text_content %}{{ story.content_blocks.first.text_content|truncatewords:25 }}{% else %}Read {{ story.title }} on Linux Bro{% endif %}{% endblock %}
+{% block og_description %}{% if story.meta_description %}{{ story.meta_description }}{% elif story.subtitle %}{{ story.subtitle }}{% elif story.content_blocks.first.text_content %}{{ story.content_blocks.first.text_content|striptags|truncatewords:25 }}{% else %}Read {{ story.title }} on Linux Bro{% endif %}{% endblock %}
 
 {% block twitter_title %}{{ story.title }}{% endblock %}
 
-{% block twitter_description %}{% if story.meta_description %}{{ story.meta_description }}{% elif story.subtitle %}{{ story.subtitle }}{% elif story.content_blocks.first.text_content %}{{ story.content_blocks.first.text_content|truncatewords:25 }}{% else %}Read {{ story.title }} on Linux Bro{% endif %}{% endblock %}
+{% block twitter_description %}{% if story.meta_description %}{{ story.meta_description }}{% elif story.subtitle %}{{ story.subtitle }}{% elif story.content_blocks.first.text_content %}{{ story.content_blocks.first.text_content|striptags|truncatewords:25 }}{% else %}Read {{ story.title }} on Linux Bro{% endif %}{% endblock %}
 
 {% block og_image %}{% if story.cover_image %}{% if request.is_secure %}https{% else %}http{% endif %}://{{ request.get_host }}{{ story.cover_image.url }}{% else %}{{ block.super }}{% endif %}{% endblock %}
 
@@ -30,7 +30,7 @@
   "@context": "https://schema.org",
   "@type": "BlogPosting",
   "headline": "{{ story.title|escapejs }}",
-  "description": "{% if story.meta_description %}{{ story.meta_description|escapejs }}{% elif story.subtitle %}{{ story.subtitle|escapejs }}{% elif story.content_blocks.first.text_content %}{{ story.content_blocks.first.text_content|truncatewords:25|escapejs }}{% else %}Read {{ story.title|escapejs }} on Linux Bro{% endif %}",
+  "description": "{% if story.meta_description %}{{ story.meta_description|escapejs }}{% elif story.subtitle %}{{ story.subtitle|escapejs }}{% elif story.content_blocks.first.text_content %}{{ story.content_blocks.first.text_content|striptags|truncatewords:25|escapejs }}{% else %}Read {{ story.title|escapejs }} on Linux Bro{% endif %}",
   "image": "{% if story.cover_image %}{% if request.is_secure %}https{% else %}http{% endif %}://{{ request.get_host }}{{ story.cover_image.url }}{% endif %}",
   "author": {
     "@type": "Person",
@@ -580,9 +580,9 @@
                      </div>
                      {% for block in content_blocks %}
                      {% if block.content_type == 'paragraph' %}
-                     <p>{{ block.text_content }}</p>
+                     {{ block.text_content|safe }}
                      {% elif block.content_type == 'subheading' %}
-                     <h5 class="mt-4 mb-2 fw-semibold content-subheading">{{ block.text_content }}</h5>
+                     <h5 class="mt-4 mb-2 fw-semibold content-subheading">{{ block.text_content|safe }}</h5>
                      {% elif block.content_type == 'image' %}
                      {% if block.image_content %}
                      <div class="col-6 pe-1">
@@ -594,7 +594,7 @@
                      {% elif block.content_type == 'blockquote' %}
                      <p
                         class="fs-1 ps-3 ps-md-4 border-start border-500 fst-italic py-3 my-4 text-700">
-                        {{ block.text_content }}
+                        {{ block.text_content|safe }}
                      </p>
                      {% elif block.content_type == 'youtube' %}
                      {% if block.video_url %}
@@ -609,7 +609,7 @@
                                  <span class="fas fa-play" data-fa-transform="grow-1 right-2"></span>
                               </a>
                               {% if block.text_content %}
-                              <p class="text-white mt-3 mb-0">{{ block.text_content }}</p>
+                              <p class="text-white mt-3 mb-0">{{ block.text_content|safe }}</p>
                               {% endif %}
                            </div>
                         </div>
@@ -842,7 +842,7 @@
                               </h5>
                               <p>
                                  {% if related_story.content_blocks.first.text_content %}
-                                    {{ related_story.content_blocks.first.text_content }}
+                                    {{ related_story.content_blocks.first.text_content|striptags|truncatewords:25 }}
                                  {% else %}
                                     {{ related_story.subtitle|default:"Read more about this story." }}
                                  {% endif %}

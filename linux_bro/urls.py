@@ -41,5 +41,13 @@ urlpatterns = [
 
 
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL,
-                          document_root=settings.MEDIA_ROOT)
+    # Serve user-uploaded media in development
+    urlpatterns += static(
+        settings.MEDIA_URL,
+        document_root=settings.MEDIA_ROOT,
+    )
+    # Serve static files from STATICFILES_DIRS in development (useful when DEBUG=True)
+    urlpatterns += static(
+        settings.STATIC_URL,
+        document_root=settings.STATICFILES_DIRS[0],
+    )

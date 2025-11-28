@@ -152,7 +152,7 @@
                                     {% endif %}
                                 </div>
                                 {% if story.content_blocks.first.text_content %}
-                                <p>{{story.content_blocks.first.text_content}}..</p>
+                                <p>{{ story.content_blocks.first.text_content|striptags|truncatewords:40 }}</p>
                                 {% endif %}
                                 <a class="text-dark fw-semi-bold" href="{% url 'blog' story.uuid %}">
                                 Read more<span class="fas fa-angle-right ms-1 text-900" data-fa-transform="down-2"></span>

@@ -1,22 +1,68 @@
 from django.contrib import admin
-from .models import (Story, Author, Category,
-                     SubCategory, Tag, ContentBlock, Response,
-                     Saved, StoryView, TeamMember, ContactInfo, ContactMessage,
-                     AboutUsContent, FooterContent, AdSpace)
+from ckeditor.widgets import CKEditorWidget
+from django import forms
+
+from .models import (
+    Story,
+    Author,
+    Category,
+    SubCategory,
+    Tag,
+    ContentBlock,
+    Response,
+    Saved,
+    StoryView,
+    TeamMember,
+    ContactInfo,
+    ContactMessage,
+    AboutUsContent,
+    FooterContent,
+    AdSpace,
+)
+
+
+class ContentBlockAdminForm(forms.ModelForm):
+    class Meta:
+        model = ContentBlock
+        fields = "__all__"
+        widgets = {
+            # Use CKEditor for main text content (paragraphs, subheadings, quotes, code text)
+            "text_content": CKEditorWidget(),
+        }
+
+
+class ContentBlockInline(admin.StackedInline):
+    """
+    Inline editor for content blocks directly on the Story admin page.
+    This lets you add/edit all blocks for a story without selecting the story each time.
+    """
+
+    model = ContentBlock
+    form = ContentBlockAdminForm
+    extra = 1
+    fields = ("content_type", "order", "text_content", "image_content", "video_url", "code_language")
+    ordering = ("order",)
 
 
 class ContentBlockAdmin(admin.ModelAdmin):
+    form = ContentBlockAdminForm
     list_display = ('story', 'content_type', 'order', 'code_language', 'video_url_preview')
     search_fields = ('story__title', 'text_content', 'content_type', 'video_url')
     list_filter = ('content_type', 'code_language', 'story__title')
     fieldsets = (
-        ('Basic Information', {
-            'fields': ('story', 'content_type', 'order')
-        }),
-        ('Content', {
-            'fields': ('text_content', 'image_content', 'video_url', 'code_language'),
-            'description': 'For YouTube videos, enter either the video ID (e.g., "M06YHZ9YUdI") or full URL (e.g., "https://youtu.be/M06YHZ9YUdI"). For code blocks, select the programming language for syntax highlighting.'
-        }),
+        (
+            "Basic Information",
+            {
+                "fields": ("story", "content_type", "order"),
+            },
+        ),
+        (
+            "Content",
+            {
+                "fields": ("text_content", "image_content", "video_url", "code_language"),
+                "description": 'Use the rich-text area for paragraphs, headings, quotes, or code text. For YouTube videos, enter either the video ID (e.g., "M06YHZ9YUdI") or full URL (e.g., "https://youtu.be/M06YHZ9YUdI"). For code blocks, select the programming language for syntax highlighting.',
+            },
+        ),
     )
     
     def video_url_preview(self, obj):
@@ -45,7 +91,19 @@ class StoryViewAdmin(admin.ModelAdmin):
     viewed_by.short_description = 'Viewed By'
 
 
+class StoryAdminForm(forms.ModelForm):
+    class Meta:
+        model = Story
+        fields = "__all__"
+        widgets = {
+            # Use CKEditor for SEO description for easier editing
+            "meta_description": CKEditorWidget(),
+        }
+
+
 class StoryAdmin(admin.ModelAdmin):
+    form = StoryAdminForm
+    inlines = [ContentBlockInline]
     list_display = ('title', 'author', 'category', 'approval_status', 'publication_date')
     list_filter = ('approval_status', 'category', 'publication_date')
     search_fields = ('title', 'subtitle', 'author__user__username')
