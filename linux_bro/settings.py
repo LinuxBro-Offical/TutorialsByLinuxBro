@@ -97,6 +97,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',  # Required for allauth
     # Import home first to apply JWT compatibility patch before allauth
     'home',
+    'ckeditor',
     # Allauth apps
     'allauth',
     'allauth.account',
@@ -277,7 +278,7 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [
    os.path.join(BASE_DIR, 'static')
 ]
-# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+#STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # Media files settings
 MEDIA_URL = 'media/'
