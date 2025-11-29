@@ -316,3 +316,45 @@ else:
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# CKEditor Configuration
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'Custom',
+        'toolbar_Custom': [
+            ['Bold', 'Italic', 'Underline', 'Strike'],
+            ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'],
+            ['Link', 'Unlink'],
+            ['Image', 'Table', 'HorizontalRule'],
+            ['CodeSnippet'],
+            ['Styles', 'Format', 'Font', 'FontSize'],
+            ['TextColor', 'BGColor'],
+            ['Maximize', 'Source'],
+        ],
+        'height': 400,
+        'width': '100%',
+        'extraPlugins': ','.join([
+            'codesnippet',
+        ]),
+        'codeSnippet_theme': 'github',  # Available themes: default, github, googlecode, xcode, etc.
+        'codeSnippet_codeClass': 'hljs',  # CSS class for code elements
+        'codeSnippet_languages': {
+            'bash': 'Bash',
+            'c': 'C',
+            'cpp': 'C++',
+            'csharp': 'C#',
+            'css': 'CSS',
+            'django': 'Django',
+            'html': 'HTML',
+            'java': 'Java',
+            'javascript': 'JavaScript',
+            'json': 'JSON',
+            'php': 'PHP',
+            'python': 'Python',
+            'ruby': 'Ruby',
+            'sql': 'SQL',
+            'xml': 'XML',
+            'yaml': 'YAML',
+        },
+    },
+}

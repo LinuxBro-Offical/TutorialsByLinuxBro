@@ -27,7 +27,17 @@ class ContentBlockAdminForm(forms.ModelForm):
         fields = "__all__"
         widgets = {
             # Use CKEditor for main text content (paragraphs, subheadings, quotes, code text)
-            "text_content": CKEditorWidget(),
+            # The 'default' config includes CodeSnippet plugin for syntax-highlighted code blocks
+            "text_content": CKEditorWidget(
+                config_name='default',
+                external_plugin_resources=[
+                    (
+                        'codesnippet',
+                        '/static/ckeditor/ckeditor/plugins/codesnippet/',
+                        'plugin.js',
+                    ),
+                ],
+            ),
         }
 
 
