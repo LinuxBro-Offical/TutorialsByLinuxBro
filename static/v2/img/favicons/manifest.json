@@ -1,18 +1,27 @@
 {
-    "name": "",
+    "name": "Linux Bro",
+    "short_name": "Linux Bro",
+    "description": "Linux Bro - Tech Blog | Empowering Tech Enthusiasts",
     "icons": [
         {
-            "src": "/android-chrome-192x192.png",
-            "sizes": "192x192",
+            "src": "/static/v2/img/favicons/favicon-32x32_v2.png",
+            "sizes": "32x32",
             "type": "image/png"
         },
         {
-            "src": "/android-chrome-512x512.png",
-            "sizes": "512x512",
+            "src": "/static/v2/img/favicons/favicon-16x16_v2.png",
+            "sizes": "16x16",
+            "type": "image/png"
+        },
+        {
+            "src": "/static/v2/img/favicons/apple-touch-icon-v2.png",
+            "sizes": "180x180",
             "type": "image/png"
         }
     ],
-    "theme_color": "#ffffff",
+    "theme_color": "#2563eb",
     "background_color": "#ffffff",
-    "display": "standalone"
+    "display": "standalone",
+    "start_url": "/",
+    "scope": "/"
 }
